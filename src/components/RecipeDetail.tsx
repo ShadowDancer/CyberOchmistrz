@@ -1,12 +1,12 @@
 "use client";
 
-import { Dish } from '@/types';
-import { getDishIngredients, isDishVegetarian, isDishVegan } from '@/lib/data';
+import { Recipie } from '@/types';
+import { getRecipieIngredients, isDishVegetarian, isDishVegan } from '@/lib/recipieData';
 import { Clock } from 'lucide-react';
 import { useState } from 'react';
 
-interface DishDetailProps {
-  dish: Dish | null;
+interface RecipeDetailProps {
+  dish: Recipie | null;
 }
 
 function StarRating({ score }: { score: number }) {
@@ -139,7 +139,7 @@ function IngredientWithTooltip({ ingredient }: {
   );
 }
 
-export default function DishDetail({ dish }: DishDetailProps) {
+export default function RecipeDetail({ dish }: RecipeDetailProps) {
   if (!dish) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -148,7 +148,7 @@ export default function DishDetail({ dish }: DishDetailProps) {
     );
   }
 
-  const dishIngredients = getDishIngredients(dish.ingredients);
+  const dishIngredients = getRecipieIngredients(dish.ingredients);
   const isVegetarian = isDishVegetarian(dish);
   const isVegan = isDishVegan(dish);
   

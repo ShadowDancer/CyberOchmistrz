@@ -7,7 +7,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 180,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "cukier",
@@ -17,7 +18,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 365,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "mleko",
@@ -27,7 +29,8 @@
     "isVegetarian": true,
     "isVegan": false,
     "freshnessDays": 7,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   },
   {
     "id": "jajka",
@@ -37,7 +40,8 @@
     "isVegetarian": true,
     "isVegan": false,
     "freshnessDays": 21,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   },
   {
     "id": "maslo",
@@ -47,7 +51,8 @@
     "isVegetarian": true,
     "isVegan": false,
     "freshnessDays": 30,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   },
   {
     "id": "sol",
@@ -57,7 +62,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 1095,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "drozdze",
@@ -67,7 +73,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 14,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   },
   {
     "id": "olej",
@@ -77,7 +84,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 180,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "pomidory",
@@ -87,7 +95,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 7,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   },
   {
     "id": "cebula",
@@ -97,7 +106,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 30,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "czosnek",
@@ -107,7 +117,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 60,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "papryka",
@@ -117,7 +128,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 7,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   },
   {
     "id": "ryz",
@@ -127,7 +139,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 365,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "makaron",
@@ -137,7 +150,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 365,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "ziemniaki",
@@ -147,7 +161,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 30,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "chleb",
@@ -157,7 +172,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 5,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "awokado",
@@ -167,7 +183,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 5,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   },
   {
     "id": "ogorek",
@@ -177,7 +194,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 7,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   },
   {
     "id": "oliwki",
@@ -187,7 +205,8 @@
     "isVegetarian": true,
     "isVegan": true,
     "freshnessDays": 180,
-    "storageType": "room"
+    "storageType": "room",
+    "isIngredient": true
   },
   {
     "id": "ser_feta",
@@ -197,136 +216,7 @@
     "isVegetarian": true,
     "isVegan": false,
     "freshnessDays": 14,
-    "storageType": "fridge"
-  },
-  {
-    "id": "kurczak",
-    "name": "Pierś z kurczaka",
-    "unit": "gramy",
-    "category": "mięso",
-    "isVegetarian": false,
-    "isVegan": false,
-    "freshnessDays": 2,
-    "storageType": "fridge"
-  },
-  {
-    "id": "wolowina",
-    "name": "Wołowina mielona",
-    "unit": "gramy",
-    "category": "mięso",
-    "isVegetarian": false,
-    "isVegan": false,
-    "freshnessDays": 2,
-    "storageType": "fridge"
-  },
-  {
-    "id": "schab",
-    "name": "Schab wieprzowy",
-    "unit": "gramy",
-    "category": "mięso",
-    "isVegetarian": false,
-    "isVegan": false,
-    "freshnessDays": 3,
-    "storageType": "fridge"
-  },
-  {
-    "id": "boczek",
-    "name": "Boczek",
-    "unit": "gramy",
-    "category": "mięso",
-    "isVegetarian": false,
-    "isVegan": false,
-    "freshnessDays": 7,
-    "storageType": "fridge"
-  },
-  {
-    "id": "kielbasa",
-    "name": "Kiełbasa",
-    "unit": "gramy",
-    "category": "mięso",
-    "isVegetarian": false,
-    "isVegan": false,
-    "freshnessDays": 5,
-    "storageType": "fridge"
-  },
-  {
-    "id": "marchew",
-    "name": "Marchew",
-    "unit": "sztuki",
-    "category": "warzywa",
-    "isVegetarian": true,
-    "isVegan": true,
-    "freshnessDays": 14,
-    "storageType": "fridge"
-  },
-  {
-    "id": "pietruszka",
-    "name": "Pietruszka",
-    "unit": "sztuki",
-    "category": "warzywa",
-    "isVegetarian": true,
-    "isVegan": true,
-    "freshnessDays": 10,
-    "storageType": "fridge"
-  },
-  {
-    "id": "seler",
-    "name": "Seler",
-    "unit": "sztuki",
-    "category": "warzywa",
-    "isVegetarian": true,
-    "isVegan": true,
-    "freshnessDays": 14,
-    "storageType": "fridge"
-  },
-  {
-    "id": "grzyby",
-    "name": "Grzyby",
-    "unit": "gramy",
-    "category": "warzywa",
-    "isVegetarian": true,
-    "isVegan": true,
-    "freshnessDays": 5,
-    "storageType": "fridge"
-  },
-  {
-    "id": "bulion",
-    "name": "Bulion",
-    "unit": "mililitry",
-    "category": "inne",
-    "isVegetarian": false,
-    "isVegan": false,
-    "freshnessDays": 3,
-    "storageType": "fridge"
-  },
-  {
-    "id": "bulion_warzywny",
-    "name": "Bulion warzywny",
-    "unit": "mililitry",
-    "category": "inne",
-    "isVegetarian": true,
-    "isVegan": true,
-    "freshnessDays": 3,
-    "storageType": "fridge"
-  },
-  {
-    "id": "smietana",
-    "name": "Śmietana",
-    "unit": "mililitry",
-    "category": "nabiał",
-    "isVegetarian": true,
-    "isVegan": false,
-    "freshnessDays": 7,
-    "storageType": "fridge"
-  },
-  {
-    "id": "por",
-    "name": "Por",
-    "unit": "sztuki",
-    "category": "warzywa",
-    "isVegetarian": true,
-    "isVegan": true,
-    "freshnessDays": 7,
-    "storageType": "fridge"
+    "storageType": "fridge",
+    "isIngredient": true
   }
 ] 

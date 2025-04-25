@@ -7,6 +7,7 @@ export interface Ingredient {
   isVegan: boolean;
   freshnessDays: number; // how long the ingredient stays fresh in days
   storageType: 'room' | 'fridge' | 'freezer'; // where the ingredient should be stored
+  isIngerent?: boolean; // whether this is an ingredient or another type of supply
 }
 
 export interface IngredientAmount {
@@ -21,7 +22,7 @@ export enum MealType {
   SNACK = 'przekąska'
 }
 
-export interface Dish {
+export interface Recipie {
   id: number;
   name: string;
   ingredients: IngredientAmount[];

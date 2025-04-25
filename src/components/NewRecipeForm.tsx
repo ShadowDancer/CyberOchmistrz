@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Dish, Ingredient, MealType, IngredientAmount } from '@/types';
-import { getAllIngredients, getDishes } from '@/lib/data';
+import { Recipie, Ingredient, MealType, IngredientAmount } from '@/types';
+import { getIngredients, getDishes } from '@/lib/recipieData';
 
 export default function NewRecipeForm() {
   const [recipeName, setRecipeName] = useState('');
@@ -17,7 +17,7 @@ export default function NewRecipeForm() {
   const [jsonOutput, setJsonOutput] = useState('');
   const [allUniqueEquipment, setAllUniqueEquipment] = useState<string[]>([]);
 
-  const allIngredients = getAllIngredients();
+  const allIngredients = getIngredients();
 
   useEffect(() => {
     // Extract all unique equipment items from existing dishes
@@ -123,7 +123,7 @@ export default function NewRecipeForm() {
       ? selectedMealTypes 
       : [MealType.DINNER];
 
-    const dish: Dish = {
+    const dish: Recipie = {
       id: Date.now(), // temporary ID as number
       name: recipeName.trim(),
       description: description.trim(),

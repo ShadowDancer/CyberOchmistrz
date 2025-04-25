@@ -1,17 +1,17 @@
-import { Dish, Ingredient, IngredientAmount } from '../types';
-import dishesData from '../data/dishes.json';
-import ingredientsData from '../data/ingredients.json';
+import { Recipie, Ingredient, IngredientAmount } from '../types';
+import dishesData from '../data/recipies.json';
+import suppliesData from '../data/supplies.json';
 
-export function getDishes(): Dish[] {
-  return dishesData as Dish[];
+export function getDishes(): Recipie[] {
+  return dishesData as Recipie[];
+}
+
+export function getDishById(id: number): Recipie | undefined {
+  return getDishes().find(dish => dish.id === id);
 }
 
 export function getIngredients(): Ingredient[] {
-  return ingredientsData as Ingredient[];
-}
-
-export function getAllIngredients(): Ingredient[] {
-  return ingredientsData as Ingredient[];
+  return (suppliesData as any[]).filter(supply => supply.isIngredient === true) as Ingredient[];
 }
 
 export function getIngredientById(id: string): Ingredient | undefined {
@@ -28,16 +28,16 @@ export function getIngredientUnit(id: string): string {
   return ingredient ? ingredient.unit : '';
 }
 
-export function getDishIngredients(dishIngredients: IngredientAmount[]): (IngredientAmount & Ingredient)[] {
+export function getRecipieIngredients(dishIngredients: IngredientAmount[]): (IngredientAmount & Ingredient)[] {
  
-  return dishIngredients.map(ingAmount => {
-    const ingredient = getIngredientById(ingAmount.id);
+  return dishIngredients.map(ing => {
+    const ingredient = getIngredientById(ing.id);
     if (!ingredient) {
-      console.warn(`Ingredient with id "${ingAmount.id}" not found`);
+      console.warn(`Ingredient with id "${ing.id}" not found`);
       // Return a default ingredient to prevent errors
       return {
-        ...ingAmount,
-        name: `Unknown (${ingAmount.id})`,
+        ...ing,
+        name: `Unknown (${ing.id})`,
         unit: '',
         category: 'inne' as const,
         isVegetarian: false,
@@ -47,13 +47,13 @@ export function getDishIngredients(dishIngredients: IngredientAmount[]): (Ingred
       } as (IngredientAmount & Ingredient);
     }
     return {
-      ...ingAmount,
+      ...ing,
       ...ingredient
     } as (IngredientAmount & Ingredient);
   });
 }
 
-export function isDishVegetarian(dish: Dish): boolean {
+export function isDishVegetarian(dish: Recipie): boolean {
   const ingredients = dish.ingredients
     .map(ing => getIngredientById(ing.id))
     .filter((ing): ing is Ingredient => ing !== undefined);
@@ -61,7 +61,7 @@ export function isDishVegetarian(dish: Dish): boolean {
   return ingredients.every(ing => ing.isVegetarian);
 }
 
-export function isDishVegan(dish: Dish): boolean {
+export function isDishVegan(dish: Recipie): boolean {
   const ingredients = dish.ingredients
     .map(ing => getIngredientById(ing.id))
     .filter((ing): ing is Ingredient => ing !== undefined);

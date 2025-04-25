@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import DishList from '@/components/DishList';
-import DishDetail from '@/components/DishDetail';
-import { Dish } from '@/types';
-import { getDishes } from '@/lib/data';
+import RecipeList from '@/components/RecipeList';
+import RecipeDetail from '@/components/RecipeDetail';
+import { Recipie } from '@/types';
+import { getDishes } from '@/lib/recipieData';
 
 export default function RecipesPage() {
-  const [selectedDish, setSelectedDish] = useState<Dish | null>(null);
+  const [selectedDish, setSelectedDish] = useState<Recipie | null>(null);
   const dishes = getDishes();
 
   // Auto-select first dish if no dish is selected
@@ -23,14 +23,14 @@ export default function RecipesPage() {
       
       <div className="flex flex-col md:flex-row gap-8 h-[calc(100vh-180px)]">
         <div className="w-full md:w-1/3 border rounded-lg p-4 bg-white shadow-sm overflow-hidden">
-          <DishList 
+          <RecipeList 
             onSelectDish={setSelectedDish} 
             selectedDishId={selectedDish?.id || null} 
           />
         </div>
         
         <div className="w-full md:w-2/3 border rounded-lg bg-white shadow-sm overflow-hidden">
-          <DishDetail dish={selectedDish} />
+          <RecipeDetail dish={selectedDish} />
         </div>
       </div>
     </main>
