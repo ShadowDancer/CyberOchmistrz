@@ -1,7 +1,7 @@
 "use client";
 
 import { getDishes, isDishVegetarian, isDishVegan } from '@/lib/data';
-import { Dish } from '@/types';
+import { Dish, MealType } from '@/types';
 import { useState } from 'react';
 import { Clock } from 'lucide-react';
 
@@ -55,7 +55,7 @@ export default function DishList({ onSelectDish, selectedDishId }: DishListProps
   const [filterType, setFilterType] = useState<string>('wszystkie');
   const [filterDiet, setFilterDiet] = useState<'all' | 'vegetarian' | 'vegan'>('all');
   
-  const uniqueMealTypes = ['wszystkie', ...new Set(allDishes.map(dish => dish.mealType))];
+  const uniqueMealTypes = ['wszystkie', ...Object.values(MealType)];
   
   const handleFilterChange = (type: string) => {
     setFilterType(type);
@@ -72,12 +72,12 @@ export default function DishList({ onSelectDish, selectedDishId }: DishListProps
     
     // Apply meal type filter
     if (mealType !== 'wszystkie') {
-      filtered = filtered.filter(dish => dish.mealType === mealType);
+      filtered = filtered.filter(dish => dish.mealType.includes(mealType as MealType));
     }
     
     // Apply dietary filter
     if (diet === 'vegetarian') {
-      filtered = filtered.filter(dish => isDishVegetarian(dish));
+      filtered = filtered.filter(dish => isDishVegetarian(dish) || isDishVegan(dish));
     } else if (diet === 'vegan') {
       filtered = filtered.filter(dish => isDishVegan(dish));
     }
@@ -156,12 +156,19 @@ export default function DishList({ onSelectDish, selectedDishId }: DishListProps
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-medium">{dish.name}</h3>
-                    {(isVegetarian || isVegan) && (
-                      <div className="mt-1">
-                        <DietBadge isVegetarian={isVegetarian} isVegan={isVegan} />
+                    <div className="flex flex-col space-y-1">
+                      <div className="font-semibold text-lg truncate">{dish.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {dish.mealType.join(", ")}
                       </div>
-                    )}
+                      <div className="flex items-center mt-1">
+                        {(isVegetarian || isVegan) && (
+                          <div className="mt-1">
+                            <DietBadge isVegetarian={isVegetarian} isVegan={isVegan} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   <div className="flex flex-col items-end text-xs text-gray-500 ml-2">
                     <div className="flex items-center gap-1 mb-1">
@@ -176,7 +183,7 @@ export default function DishList({ onSelectDish, selectedDishId }: DishListProps
                 </div>
                 <p className="text-sm text-gray-600 line-clamp-2 mt-1">{dish.description}</p>
                 <div className="flex items-center justify-between mt-2">
-                  <p className="text-xs text-gray-500">Typ: {dish.mealType}</p>
+                  <p className="text-xs text-gray-500">Typ: {dish.mealType.join(', ')}</p>
                   <div className="flex items-center text-xs text-gray-500 gap-1">
                     <Clock className="w-3 h-3" />
                     <span>{formatTime(dish.preparationTime)}</span>

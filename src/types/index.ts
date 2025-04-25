@@ -14,13 +14,20 @@ export interface IngredientAmount {
   amount: number;
 }
 
+export enum MealType {
+  BREAKFAST = 'śniadanie',
+  DINNER = 'obiad',
+  SUPPER = 'kolacja',
+  SNACK = 'przekąska'
+}
+
 export interface Dish {
   id: number;
   name: string;
   ingredients: IngredientAmount[];
   equipment: string[];
   description: string;
-  mealType: 'śniadanie' | 'obiad' | 'kolacja' | 'przekąska';
+  mealType: MealType[];
   difficulty: number; // 1-5 stars
   tasteScore: number; // 1-5 stars
   preparationTime: number; // time in minutes

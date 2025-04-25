@@ -148,7 +148,7 @@ export default function DishDetail({ dish }: DishDetailProps) {
     );
   }
 
-  const dishIngredients = getDishIngredients(dish);
+  const dishIngredients = getDishIngredients(dish.ingredients);
   const isVegetarian = isDishVegetarian(dish);
   const isVegan = isDishVegan(dish);
   

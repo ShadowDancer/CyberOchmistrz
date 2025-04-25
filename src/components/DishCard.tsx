@@ -36,14 +36,14 @@ function formatTime(minutes: number): string {
 }
 
 export default function DishCard({ dish }: DishCardProps) {
-  const dishIngredients = getDishIngredients(dish);
+  const dishIngredients = getDishIngredients(dish.ingredients);
   
   return (
     <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start mb-3">
         <div>
           <h3 className="text-xl font-semibold mb-2">{dish.name}</h3>
-          <p className="text-gray-500 text-sm">Typ posiłku: <span className="font-medium">{dish.mealType}</span></p>
+          <p className="text-gray-500 text-sm">Typ posiłku: <span className="font-medium">{dish.mealType.join(", ")}</span></p>
         </div>
         <div className="flex flex-col items-end text-xs text-gray-500 ml-2">
           <div className="flex items-center gap-1 mb-1">
@@ -84,6 +84,10 @@ export default function DishCard({ dish }: DishCardProps) {
       <div>
         <h4 className="font-medium mb-1">Opis:</h4>
         <p className="text-sm">{dish.description}</p>
+      </div>
+      
+      <div>
+        <p className="text-xs text-gray-500">Typ: {dish.mealType.join(', ')}</p>
       </div>
     </div>
   );

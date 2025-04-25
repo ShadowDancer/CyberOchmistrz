@@ -29,7 +29,7 @@
       "Mikser"
     ],
     "description": "Klasyczne naleśniki serwowane z dżemem owocowym. Idealne na słodkie śniadanie lub deser.",
-    "mealType": "śniadanie",
+    "mealType": ["śniadanie"],
     "difficulty": 3,
     "tasteScore": 5,
     "preparationTime": 25,
@@ -69,7 +69,7 @@
       "Patelnia"
     ],
     "description": "Klasyczny włoski makaron z sosem mięsno-pomidorowym, cebulą i czosnkiem.",
-    "mealType": "obiad",
+    "mealType": ["obiad"],
     "difficulty": 4,
     "tasteScore": 5,
     "preparationTime": 45,
@@ -109,7 +109,7 @@
       "Miska"
     ],
     "description": "Puszysty omlet z warzywami, idealny na szybkie i pożywne śniadanie.",
-    "mealType": "śniadanie",
+    "mealType": ["śniadanie"],
     "difficulty": 2,
     "tasteScore": 4,
     "preparationTime": 15,
@@ -154,7 +154,7 @@
       "Tarka"
     ],
     "description": "Tradycyjne polskie placki ziemniaczane. Chrupiące z zewnątrz, miękkie w środku.",
-    "mealType": "kolacja",
+    "mealType": ["kolacja"],
     "difficulty": 3,
     "tasteScore": 5,
     "preparationTime": 30,
@@ -195,7 +195,7 @@
       "Łyżka drewniana"
     ],
     "description": "Kremowe włoskie risotto z aromatycznymi grzybami leśnymi.",
-    "mealType": "obiad",
+    "mealType": ["obiad"],
     "difficulty": 5,
     "tasteScore": 4,
     "preparationTime": 40,
@@ -237,7 +237,7 @@
       "Toster"
     ],
     "description": "Szybkie i zdrowe kanapki z kremowym awokado i plasterkami pomidora. Idealne na lekkie śniadanie.",
-    "mealType": "śniadanie",
+    "mealType": ["śniadanie"],
     "difficulty": 1,
     "tasteScore": 3,
     "preparationTime": 10,
@@ -281,7 +281,7 @@
       "Blender"
     ],
     "description": "Klasyczna zupa pomidorowa z makaronem. Rozgrzewający posiłek idealny na chłodniejsze dni.",
-    "mealType": "obiad",
+    "mealType": ["obiad"],
     "difficulty": 2,
     "tasteScore": 4,
     "preparationTime": 35,
@@ -329,7 +329,7 @@
       "Nóż"
     ],
     "description": "Orzeźwiająca sałatka z warzywami, oliwkami i serem feta z odrobiną oliwy z oliwek.",
-    "mealType": "kolacja",
+    "mealType": ["kolacja"],
     "difficulty": 1,
     "tasteScore": 4,
     "preparationTime": 20,
@@ -375,7 +375,7 @@
       "Talerze do panierowania"
     ],
     "description": "Tradycyjny polski kotlet schabowy w chrupiącej panierce. Podawany z ziemniakami i surówką.",
-    "mealType": "obiad",
+    "mealType": ["obiad"],
     "difficulty": 3,
     "tasteScore": 5,
     "preparationTime": 40,
@@ -433,7 +433,7 @@
       "Łyżka cedzakowa"
     ],
     "description": "Klasyczny polski rosół z kurczaka z warzywami i makaronem. Doskonały na niedzielny obiad.",
-    "mealType": "obiad",
+    "mealType": ["obiad"],
     "difficulty": 2,
     "tasteScore": 5,
     "preparationTime": 120,
@@ -484,7 +484,7 @@
       "Patelnia"
     ],
     "description": "Pikantne danie meksykańskie z mieloną wołowiną, fasolą i pomidorami. Doskonałe na kolację.",
-    "mealType": "kolacja",
+    "mealType": ["kolacja"],
     "difficulty": 3,
     "tasteScore": 4,
     "preparationTime": 60,
@@ -535,7 +535,7 @@
       "Łyżka wazowa"
     ],
     "description": "Aksamitny krem z pomidorów z dodatkiem śmietany. Idealny na lekki obiad lub kolację.",
-    "mealType": "kolacja",
+    "mealType": ["kolacja"],
     "difficulty": 2,
     "tasteScore": 4,
     "preparationTime": 45,
@@ -592,7 +592,7 @@
       "Chochla"
     ],
     "description": "Tradycyjna polska zupa na zakwasie żytnim z kiełbasą, boczkiem i jajkiem. Doskonała na święta.",
-    "mealType": "obiad",
+    "mealType": ["obiad"],
     "difficulty": 4,
     "tasteScore": 5,
     "preparationTime": 90,
@@ -643,7 +643,7 @@
       "Ostry nóż"
     ],
     "description": "Aromatyczny gulasz z kawałkami kurczaka, warzywami i przyprawami. Świetny na obiad z ryżem lub ziemniakami.",
-    "mealType": "obiad",
+    "mealType": ["obiad"],
     "difficulty": 3,
     "tasteScore": 4,
     "preparationTime": 60,
@@ -694,7 +694,7 @@
       "Blender"
     ],
     "description": "Aromatyczna zupa krem z leśnych grzybów. Rozgrzewająca i sycąca, idealna na chłodne dni.",
-    "mealType": "obiad",
+    "mealType": ["obiad"],
     "difficulty": 3,
     "tasteScore": 5,
     "preparationTime": 50,
