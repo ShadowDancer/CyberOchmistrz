@@ -1,0 +1,714 @@
+[
+  {
+    "id": 1,
+    "name": "Naleśniki z dżemem",
+    "ingredients": [
+      {
+        "id": "maka",
+        "amount": 200
+      },
+      {
+        "id": "mleko",
+        "amount": 300
+      },
+      {
+        "id": "jajka",
+        "amount": 2
+      },
+      {
+        "id": "maslo",
+        "amount": 20
+      },
+      {
+        "id": "olej",
+        "amount": 10
+      }
+    ],
+    "equipment": [
+      "Patelnia",
+      "Mikser"
+    ],
+    "description": "Klasyczne naleśniki serwowane z dżemem owocowym. Idealne na słodkie śniadanie lub deser.",
+    "mealType": "śniadanie",
+    "difficulty": 3,
+    "tasteScore": 5,
+    "preparationTime": 25,
+    "instructions": [
+      "W misce wymieszaj mąkę, mleko i jajka, aż powstanie gładkie ciasto.",
+      "Dodaj szczypta soli i odstaw na 15 minut.",
+      "Rozgrzej patelnię i posmaruj odrobiną oleju.",
+      "Wylej niewielką ilość ciasta na patelnię, rozprowadzając je równomiernie.",
+      "Smaż naleśnik przez około 1-2 minuty z każdej strony, aż będzie złoty.",
+      "Powtórz z resztą ciasta.",
+      "Posmaruj każdy naleśnik dżemem owocowym i złóż w trójkąt lub rulon."
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Spaghetti Bolognese",
+    "ingredients": [
+      {
+        "id": "makaron",
+        "amount": 200
+      },
+      {
+        "id": "pomidory",
+        "amount": 4
+      },
+      {
+        "id": "cebula",
+        "amount": 1
+      },
+      {
+        "id": "czosnek",
+        "amount": 2
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Patelnia"
+    ],
+    "description": "Klasyczny włoski makaron z sosem mięsno-pomidorowym, cebulą i czosnkiem.",
+    "mealType": "obiad",
+    "difficulty": 4,
+    "tasteScore": 5,
+    "preparationTime": 45,
+    "instructions": [
+      "Ugotuj makaron spaghetti w osolonej wodzie według instrukcji na opakowaniu.",
+      "Na patelni zeszklij drobno posiekaną cebulę i czosnek.",
+      "Dodaj mięso mielone i smaż, aż się zarumieni.",
+      "Pokrój pomidory w kostkę i dodaj je do mięsa.",
+      "Dopraw solą, pieprzem i ziołami (np. bazylią, oregano).",
+      "Duś sos na małym ogniu przez około 20 minut.",
+      "Podawaj makaron polany sosem, posypany tartym serem."
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Omlet z warzywami",
+    "ingredients": [
+      {
+        "id": "jajka",
+        "amount": 3
+      },
+      {
+        "id": "cebula",
+        "amount": 0.5
+      },
+      {
+        "id": "papryka",
+        "amount": 0.5
+      },
+      {
+        "id": "sol",
+        "amount": 2
+      }
+    ],
+    "equipment": [
+      "Patelnia",
+      "Miska"
+    ],
+    "description": "Puszysty omlet z warzywami, idealny na szybkie i pożywne śniadanie.",
+    "mealType": "śniadanie",
+    "difficulty": 2,
+    "tasteScore": 4,
+    "preparationTime": 15,
+    "instructions": [
+      "Pokrój cebulę i paprykę w drobną kostkę.",
+      "Rozbij jajka do miski i roztrzep je widelcem.",
+      "Dodaj sól i pieprz do jajek i wymieszaj.",
+      "Rozgrzej patelnię z odrobiną oleju lub masła.",
+      "Wrzuć pokrojone warzywa i podsmażaj przez 2-3 minuty.",
+      "Wlej roztrzepane jajka na warzywa.",
+      "Smaż na średnim ogniu przez około 3-4 minuty.",
+      "Złóż omlet na pół i podawaj natychmiast."
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Placki ziemniaczane",
+    "ingredients": [
+      {
+        "id": "ziemniaki",
+        "amount": 500
+      },
+      {
+        "id": "jajka",
+        "amount": 1
+      },
+      {
+        "id": "cebula",
+        "amount": 0.5
+      },
+      {
+        "id": "maka",
+        "amount": 30
+      },
+      {
+        "id": "sol",
+        "amount": 5
+      }
+    ],
+    "equipment": [
+      "Patelnia",
+      "Tarka"
+    ],
+    "description": "Tradycyjne polskie placki ziemniaczane. Chrupiące z zewnątrz, miękkie w środku.",
+    "mealType": "kolacja",
+    "difficulty": 3,
+    "tasteScore": 5,
+    "preparationTime": 30,
+    "instructions": [
+      "Obierz ziemniaki i cebulę.",
+      "Zetrzyj ziemniaki i cebulę na tarce o drobnych oczkach.",
+      "Odciśnij nadmiar wody z ziemniaków.",
+      "Dodaj jajko, mąkę, sól i pieprz do masy ziemniaczanej i dokładnie wymieszaj.",
+      "Rozgrzej patelnię z olejem.",
+      "Nakładaj łyżką porcje masy i rozpłaszczaj na placki.",
+      "Smaż na złoty kolor z obu stron, około 3-4 minuty z każdej strony.",
+      "Odsącz na papierowym ręczniku i podawaj na gorąco."
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Risotto z grzybami",
+    "ingredients": [
+      {
+        "id": "ryz",
+        "amount": 250
+      },
+      {
+        "id": "cebula",
+        "amount": 1
+      },
+      {
+        "id": "czosnek",
+        "amount": 2
+      },
+      {
+        "id": "sol",
+        "amount": 3
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Łyżka drewniana"
+    ],
+    "description": "Kremowe włoskie risotto z aromatycznymi grzybami leśnymi.",
+    "mealType": "obiad",
+    "difficulty": 5,
+    "tasteScore": 4,
+    "preparationTime": 40,
+    "instructions": [
+      "Pokrój cebulę i czosnek drobno, a grzyby w plastry.",
+      "W garnku rozgrzej masło i oliwę, zeszklij cebulę i czosnek.",
+      "Dodaj ryż i smaż, mieszając przez 1-2 minuty, aż ziarenka staną się przezroczyste.",
+      "Wlej kieliszek białego wina (opcjonalnie) i gotuj, aż odparuje.",
+      "Stopniowo dodawaj gorący bulion, po około pół szklanki, mieszając regularnie.",
+      "Gdy ryż wchłonie płyn, dodaj kolejną porcję bulionu.",
+      "Po około 15 minutach dodaj grzyby i kontynuuj gotowanie.",
+      "Risotto jest gotowe, gdy ryż jest al dente, a całość kremowa.",
+      "Na koniec wymieszaj z masłem i parmezanem, dopraw solą i pieprzem."
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Kanapki z awokado",
+    "ingredients": [
+      {
+        "id": "chleb",
+        "amount": 2
+      },
+      {
+        "id": "awokado",
+        "amount": 1
+      },
+      {
+        "id": "pomidory",
+        "amount": 1
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      }
+    ],
+    "equipment": [
+      "Nóż",
+      "Toster"
+    ],
+    "description": "Szybkie i zdrowe kanapki z kremowym awokado i plasterkami pomidora. Idealne na lekkie śniadanie.",
+    "mealType": "śniadanie",
+    "difficulty": 1,
+    "tasteScore": 3,
+    "preparationTime": 10,
+    "instructions": [
+      "Opiecz kromki chleba w tosterze.",
+      "Przekrój awokado na pół, usuń pestkę i wydrąż miąższ łyżką.",
+      "Rozgnieć miąższ awokado widelcem i dopraw solą, pieprzem i sokiem z cytryny.",
+      "Pokrój pomidora w cienkie plastry.",
+      "Posmaruj opieczone kromki pastą z awokado.",
+      "Ułóż plastry pomidora na awokado.",
+      "Możesz posypać solą, pieprzem oraz posiekaną bazylią lub kolendrą."
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Zupa pomidorowa",
+    "ingredients": [
+      {
+        "id": "pomidory",
+        "amount": 6
+      },
+      {
+        "id": "cebula",
+        "amount": 1
+      },
+      {
+        "id": "czosnek",
+        "amount": 2
+      },
+      {
+        "id": "makaron",
+        "amount": 100
+      },
+      {
+        "id": "sol",
+        "amount": 2
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Blender"
+    ],
+    "description": "Klasyczna zupa pomidorowa z makaronem. Rozgrzewający posiłek idealny na chłodniejsze dni.",
+    "mealType": "obiad",
+    "difficulty": 2,
+    "tasteScore": 4,
+    "preparationTime": 35,
+    "instructions": [
+      "W garnku zeszklij posiekaną cebulę i czosnek na oliwie.",
+      "Dodaj pokrojone pomidory bez skórki (możesz użyć też pomidorów z puszki).",
+      "Wlej bulion i gotuj przez 15-20 minut.",
+      "Zmiksuj zupę blenderem na gładki krem.",
+      "Dopraw solą, pieprzem, bazylią i odrobiną cukru.",
+      "Ugotuj makaron w osolonej wodzie według instrukcji na opakowaniu.",
+      "Podawaj zupę z makaronem i odrobiną śmietany."
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Sałatka grecka",
+    "ingredients": [
+      {
+        "id": "pomidory",
+        "amount": 2
+      },
+      {
+        "id": "ogorek",
+        "amount": 1
+      },
+      {
+        "id": "cebula",
+        "amount": 0.5
+      },
+      {
+        "id": "oliwki",
+        "amount": 100
+      },
+      {
+        "id": "ser_feta",
+        "amount": 100
+      },
+      {
+        "id": "olej",
+        "amount": 30
+      }
+    ],
+    "equipment": [
+      "Miska",
+      "Nóż"
+    ],
+    "description": "Orzeźwiająca sałatka z warzywami, oliwkami i serem feta z odrobiną oliwy z oliwek.",
+    "mealType": "kolacja",
+    "difficulty": 1,
+    "tasteScore": 4,
+    "preparationTime": 20,
+    "instructions": [
+      "Pokrój pomidory i ogórka w kostkę.",
+      "Cebulę pokrój w cienkie półkrążki.",
+      "Pokrój ser feta w kostkę.",
+      "Przełóż wszystkie składniki do miski.",
+      "Dodaj całe lub połówki oliwek.",
+      "Skrop oliwą z oliwek i sokiem z cytryny.",
+      "Dopraw solą, pieprzem i oregano.",
+      "Delikatnie wymieszaj wszystkie składniki i podawaj od razu."
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Kotlet schabowy",
+    "ingredients": [
+      {
+        "id": "schab",
+        "amount": 400
+      },
+      {
+        "id": "jajka",
+        "amount": 2
+      },
+      {
+        "id": "maka",
+        "amount": 50
+      },
+      {
+        "id": "bulion",
+        "amount": 50
+      },
+      {
+        "id": "sol",
+        "amount": 5
+      }
+    ],
+    "equipment": [
+      "Patelnia",
+      "Młotek do mięsa",
+      "Talerze do panierowania"
+    ],
+    "description": "Tradycyjny polski kotlet schabowy w chrupiącej panierce. Podawany z ziemniakami i surówką.",
+    "mealType": "obiad",
+    "difficulty": 3,
+    "tasteScore": 5,
+    "preparationTime": 40,
+    "instructions": [
+      "Schab pokrój na plastry o grubości około 1,5 cm.",
+      "Rozbij mięso tłuczkiem, aby było cieńsze i bardziej miękkie.",
+      "Dopraw mięso solą i pieprzem z obu stron.",
+      "Przygotuj 3 talerze: z mąką, z roztrzepanymi jajkami i z bułką tartą.",
+      "Obtocz każdy plaster schabu najpierw w mące, potem w jajku, a na końcu w bułce tartej.",
+      "Rozgrzej patelnię z olejem (olej powinien pokrywać dno).",
+      "Smaż kotlety na średnim ogniu po 3-4 minuty z każdej strony, aż będą złociste.",
+      "Odsącz na papierowym ręczniku i podawaj z ziemniakami i surówką."
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Rosół z kurczaka",
+    "ingredients": [
+      {
+        "id": "kurczak",
+        "amount": 500
+      },
+      {
+        "id": "marchew",
+        "amount": 2
+      },
+      {
+        "id": "pietruszka",
+        "amount": 1
+      },
+      {
+        "id": "seler",
+        "amount": 0.5
+      },
+      {
+        "id": "cebula",
+        "amount": 1
+      },
+      {
+        "id": "por",
+        "amount": 0.5
+      },
+      {
+        "id": "makaron",
+        "amount": 100
+      },
+      {
+        "id": "sol",
+        "amount": 5
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Durszlak",
+      "Łyżka cedzakowa"
+    ],
+    "description": "Klasyczny polski rosół z kurczaka z warzywami i makaronem. Doskonały na niedzielny obiad.",
+    "mealType": "obiad",
+    "difficulty": 2,
+    "tasteScore": 5,
+    "preparationTime": 120,
+    "instructions": [
+      "Umyj mięso z kurczaka (najlepiej z kością) i umieść w dużym garnku.",
+      "Zalej zimną wodą i doprowadź do wrzenia, zbierając pojawiającą się pianę.",
+      "Obierz warzywa: marchew, pietruszkę, seler i cebulę.",
+      "Dodaj wszystkie warzywa do garnka, dopraw solą.",
+      "Gotuj na małym ogniu przez około 1,5-2 godziny, aż mięso będzie miękkie.",
+      "Wyjmij mięso i warzywa z zupy.",
+      "Przecedź rosół przez sito, aby był klarowny.",
+      "Ugotuj osobno makaron zgodnie z instrukcją na opakowaniu.",
+      "Pokrój ugotowaną marchewkę w plasterki i wróć do zupy.",
+      "Podawaj rosół z makaronem i posiekaną natką pietruszki."
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Chili con carne",
+    "ingredients": [
+      {
+        "id": "wolowina",
+        "amount": 500
+      },
+      {
+        "id": "cebula",
+        "amount": 1
+      },
+      {
+        "id": "czosnek",
+        "amount": 3
+      },
+      {
+        "id": "papryka",
+        "amount": 1
+      },
+      {
+        "id": "pomidory",
+        "amount": 3
+      },
+      {
+        "id": "sol",
+        "amount": 5
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Patelnia"
+    ],
+    "description": "Pikantne danie meksykańskie z mieloną wołowiną, fasolą i pomidorami. Doskonałe na kolację.",
+    "mealType": "kolacja",
+    "difficulty": 3,
+    "tasteScore": 4,
+    "preparationTime": 60,
+    "instructions": [
+      "Na patelni zeszklij posiekaną cebulę i czosnek.",
+      "Dodaj mielone mięso wołowe i smaż, aż się zarumieni.",
+      "Dodaj pokrojoną w kostkę paprykę i smaż przez 2-3 minuty.",
+      "Wsyp przyprawy: kminek, chili, paprykę w proszku, oregano.",
+      "Dodaj pomidory (świeże lub z puszki) i fasola z puszki.",
+      "Wlej bulion wołowy lub trochę wody.",
+      "Duś na małym ogniu przez około 45 minut, aż sos zgęstnieje.",
+      "Dopraw solą i pieprzem do smaku.",
+      "Podawaj z ryżem, posypane posiekaną kolendrą i startym serem."
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Krem z pomidorów",
+    "ingredients": [
+      {
+        "id": "pomidory",
+        "amount": 8
+      },
+      {
+        "id": "cebula",
+        "amount": 1
+      },
+      {
+        "id": "czosnek",
+        "amount": 2
+      },
+      {
+        "id": "bulion_warzywny",
+        "amount": 500
+      },
+      {
+        "id": "smietana",
+        "amount": 100
+      },
+      {
+        "id": "sol",
+        "amount": 5
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Blender",
+      "Łyżka wazowa"
+    ],
+    "description": "Aksamitny krem z pomidorów z dodatkiem śmietany. Idealny na lekki obiad lub kolację.",
+    "mealType": "kolacja",
+    "difficulty": 2,
+    "tasteScore": 4,
+    "preparationTime": 45,
+    "instructions": [
+      "W garnku zeszklij posiekaną cebulę i czosnek na oliwie.",
+      "Dodaj pokrojone pomidory (możesz wcześniej sparzyć je i obrać ze skórki).",
+      "Wlej bulion i gotuj na średnim ogniu przez około 20 minut.",
+      "Dopraw solą, pieprzem, bazylią i odrobiną cukru.",
+      "Zmiksuj zupę blenderem na gładki krem.",
+      "Dodaj śmietanę i delikatnie wymieszaj (nie gotuj po dodaniu śmietany).",
+      "Podawaj z grzankami lub świeżą bazylią.",
+      "Możesz dodatkowo skropić oliwą z oliwek przed podaniem."
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Żurek",
+    "ingredients": [
+      {
+        "id": "kielbasa",
+        "amount": 200
+      },
+      {
+        "id": "boczek",
+        "amount": 100
+      },
+      {
+        "id": "jajka",
+        "amount": 2
+      },
+      {
+        "id": "marchew",
+        "amount": 1
+      },
+      {
+        "id": "cebula",
+        "amount": 1
+      },
+      {
+        "id": "czosnek",
+        "amount": 2
+      },
+      {
+        "id": "smietana",
+        "amount": 100
+      },
+      {
+        "id": "sol",
+        "amount": 5
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Chochla"
+    ],
+    "description": "Tradycyjna polska zupa na zakwasie żytnim z kiełbasą, boczkiem i jajkiem. Doskonała na święta.",
+    "mealType": "obiad",
+    "difficulty": 4,
+    "tasteScore": 5,
+    "preparationTime": 90,
+    "instructions": [
+      "Przygotuj wywar: zalej wodą kiełbasę, boczek, marchew, cebulę i czosnek.",
+      "Gotuj wywar na małym ogniu przez około 1 godzinę.",
+      "Ugotuj jajka na twardo, obierz i przekrój na połówki.",
+      "Przecedź wywar i dodaj zakwas żytni.",
+      "Gotuj zupę jeszcze przez 15 minut.",
+      "Na patelni podsmaż pokrojoną w kostkę kiełbasę i boczek.",
+      "Dodaj podsmażone mięso do zupy.",
+      "Zagęść zupę śmietaną wymieszaną z łyżką mąki.",
+      "Dopraw majerankiem, czosnkiem, solą i pieprzem.",
+      "Podawaj z połówkami jajek i świeżym chlebem."
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Gulasz z kurczaka",
+    "ingredients": [
+      {
+        "id": "kurczak",
+        "amount": 500
+      },
+      {
+        "id": "cebula",
+        "amount": 2
+      },
+      {
+        "id": "papryka",
+        "amount": 1
+      },
+      {
+        "id": "pomidory",
+        "amount": 2
+      },
+      {
+        "id": "czosnek",
+        "amount": 2
+      },
+      {
+        "id": "sol",
+        "amount": 5
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Ostry nóż"
+    ],
+    "description": "Aromatyczny gulasz z kawałkami kurczaka, warzywami i przyprawami. Świetny na obiad z ryżem lub ziemniakami.",
+    "mealType": "obiad",
+    "difficulty": 3,
+    "tasteScore": 4,
+    "preparationTime": 60,
+    "instructions": [
+      "Pokrój kurczaka na kawałki o wielkości około 3 cm.",
+      "Dopraw mięso solą, pieprzem i papryką w proszku.",
+      "W garnku rozgrzej olej i zrumień kawałki kurczaka partiami.",
+      "Wyjmij mięso i na tym samym tłuszczu zeszklij posiekaną cebulę i czosnek.",
+      "Dodaj pokrojoną w kostkę paprykę i smaż przez 2-3 minuty.",
+      "Wróć mięso do garnka i dodaj pomidory (świeże lub z puszki).",
+      "Wlej trochę bulionu lub wody, aby przykryć składniki.",
+      "Duś pod przykryciem na małym ogniu przez około 40 minut.",
+      "Pod koniec gotowania możesz zagęścić sos, dodając zasmażkę z masła i mąki.",
+      "Podawaj z ryżem, kaszą lub ziemniakami."
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Zupa krem z grzybów",
+    "ingredients": [
+      {
+        "id": "grzyby",
+        "amount": 300
+      },
+      {
+        "id": "cebula",
+        "amount": 1
+      },
+      {
+        "id": "czosnek",
+        "amount": 2
+      },
+      {
+        "id": "bulion_warzywny",
+        "amount": 500
+      },
+      {
+        "id": "smietana",
+        "amount": 100
+      },
+      {
+        "id": "sol",
+        "amount": 5
+      }
+    ],
+    "equipment": [
+      "Garnek",
+      "Blender"
+    ],
+    "description": "Aromatyczna zupa krem z leśnych grzybów. Rozgrzewająca i sycąca, idealna na chłodne dni.",
+    "mealType": "obiad",
+    "difficulty": 3,
+    "tasteScore": 5,
+    "preparationTime": 50,
+    "instructions": [
+      "Oczyść grzyby i pokrój je w plastry.",
+      "W garnku zeszklij posiekaną cebulę i czosnek na maśle.",
+      "Dodaj grzyby i smaż przez około 5 minut, aż zmiękną i zbrązowieją.",
+      "Wlej bulion i gotuj na średnim ogniu przez 20 minut.",
+      "Dopraw solą, pieprzem i gałką muszkatołową.",
+      "Zmiksuj zupę blenderem na gładki krem.",
+      "Dodaj śmietanę i delikatnie podgrzej, nie doprowadzając do wrzenia.",
+      "Możesz zostawić kilka plasterków grzybów do dekoracji.",
+      "Podawaj z posiekaną natką pietruszki lub koperkiem.",
+      "Dobrze smakuje z grzankami czosnkowymi."
+    ]
+  }
+]
