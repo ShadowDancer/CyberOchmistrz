@@ -1,19 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, Recipie, CruiseDay } from '../types';
-import { 
-  getCruiseById, 
-  deleteCruise, 
-  addRecipeToCruiseDay, 
-  removeRecipeFromCruiseDay
-} from '../lib/cruiseData';
-import { getRecipies, getRecipeById } from '../lib/recipieData';
+import { Cruise } from '../types';
+import { getCruiseById } from '../lib/cruiseData';
 import { useRouter } from 'next/navigation';
-import RecipeList from './RecipeList';
 import CruiseSuppliesTab from './CruiseSuppliesTab';
 import ShoppingListTab from './ShoppingListTab';
-import { getNonIngredients } from '../lib/supplyData';
+import CruisePlanTab from './CruisePlanTab';
+import CruiseInfoTab from './CruiseInfoTab';
 
 interface CruiseDetailProps {
   id: string;
@@ -23,8 +17,6 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
   const router = useRouter();
   const [cruise, setCruise] = useState<Cruise | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [selectedRecipie, setSelectedRecipie] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'plan' | 'supplies' | 'shopping'>('info');
 
   useEffect(() => {
@@ -39,49 +31,7 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
     setLoading(false);
   }, [id]);
 
-  const handleDaySelect = (dayNumber: number) => {
-    setSelectedDay(dayNumber === selectedDay ? null : dayNumber);
-  };
-
-  const handleRecipieSelect = (recipie: Recipie) => {
-    setSelectedRecipie(recipie.id);
-    
-    // If a day is selected, add the recipie immediately
-    if (selectedDay !== null && cruise) {
-      addRecipeToCruiseDay(cruise.id, selectedDay, recipie.id);
-      
-      // Refresh cruise data
-      const updatedCruise = getCruiseById(id);
-      if (updatedCruise) {
-        setCruise(updatedCruise);
-      }
-    }
-  };
-
-  const handleDelete = () => {
-    if (confirm('Czy na pewno chcesz usunąć ten rejs?')) {
-      deleteCruise(id);
-      router.push('/rejsy');
-    }
-  };
-
-  const handleRemoveRecipe = (dayNumber: number, recipeId: number) => {
-    if (!cruise) return;
-    
-    removeRecipeFromCruiseDay(cruise.id, dayNumber, recipeId);
-    
-    // Refresh cruise data
-    const updatedCruise = getCruiseById(id);
-    if (updatedCruise) {
-      setCruise(updatedCruise);
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
-
-  const handleSupplyChange = () => {
+  const handleCruiseChange = () => {
     // Refresh cruise data
     const updatedCruise = getCruiseById(id);
     if (updatedCruise) {
@@ -106,10 +56,6 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
       </div>
     );
   }
-
-  const selectedDayData = selectedDay !== null 
-    ? cruise.days.find(day => day.dayNumber === selectedDay) 
-    : null;
 
   return (
     <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-sm">
@@ -171,167 +117,20 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
       </div>
 
       {activeTab === 'info' && (
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h2 className="text-lg font-medium mb-2">Informacje podstawowe</h2>
-              <div className="grid gap-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Utworzono:</span>
-                  <span>{formatDate(cruise.dateCreated)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Ostatnia modyfikacja:</span>
-                  <span>{formatDate(cruise.dateModified)}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h2 className="text-lg font-medium mb-2">Parametry rejsu</h2>
-              <div className="grid gap-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Długość rejsu:</span>
-                  <span>{cruise.length} dni</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Liczba załogantów:</span>
-                  <span>{cruise.crew} osób</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
-              Usuń rejs
-            </button>
-          </div>
-        </div>
+        <CruiseInfoTab cruise={cruise} />
       )}
 
       {activeTab === 'plan' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 h-[calc(100vh-220px)]">
-          {/* Left Panel - Days */}
-          <div className="border-r p-4 overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Dni rejsu</h2>
-            <div className="space-y-2">
-              {cruise.days.map(day => {
-                const dayRecipes = day.recipes.length;
-                return (
-                  <div 
-                    key={day.dayNumber}
-                    onClick={() => handleDaySelect(day.dayNumber)}
-                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                      selectedDay === day.dayNumber
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-medium">Dzień {day.dayNumber}</h3>
-                      <span className="text-sm text-gray-500">
-                        {dayRecipes} {dayRecipes === 1 ? 'przepis' : 
-                          dayRecipes > 1 && dayRecipes < 5 ? 'przepisy' : 'przepisów'}
-                      </span>
-                    </div>
-                    
-                    {dayRecipes > 0 && (
-                      <ul className="mt-2 text-sm text-gray-600">
-                        {day.recipes.slice(0, 2).map(recipeId => {
-                          const recipe = getRecipeById(recipeId);
-                          return (
-                            <li key={recipeId} className="truncate">
-                              • {recipe ? recipe.name : `Przepis #${recipeId}`}
-                            </li>
-                          );
-                        })}
-                        {dayRecipes > 2 && (
-                          <li className="text-blue-600">
-                            + {dayRecipes - 2} więcej...
-                          </li>
-                        )}
-                      </ul>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          
-          {/* Center Panel - Day Details */}
-          <div className="border-r p-4 overflow-y-auto">
-            {selectedDay !== null && selectedDayData ? (
-              <>
-                <h2 className="text-xl font-bold mb-4">Dzień {selectedDay}</h2>
-                {selectedDayData.recipes.length === 0 ? (
-                  <p className="text-gray-500 italic">
-                    Brak przepisów na ten dzień. Wybierz przepis z panelu po prawej stronie.
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    <h3 className="font-medium">Zaplanowane przepisy:</h3>
-                    <ul className="space-y-2">
-                      {selectedDayData.recipes.map(recipeId => {
-                        const recipe = getRecipeById(recipeId);
-                        return (
-                          <li 
-                            key={recipeId} 
-                            className="p-3 border rounded-lg flex justify-between items-center"
-                          >
-                            <div>
-                              <span className="font-medium">
-                                {recipe ? recipe.name : `Przepis #${recipeId}`}
-                              </span>
-                              {recipe && (
-                                <p className="text-sm text-gray-600 mt-1">
-                                  {recipe.mealType.join(', ')}
-                                </p>
-                              )}
-                            </div>
-                            <button
-                              onClick={() => handleRemoveRecipe(selectedDay, recipeId)}
-                              className="text-red-600 hover:text-red-800 text-sm"
-                            >
-                              Usuń
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <p>Wybierz dzień z listy po lewej stronie</p>
-              </div>
-            )}
-          </div>
-          
-          {/* Right Panel - Recipie Selection */}
-          <div className="p-4 overflow-y-auto">
-            {selectedDay !== null ? (
-              <RecipeList 
-                onSelectRecipie={handleRecipieSelect} 
-                selectedRecipieId={selectedRecipie}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <p>Wybierz dzień, aby dodać przepisy</p>
-              </div>
-            )}
-          </div>
-        </div>
+        <CruisePlanTab 
+          cruise={cruise}
+          onCruiseChange={handleCruiseChange}
+        />
       )}
 
       {activeTab === 'supplies' && (
         <CruiseSuppliesTab
           cruise={cruise}
-          onSupplyChange={handleSupplyChange}
+          onSupplyChange={handleCruiseChange}
         />
       )}
 
