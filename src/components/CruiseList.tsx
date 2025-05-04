@@ -4,21 +4,22 @@ import { useState, useEffect } from 'react';
 import { Cruise } from '../types';
 import { getCruises, deleteCruise } from '../lib/cruiseData';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function CruiseList() {
   const [cruises, setCruises] = useState<Cruise[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     setCruises(getCruises());
   }, []);
 
-  const handleDelete = (id: string) => {
-    deleteCruise(id);
-    setCruises(getCruises());
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleCruiseClick = (id: string) => {
+    router.push(`/rejsy/${id}`);
   };
 
   return (
@@ -48,24 +49,11 @@ export default function CruiseList() {
           {cruises.map((cruise) => (
             <div 
               key={cruise.id} 
-              className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+              className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => handleCruiseClick(cruise.id)}
             >
               <div className="flex justify-between">
                 <h2 className="text-xl font-semibold">{cruise.name}</h2>
-                <div className="flex gap-2">
-                  <Link 
-                    href={`/rejsy/${cruise.id}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Szczegóły
-                  </Link>
-                  <button 
-                    onClick={() => handleDelete(cruise.id)}
-                    className="text-red-600 hover:underline"
-                  >
-                    Usuń
-                  </button>
-                </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 text-sm text-gray-600">
                 <div>

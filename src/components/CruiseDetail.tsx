@@ -121,12 +121,6 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
           >
             Wróć
           </button>
-          <button
-            onClick={handleDelete}
-            className="text-red-600 hover:text-red-800"
-          >
-            Usuń rejs
-          </button>
         </div>
       </div>
 
@@ -195,6 +189,15 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
                 </div>
               </div>
             </div>
+          </div>
+          
+          <div className="mt-6 flex justify-end">
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              Usuń rejs
+            </button>
           </div>
         </div>
       )}
@@ -302,8 +305,8 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
           <div className="p-4 overflow-y-auto">
             {selectedDay !== null ? (
               <RecipeList 
-                onSelectDish={handleDishSelect} 
-                selectedDishId={selectedDish}
+                onSelectRecipie={handleDishSelect} 
+                selectedRecipieId={selectedDish}
               />
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-gray-500">

@@ -3,14 +3,13 @@ export interface Supply {
   name: string;
   unit: string;
   isIngredient: boolean;
+  category: string;
 }
 
 export interface Ingredient extends Supply {
   category: 'nabiał' | 'mięso' | 'warzywa' | 'owoce' | 'pieczywo' | 'zboża' | 'przyprawy' | 'tłuszcze' | 'inne';
   isVegetarian: boolean;
   isVegan: boolean;
-  freshnessDays: number; // how long the ingredient stays fresh in days
-  storageType: 'room' | 'fridge' | 'freezer'; // where the ingredient should be stored
 }
 
 export interface IngredientAmount {
@@ -29,12 +28,9 @@ export interface Recipie {
   id: number;
   name: string;
   ingredients: IngredientAmount[];
-  equipment: string[];
   description: string;
   mealType: MealType[];
   difficulty: number; // 1-5 stars
-  tasteScore: number; // 1-5 stars
-  preparationTime: number; // time in minutes
   instructions: string[]; // array of preparation steps
 }
 

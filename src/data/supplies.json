@@ -6,8 +6,6 @@
     "category": "zboża",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 180,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -17,8 +15,6 @@
     "category": "inne",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 365,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -28,8 +24,6 @@
     "category": "nabiał",
     "isVegetarian": true,
     "isVegan": false,
-    "freshnessDays": 7,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
@@ -39,8 +33,6 @@
     "category": "nabiał",
     "isVegetarian": true,
     "isVegan": false,
-    "freshnessDays": 21,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
@@ -50,8 +42,6 @@
     "category": "nabiał",
     "isVegetarian": true,
     "isVegan": false,
-    "freshnessDays": 30,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
@@ -61,8 +51,6 @@
     "category": "przyprawy",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 1095,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -72,8 +60,6 @@
     "category": "inne",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 14,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
@@ -83,8 +69,6 @@
     "category": "tłuszcze",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 180,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -94,8 +78,6 @@
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 7,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
@@ -105,8 +87,6 @@
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 30,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -116,8 +96,6 @@
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 60,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -127,8 +105,6 @@
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 7,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
@@ -138,8 +114,6 @@
     "category": "zboża",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 365,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -149,8 +123,6 @@
     "category": "zboża",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 365,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -160,8 +132,6 @@
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 30,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -171,8 +141,6 @@
     "category": "pieczywo",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 5,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -182,8 +150,6 @@
     "category": "owoce",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 5,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
@@ -193,8 +159,6 @@
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 7,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
@@ -204,8 +168,6 @@
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "freshnessDays": 180,
-    "storageType": "room",
     "isIngredient": true
   },
   {
@@ -215,36 +177,34 @@
     "category": "nabiał",
     "isVegetarian": true,
     "isVegan": false,
-    "freshnessDays": 14,
-    "storageType": "fridge",
     "isIngredient": true
   },
   {
     "id": "papier_toaletowy",
     "name": "Papier toaletowy",
     "unit": "rolki",
-    "category": "inne",
+    "category": "środki czystości",
     "isIngredient": false
   },
   {
     "id": "ręcznik_papierowy",
     "name": "Ręcznik papierowy",
     "unit": "rolki",
-    "category": "inne",
+    "category": "środki czystości",
     "isIngredient": false
   },
   {
     "id": "mydło",
     "name": "Mydło",
     "unit": "sztuki",
-    "category": "inne",
+    "category": "środki czystości",
     "isIngredient": false
   },
   {
     "id": "płyn_do_naczyń",
     "name": "Płyn do naczyń",
     "unit": "sztuki",
-    "category": "inne",
+    "category": "środki czystości",
     "isIngredient": false
   },
   {
@@ -265,14 +225,14 @@
     "id": "worki_na_śmieci_120L",
     "name": "Worki na śmieci 120L",
     "unit": "sztuki",
-    "category": "inne",
+    "category": "środki czystości",
     "isIngredient": false
   },
   {
     "id": "worki_na_śmieci_30L",
     "name": "Worki na śmieci 30L",
     "unit": "sztuki",
-    "category": "inne",
+    "category": "środki czystości",
     "isIngredient": false
   }
-] 
+]

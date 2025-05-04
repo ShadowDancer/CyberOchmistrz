@@ -2,7 +2,6 @@
 
 import { Recipie } from '@/types';
 import { getRecipieIngredients } from '@/lib/recipieData';
-import { Clock } from 'lucide-react';
 
 interface RecipeCardProps {
   recipie: Recipie;
@@ -50,14 +49,6 @@ export default function RecipeCard({ recipie: recipie }: RecipeCardProps) {
             <span>Trudność:</span>
             <StarRating score={recipie.difficulty} />
           </div>
-          <div className="flex items-center gap-1 mb-1">
-            <span>Smak:</span>
-            <StarRating score={recipie.tasteScore} />
-          </div>
-          <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            <span>{formatTime(recipie.preparationTime)}</span>
-          </div>
         </div>
       </div>
       
@@ -68,15 +59,6 @@ export default function RecipeCard({ recipie: recipie }: RecipeCardProps) {
             <li key={index}>
               {ingredient.name}: {ingredient.amount} {ingredient.unit}
             </li>
-          ))}
-        </ul>
-      </div>
-      
-      <div className="mb-3">
-        <h4 className="font-medium mb-1">Wyposażenie:</h4>
-        <ul className="list-disc list-inside text-sm">
-          {recipie.equipment.map((item, index) => (
-            <li key={index}>{item}</li>
           ))}
         </ul>
       </div>

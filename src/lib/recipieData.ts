@@ -53,7 +53,7 @@ export function getRecipieIngredients(ingredients: IngredientAmount[]): (Ingredi
   });
 }
 
-export function isDishVegetarian(dish: Recipie): boolean {
+export function isRecipieVegetarian(dish: Recipie): boolean {
   const ingredients = dish.ingredients
     .map(ing => getIngredientById(ing.id))
     .filter((ing): ing is Ingredient => ing !== undefined);
@@ -61,7 +61,7 @@ export function isDishVegetarian(dish: Recipie): boolean {
   return ingredients.every(ing => ing.isVegetarian);
 }
 
-export function isDishVegan(dish: Recipie): boolean {
+export function isRecipieVegan(dish: Recipie): boolean {
   const ingredients = dish.ingredients
     .map(ing => getIngredientById(ing.id))
     .filter((ing): ing is Ingredient => ing !== undefined);

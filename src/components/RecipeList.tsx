@@ -1,13 +1,12 @@
 "use client";
 
-import { getRecipies, isDishVegetarian, isDishVegan } from '@/lib/recipieData';
+import { getRecipies, isRecipieVegetarian, isRecipieVegan } from '@/lib/recipieData';
 import { Recipie, MealType } from '@/types';
 import { useState } from 'react';
-import { Clock } from 'lucide-react';
 
 interface RecipeListProps {
-  onSelectDish: (dish: Recipie) => void;
-  selectedDishId: number | null;
+  onSelectRecipie: (recipie: Recipie) => void;
+  selectedRecipieId: number | null;
 }
 
 function StarRating({ score }: { score: number }) {
@@ -49,9 +48,9 @@ function DietBadge({ isVegetarian, isVegan }: { isVegetarian: boolean; isVegan: 
   return null;
 }
 
-export default function RecipeList({ onSelectDish, selectedDishId }: RecipeListProps) {
-  const allDishes = getRecipies();
-  const [filteredDishes, setFilteredDishes] = useState<Recipie[]>(allDishes);
+export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedRecipieId: selectedRecipieId }: RecipeListProps) {
+  const allRecipies = getRecipies();
+  const [filteredRecipies, setFilteredRecipies] = useState<Recipie[]>(allRecipies);
   const [filterType, setFilterType] = useState<string>('wszystkie');
   const [filterDiet, setFilterDiet] = useState<'all' | 'vegetarian' | 'vegan'>('all');
   
@@ -68,21 +67,21 @@ export default function RecipeList({ onSelectDish, selectedDishId }: RecipeListP
   };
   
   const applyFilters = (mealType: string, diet: 'all' | 'vegetarian' | 'vegan') => {
-    let filtered = allDishes;
+    let filtered = allRecipies;
     
     // Apply meal type filter
     if (mealType !== 'wszystkie') {
-      filtered = filtered.filter(dish => dish.mealType.includes(mealType as MealType));
+      filtered = filtered.filter(recipie => recipie.mealType.includes(mealType as MealType));
     }
     
     // Apply dietary filter
     if (diet === 'vegetarian') {
-      filtered = filtered.filter(dish => isDishVegetarian(dish) || isDishVegan(dish));
+      filtered = filtered.filter(recipie => isRecipieVegetarian(recipie) || isRecipieVegan(recipie));
     } else if (diet === 'vegan') {
-      filtered = filtered.filter(dish => isDishVegan(dish));
+      filtered = filtered.filter(recipie => isRecipieVegan(recipie));
     }
     
-    setFilteredDishes(filtered);
+    setFilteredRecipies(filtered);
   };
   
   return (
@@ -142,52 +141,35 @@ export default function RecipeList({ onSelectDish, selectedDishId }: RecipeListP
       
       <div className="overflow-y-auto pr-1 flex-grow h-0 min-h-0">
         <ul className="space-y-2">
-          {filteredDishes.map(dish => {
-            const isVegetarian = isDishVegetarian(dish);
-            const isVegan = isDishVegan(dish);
+          {filteredRecipies.map(recipie => {
+            const isVegetarian = isRecipieVegetarian(recipie);
+            const isVegan = isRecipieVegan(recipie);
             
             return (
               <li 
-                key={dish.id}
+                key={recipie.id}
                 className={`p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
-                  selectedDishId === dish.id ? 'border-blue-500 bg-blue-50' : ''
+                  selectedRecipieId === recipie.id ? 'border-blue-500 bg-blue-50' : ''
                 }`}
-                onClick={() => onSelectDish(dish)}
+                onClick={() => onSelectRecipie(recipie)}
               >
                 <div className="flex justify-between items-start">
-                  <div>
-                    <div className="flex flex-col space-y-1">
-                      <div className="font-semibold text-lg truncate">{dish.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {dish.mealType.join(", ")}
-                      </div>
-                      <div className="flex items-center mt-1">
-                        {(isVegetarian || isVegan) && (
-                          <div className="mt-1">
-                            <DietBadge isVegetarian={isVegetarian} isVegan={isVegan} />
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <div className="font-semibold text-lg truncate">{recipie.name}</div>
+                    {(isVegetarian || isVegan) && (
+                      <DietBadge isVegetarian={isVegetarian} isVegan={isVegan} />
+                    )}
                   </div>
                   <div className="flex flex-col items-end text-xs text-gray-500 ml-2">
                     <div className="flex items-center gap-1 mb-1">
                       <span>Trudność:</span>
-                      <StarRating score={dish.difficulty} />
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span>Smak:</span>
-                      <StarRating score={dish.tasteScore} />
+                      <StarRating score={recipie.difficulty} />
                     </div>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 line-clamp-2 mt-1">{dish.description}</p>
+                <p className="text-sm text-gray-600 line-clamp-2 mt-1">{recipie.description}</p>
                 <div className="flex items-center justify-between mt-2">
-                  <p className="text-xs text-gray-500">Typ: {dish.mealType.join(', ')}</p>
-                  <div className="flex items-center text-xs text-gray-500 gap-1">
-                    <Clock className="w-3 h-3" />
-                    <span>{formatTime(dish.preparationTime)}</span>
-                  </div>
+                  <p className="text-xs text-gray-500">{recipie.mealType.join(', ')}</p>
                 </div>
               </li>
             );
