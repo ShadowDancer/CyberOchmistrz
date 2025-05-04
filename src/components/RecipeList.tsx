@@ -1,6 +1,6 @@
 "use client";
 
-import { getDishes, isDishVegetarian, isDishVegan } from '@/lib/recipieData';
+import { getRecipies, isDishVegetarian, isDishVegan } from '@/lib/recipieData';
 import { Recipie, MealType } from '@/types';
 import { useState } from 'react';
 import { Clock } from 'lucide-react';
@@ -50,7 +50,7 @@ function DietBadge({ isVegetarian, isVegan }: { isVegetarian: boolean; isVegan: 
 }
 
 export default function RecipeList({ onSelectDish, selectedDishId }: RecipeListProps) {
-  const allDishes = getDishes();
+  const allDishes = getRecipies();
   const [filteredDishes, setFilteredDishes] = useState<Recipie[]>(allDishes);
   const [filterType, setFilterType] = useState<string>('wszystkie');
   const [filterDiet, setFilterDiet] = useState<'all' | 'vegetarian' | 'vegan'>('all');

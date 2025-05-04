@@ -1,13 +1,13 @@
 import { Recipie, Ingredient, IngredientAmount } from '../types';
-import dishesData from '../data/recipies.json';
+import recipies from '../data/recipies.json';
 import suppliesData from '../data/supplies.json';
 
-export function getDishes(): Recipie[] {
-  return dishesData as Recipie[];
+export function getRecipies(): Recipie[] {
+  return recipies as Recipie[];
 }
 
-export function getDishById(id: number): Recipie | undefined {
-  return getDishes().find(dish => dish.id === id);
+export function getRecipeById(id: number): Recipie | undefined {
+  return getRecipies().find(recipie => recipie.id === id);
 }
 
 export function getIngredients(): Ingredient[] {
@@ -28,9 +28,9 @@ export function getIngredientUnit(id: string): string {
   return ingredient ? ingredient.unit : '';
 }
 
-export function getRecipieIngredients(dishIngredients: IngredientAmount[]): (IngredientAmount & Ingredient)[] {
+export function getRecipieIngredients(ingredients: IngredientAmount[]): (IngredientAmount & Ingredient)[] {
  
-  return dishIngredients.map(ing => {
+  return ingredients.map(ing => {
     const ingredient = getIngredientById(ing.id);
     if (!ingredient) {
       console.warn(`Ingredient with id "${ing.id}" not found`);

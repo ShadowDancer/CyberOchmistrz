@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Recipie, Ingredient, MealType, IngredientAmount } from '@/types';
-import { getIngredients, getDishes } from '@/lib/recipieData';
+import { getIngredients, getRecipies } from '@/lib/recipieData';
 
 export default function NewRecipeForm() {
   const [recipeName, setRecipeName] = useState('');
@@ -21,7 +21,7 @@ export default function NewRecipeForm() {
 
   useEffect(() => {
     // Extract all unique equipment items from existing dishes
-    const dishes = getDishes();
+    const dishes = getRecipies();
     const equipmentSet = new Set<string>();
     
     dishes.forEach(dish => {

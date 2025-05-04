@@ -218,5 +218,61 @@
     "freshnessDays": 14,
     "storageType": "fridge",
     "isIngredient": true
+  },
+  {
+    "id": "papier_toaletowy",
+    "name": "Papier toaletowy",
+    "unit": "rolki",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
+    "id": "ręcznik_papierowy",
+    "name": "Ręcznik papierowy",
+    "unit": "rolki",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
+    "id": "mydło",
+    "name": "Mydło",
+    "unit": "sztuki",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
+    "id": "płyn_do_naczyń",
+    "name": "Płyn do naczyń",
+    "unit": "sztuki",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
+    "id": "zapałki",
+    "name": "Zapałki",
+    "unit": "opakowania",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
+    "id": "zapalniczka",
+    "name": "Zapalniczka",
+    "unit": "sztuki",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
+    "id": "worki_na_śmieci_120L",
+    "name": "Worki na śmieci 120L",
+    "unit": "sztuki",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
+    "id": "worki_na_śmieci_30L",
+    "name": "Worki na śmieci 30L",
+    "unit": "sztuki",
+    "category": "inne",
+    "isIngredient": false
   }
 ] 

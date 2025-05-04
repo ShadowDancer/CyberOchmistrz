@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import RecipeList from '@/components/RecipeList';
 import RecipeDetail from '@/components/RecipeDetail';
 import { Recipie } from '@/types';
-import { getDishes } from '@/lib/recipieData';
+import { getRecipies } from '@/lib/recipieData';
 
 export default function RecipesPage() {
   const [selectedDish, setSelectedDish] = useState<Recipie | null>(null);
-  const dishes = getDishes();
+  const dishes = getRecipies();
 
   // Auto-select first dish if no dish is selected
   useEffect(() => {
