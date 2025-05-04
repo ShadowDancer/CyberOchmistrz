@@ -19,7 +19,7 @@ export default function CruiseList() {
   };
 
   const handleCruiseClick = (id: string) => {
-    router.push(`/rejsy/${id}`);
+    router.push(`/rejsy?id=${id}`);
   };
 
   return (
