@@ -12,6 +12,7 @@ import { getRecipies, getRecipeById } from '../lib/recipieData';
 import { useRouter } from 'next/navigation';
 import RecipeList from './RecipeList';
 import CruiseSuppliesTab from './CruiseSuppliesTab';
+import ShoppingListTab from './ShoppingListTab';
 import { getNonIngredients } from '../lib/supplyData';
 
 interface CruiseDetailProps {
@@ -23,8 +24,8 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
   const [cruise, setCruise] = useState<Cruise | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [selectedDish, setSelectedDish] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'info' | 'plan' | 'supplies'>('info');
+  const [selectedRecipie, setSelectedRecipie] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'info' | 'plan' | 'supplies' | 'shopping'>('info');
 
   useEffect(() => {
     const cruiseData = getCruiseById(id);
@@ -42,12 +43,12 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
     setSelectedDay(dayNumber === selectedDay ? null : dayNumber);
   };
 
-  const handleDishSelect = (dish: Recipie) => {
-    setSelectedDish(dish.id);
+  const handleRecipieSelect = (recipie: Recipie) => {
+    setSelectedRecipie(recipie.id);
     
-    // If a day is selected, add the dish immediately
+    // If a day is selected, add the recipie immediately
     if (selectedDay !== null && cruise) {
-      addRecipeToCruiseDay(cruise.id, selectedDay, dish.id);
+      addRecipeToCruiseDay(cruise.id, selectedDay, recipie.id);
       
       // Refresh cruise data
       const updatedCruise = getCruiseById(id);
@@ -155,6 +156,16 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
             }`}
           >
             Dodatkowe zakupy
+          </button>
+          <button
+            onClick={() => setActiveTab('shopping')}
+            className={`px-4 py-2 rounded-md ${
+              activeTab === 'shopping' 
+                ? 'bg-blue-600 text-white'
+                : 'bg-white hover:bg-gray-100'
+            }`}
+          >
+            Lista zakupów
           </button>
         </div>
       </div>
@@ -301,12 +312,12 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
             )}
           </div>
           
-          {/* Right Panel - Dish Selection */}
+          {/* Right Panel - Recipie Selection */}
           <div className="p-4 overflow-y-auto">
             {selectedDay !== null ? (
               <RecipeList 
-                onSelectRecipie={handleDishSelect} 
-                selectedRecipieId={selectedDish}
+                onSelectRecipie={handleRecipieSelect} 
+                selectedRecipieId={selectedRecipie}
               />
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-gray-500">
@@ -322,6 +333,10 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
           cruise={cruise}
           onSupplyChange={handleSupplyChange}
         />
+      )}
+
+      {activeTab === 'shopping' && (
+        <ShoppingListTab cruise={cruise} />
       )}
     </div>
   );
