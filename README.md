@@ -3,4 +3,7 @@ Docelowo składać się będzie z książki kucharskiej, do której można dodaw
 
 ## Uruchomienie
 
-```npm run dev```
+```
+npm install
+npm run dev
+```

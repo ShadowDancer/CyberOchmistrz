@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, Supply, Ingredient } from '../types';
+import { Cruise, Supply } from '../types';
 import { getSupplyById, getIngredientById } from '../lib/supplyData';
-import { getRecipeById, getRecipieIngredients } from '../lib/recipieData';
+import { getRecipeById } from '../lib/recipieData';
 
 interface ShoppingListTabProps {
   cruise: Cruise;

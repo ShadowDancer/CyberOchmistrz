@@ -1,4 +1,4 @@
-import { Cruise, CruiseSupply } from '../types';
+import { Cruise } from '../types';
 
 const STORAGE_KEY = 'cyber-ochmistrz-cruises';
 
@@ -14,7 +14,7 @@ function migrateCruises(): void {
     let hasChanges = false;
     
     const updatedCruises = cruises.map(cruise => {
-      let updatedCruise = { ...cruise };
+      const updatedCruise = { ...cruise };
       let needsUpdate = false;
       
       if (!updatedCruise.days) {
@@ -129,20 +129,6 @@ export function removeRecipeFromCruiseDay(cruiseId: string, dayNumber: number, r
   
   cruise.days[dayIndex].recipes = cruise.days[dayIndex].recipes.filter(id => id !== recipeId);
   saveCruise(cruise);
-}
-
-// Function to add a supply to a cruise's supplies list
-export function addSupplyToCruise(cruiseId: string, supplyId: string, amount: number): void {
-  // This function is no longer needed as we don't store supplies on Cruise object
-  // Keep it to avoid breaking code elsewhere, but make it a no-op
-  return;
-}
-
-// Function to remove a supply from a cruise's supplies list
-export function removeSupplyFromCruise(cruiseId: string, supplyId: string): void {
-  // This function is no longer needed as we don't store supplies on Cruise object
-  // Keep it to avoid breaking code elsewhere, but make it a no-op
-  return;
 }
 
 // Function to add a supply to a cruise's additional supplies list

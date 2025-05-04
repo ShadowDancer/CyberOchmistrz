@@ -1,4 +1,4 @@
-import { Recipie, Ingredient, IngredientAmount } from '../types';
+import { Recipie, Ingredient, IngredientAmount, Supply } from '../types';
 import recipies from '../data/recipies.json';
 import suppliesData from '../data/supplies.json';
 
@@ -11,7 +11,7 @@ export function getRecipeById(id: number): Recipie | undefined {
 }
 
 export function getIngredients(): Ingredient[] {
-  return (suppliesData as any[]).filter(supply => supply.isIngredient === true) as Ingredient[];
+  return (suppliesData as Supply[]).filter(supply => supply.isIngredient === true) as Ingredient[];
 }
 
 export function getIngredientById(id: string): Ingredient | undefined {
@@ -41,9 +41,7 @@ export function getRecipieIngredients(ingredients: IngredientAmount[]): (Ingredi
         unit: '',
         category: 'inne' as const,
         isVegetarian: false,
-        isVegan: false,
-        freshnessDays: 0,
-        storageType: 'room' as const
+        isVegan: false
       } as (IngredientAmount & Ingredient);
     }
     return {

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Recipie, Ingredient, MealType, IngredientAmount } from '@/types';
-import { getIngredients, getRecipies } from '@/lib/recipieData';
+import React, { useState } from 'react';
+import { Recipie, MealType, IngredientAmount } from '@/types';
+import { getIngredients } from '@/lib/recipieData';
 
 export default function NewRecipeForm() {
   const [recipeName, setRecipeName] = useState('');

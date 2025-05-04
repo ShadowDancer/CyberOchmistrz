@@ -19,7 +19,6 @@ export default function CruiseSuppliesTab({
   onSupplyChange 
 }: CruiseSuppliesTabProps) {
   const [showIngredients, setShowIngredients] = useState<boolean>(false);
-  const [supplies, setSupplies] = useState<Supply[]>([]);
   const [filterText, setFilterText] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [suppliesByCategory, setSuppliesByCategory] = useState<{[key: string]: Supply[]}>({});
@@ -28,7 +27,6 @@ export default function CruiseSuppliesTab({
   // Load supplies directly, filtered by isIngredient flag
   useEffect(() => {
     const allSupplies = getSuppliesByType(showIngredients);
-    setSupplies(allSupplies);
     
     // Group supplies by category
     const grouped: {[key: string]: Supply[]} = {};
