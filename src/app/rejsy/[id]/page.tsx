@@ -12,3 +12,9 @@ export default async function CruiseDetailPage({
     </div>
   );
 } 
+
+export async function generateStaticParams() {
+  // Temporary return empty object to avoid errors during static generation
+  return [{ id: '1' }, { id: '2' }, { id: '3' }]
+}
+
