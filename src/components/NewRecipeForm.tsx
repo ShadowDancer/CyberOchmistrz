@@ -132,7 +132,7 @@ export default function NewRecipeForm() {
           </div>
           
           <div className="mt-4">
-            <label className="block mb-1">Rodzaj posiłku (wybierz jeden lub więcej)</label>
+            <label className="block mb-1">Rodzaj posiłku (jeden lub więcej)</label>
             <div className="flex flex-wrap gap-2">
               {Object.values(MealType).map((type) => (
                 <button

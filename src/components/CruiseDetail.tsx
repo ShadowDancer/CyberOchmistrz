@@ -58,9 +58,9 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-sm">
-      <div className="flex justify-between items-center p-6 border-b">
-        <h1 className="text-2xl font-bold">{cruise.name}</h1>
+    <div className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow-sm flex flex-col h-full">
+      <div className="flex justify-between items-center p-3 md:p-6 border-b">
+        <h1 className="text-xl md:text-2xl font-bold truncate">{cruise.name}</h1>
         <div className="flex gap-3">
           <button
             onClick={() => router.push('/rejsy')}
@@ -71,11 +71,11 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
         </div>
       </div>
 
-      <div className="p-4 border-b bg-gray-50">
-        <div className="flex gap-4">
+      <div className="p-2 md:p-4 border-b bg-gray-50 overflow-x-auto">
+        <div className="flex gap-1 md:gap-4 min-w-max">
           <button
             onClick={() => setActiveTab('info')}
-            className={`px-4 py-2 rounded-md ${
+            className={`px-2 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${
               activeTab === 'info' 
                 ? 'bg-blue-600 text-white'
                 : 'bg-white hover:bg-gray-100'
@@ -85,7 +85,7 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
           </button>
           <button
             onClick={() => setActiveTab('plan')}
-            className={`px-4 py-2 rounded-md ${
+            className={`px-2 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${
               activeTab === 'plan' 
                 ? 'bg-blue-600 text-white'
                 : 'bg-white hover:bg-gray-100'
@@ -95,7 +95,7 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
           </button>
           <button
             onClick={() => setActiveTab('supplies')}
-            className={`px-4 py-2 rounded-md ${
+            className={`px-2 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${
               activeTab === 'supplies' 
                 ? 'bg-blue-600 text-white'
                 : 'bg-white hover:bg-gray-100'
@@ -105,7 +105,7 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
           </button>
           <button
             onClick={() => setActiveTab('shopping')}
-            className={`px-4 py-2 rounded-md ${
+            className={`px-2 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${
               activeTab === 'shopping' 
                 ? 'bg-blue-600 text-white'
                 : 'bg-white hover:bg-gray-100'
@@ -116,27 +116,29 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
         </div>
       </div>
 
-      {activeTab === 'info' && (
-        <CruiseInfoTab cruise={cruise} />
-      )}
+      <div className="flex-grow overflow-auto">
+        {activeTab === 'info' && (
+          <CruiseInfoTab cruise={cruise} />
+        )}
 
-      {activeTab === 'plan' && (
-        <CruisePlanTab 
-          cruise={cruise}
-          onCruiseChange={handleCruiseChange}
-        />
-      )}
+        {activeTab === 'plan' && (
+          <CruisePlanTab 
+            cruise={cruise}
+            onCruiseChange={handleCruiseChange}
+          />
+        )}
 
-      {activeTab === 'supplies' && (
-        <CruiseSuppliesTab
-          cruise={cruise}
-          onSupplyChange={handleCruiseChange}
-        />
-      )}
+        {activeTab === 'supplies' && (
+          <CruiseSuppliesTab
+            cruise={cruise}
+            onSupplyChange={handleCruiseChange}
+          />
+        )}
 
-      {activeTab === 'shopping' && (
-        <ShoppingListTab cruise={cruise} />
-      )}
+        {activeTab === 'shopping' && (
+          <ShoppingListTab cruise={cruise} />
+        )}
+      </div>
     </div>
   );
 } 
