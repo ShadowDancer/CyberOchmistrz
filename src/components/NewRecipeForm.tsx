@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Recipie, MealType, IngredientAmount } from '@/types';
 import { getIngredients } from '@/lib/recipieData';
 
-export default function NewRecipeForm() {
+interface NewRecipeFormProps {
+  recipe?: Recipie;
+}
+
+export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   const [recipeName, setRecipeName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedMealTypes, setSelectedMealTypes] = useState<MealType[]>([MealType.DINNER]);
@@ -12,8 +16,22 @@ export default function NewRecipeForm() {
   const [ingredients, setIngredients] = useState<Array<{ id: string; amount: number }>>([{ id: '', amount: 0 }]);
   const [instructions, setInstructions] = useState<string[]>(['']);
   const [jsonOutput, setJsonOutput] = useState('');
+  const [recipeId, setRecipeId] = useState<number | null>(null);
 
   const allIngredients = getIngredients();
+
+  // Initialize form with existing recipe data if provided
+  useEffect(() => {
+    if (recipe) {
+      setRecipeName(recipe.name);
+      setDescription(recipe.description);
+      setSelectedMealTypes(recipe.mealType);
+      setDifficulty(recipe.difficulty);
+      setIngredients(recipe.ingredients.length > 0 ? recipe.ingredients : [{ id: '', amount: 0 }]);
+      setInstructions(recipe.instructions.length > 0 ? recipe.instructions : ['']);
+      setRecipeId(recipe.id);
+    }
+  }, [recipe]);
 
   const toggleMealType = (type: MealType) => {
     if (selectedMealTypes.includes(type)) {
@@ -84,7 +102,7 @@ export default function NewRecipeForm() {
       : [MealType.DINNER];
 
     const recipie: Recipie = {
-      id: Date.now(), // temporary ID as number
+      id: recipeId || Date.now(), // use existing ID if editing, or create new one
       name: recipeName.trim(),
       description: description.trim(),
       mealType: mealTypes,

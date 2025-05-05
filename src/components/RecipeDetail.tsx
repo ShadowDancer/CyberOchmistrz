@@ -2,6 +2,7 @@
 
 import { Recipie } from '@/types';
 import { getRecipieIngredients, isRecipieVegetarian, isRecipieVegan } from '@/lib/recipieData';
+import Link from 'next/link';
 
 interface RecipeDetailProps {
   dish: Recipie | null;
@@ -107,8 +108,14 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
       </div>
       
       <div className="overflow-y-auto flex-grow p-3 md:p-4">
-        <div className="mb-5 md:mb-6">
+        <div className="flex justify-between items-center mb-4">
           <p className="text-sm md:text-base text-gray-700">{recipie.description}</p>
+          <Link
+            href={`/przepisy/edytuj?id=${recipie.id}`}
+            className="flex-shrink-0 ml-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Edytuj
+          </Link>
         </div>
         
         <div className="mb-5 md:mb-6">
