@@ -25,7 +25,7 @@ export enum MealType {
 }
 
 export interface Recipie {
-  id: number;
+  id: string;
   name: string;
   ingredients: IngredientAmount[];
   description: string;
@@ -41,7 +41,7 @@ export interface CruiseSupply {
 
 export interface CruiseDay {
   dayNumber: number;
-  recipes: number[]; // Dish IDs
+  recipes: string[]; // Recipie IDs as strings
 }
 
 export interface Cruise {

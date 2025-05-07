@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 interface RecipeListProps {
   onSelectRecipie: (recipie: Recipie) => void;
-  selectedRecipieId: number | null;
+  selectedRecipieId: string | null;
 }
 
 function StarRating({ score }: { score: number }) {
