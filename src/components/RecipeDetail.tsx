@@ -146,6 +146,16 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
             </ol>
           </div>
         )}
+        
+        {/* Author Information */}
+        {recipie.developedBy && (
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <p className="text-sm text-gray-600 italic flex items-center">
+              <span className="font-medium mr-2">Opracował/a:</span> 
+              {recipie.developedBy}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

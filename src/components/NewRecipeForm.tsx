@@ -18,7 +18,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   const [jsonOutput, setJsonOutput] = useState('');
   const [recipeId, setRecipeId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [developedBy, setDevelopedBy] = useState<string>('');
 
   const allIngredients = getIngredients();
 
@@ -31,7 +31,8 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
       setDifficulty(recipe.difficulty);
       setIngredients(recipe.ingredients.length > 0 ? recipe.ingredients : [{ id: '', amount: 0 }]);
       setInstructions(recipe.instructions.length > 0 ? recipe.instructions : ['']);
-      setRecipeId(recipe.id.toString());
+      setRecipeId(recipe.id);
+      setDevelopedBy(recipe.developedBy || '');
     }
   }, [recipe]);
 
@@ -98,9 +99,9 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
     // Filter out empty values
     const filteredIngredients = ingredients
       .filter(ing => ing.id.trim() !== '' && ing.amount > 0)
-      .map(ing => ({ 
-        id: ing.id.trim(), 
-        amount: ing.amount 
+      .map(ing => ({
+        id: ing.id.trim(),
+        amount: ing.amount
       }));
 
     // Check if there are any ingredients
@@ -120,22 +121,22 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
     }
 
     // Ensure at least one meal type is selected
-    const mealTypes = selectedMealTypes.length > 0 
-      ? selectedMealTypes 
+    const mealTypes = selectedMealTypes.length > 0
+      ? selectedMealTypes
       : [MealType.DINNER];
-    
+
     // Check for duplicate name
     const allRecipies = getRecipies();
-    const isDuplicateName = allRecipies.some(r => 
-      r.name.toLowerCase() === recipeName.trim().toLowerCase() && 
+    const isDuplicateName = allRecipies.some(r =>
+      r.name.toLowerCase() === recipeName.trim().toLowerCase() &&
       r.id !== recipeId
     );
-    
+
     if (isDuplicateName) {
       setErrorMessage(`Przepis o nazwie "${recipeName.trim()}" już istnieje. Wybierz inną nazwę.`);
       return null;
     }
-    
+
     // Generate ID from name for new recipes, or use existing ID when editing
     let finalId = recipeId;
     if (!finalId) {
@@ -144,7 +145,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
         .toLowerCase()
         .replace(/\s+/g, '-')
         .replace(/[^\w-]/g, '');
-        
+
       // Check for duplicate ID
       const isDuplicateId = allRecipies.some(r => r.id === finalId);
       if (isDuplicateId) {
@@ -160,7 +161,8 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
       mealType: mealTypes,
       difficulty: difficulty,
       ingredients: filteredIngredients as IngredientAmount[],
-      instructions: filteredInstructions
+      instructions: filteredInstructions,
+      developedBy: developedBy.trim()
     };
 
     const jsonString = JSON.stringify(recipie, null, 2);
@@ -196,14 +198,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
             {errorMessage}
           </div>
         )}
-        
-        {/* Success message display */}
-        {successMessage && (
-          <div className="p-3 bg-green-100 border border-green-300 text-green-700 rounded-md">
-            {successMessage}
-          </div>
-        )}
-        
+
         {/* Basic Info Section */}
         <div>
           <h2 className="text-xl font-bold mb-4">Informacje podstawowe</h2>
@@ -216,7 +211,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
               className="w-full px-3 py-2 border rounded"
             />
           </div>
-          
+
           <div className="mt-4">
             <label className="block mb-1">Rodzaj posiłku (jeden lub więcej)</label>
             <div className="flex flex-wrap gap-2">
@@ -225,18 +220,17 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                   key={type}
                   type="button"
                   onClick={() => toggleMealType(type)}
-                  className={`px-3 py-1 rounded-full text-sm ${
-                    selectedMealTypes.includes(type) 
-                      ? 'bg-blue-500 text-white' 
+                  className={`px-3 py-1 rounded-full text-sm ${selectedMealTypes.includes(type)
+                      ? 'bg-blue-500 text-white'
                       : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
+                    }`}
                 >
                   {type}
                 </button>
               ))}
             </div>
           </div>
-          
+
           <div className="mt-4">
             <label className="block mb-1">Opis</label>
             <textarea
@@ -355,6 +349,19 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
               </div>
             </div>
           ))}
+        </div>
+
+        <div>
+          <div className="mt-4">
+            <label className="block mb-1">Opracował/a</label>
+            <input
+              type="text"
+              value={developedBy}
+              onChange={(e) => setDevelopedBy(e.target.value)}
+              className="w-full px-3 py-2 border rounded"
+              placeholder="Imię i nazwisko lub pseudonim"
+            />
+          </div>
         </div>
 
         {/* Action Buttons */}
