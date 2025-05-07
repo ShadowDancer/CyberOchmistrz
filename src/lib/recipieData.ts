@@ -3,10 +3,11 @@ import recipies from '../data/recipies.json';
 import suppliesData from '../data/supplies.json';
 
 export function getRecipies(): Recipie[] {
-  return recipies as Recipie[];
+  // Cast to unknown first and then to Recipie[] to avoid TypeScript errors
+  return (recipies as unknown) as Recipie[];
 }
 
-export function getRecipeById(id: number): Recipie | undefined {
+export function getRecipeById(id: string): Recipie | undefined {
   return getRecipies().find(recipie => recipie.id === id);
 }
 

@@ -13,7 +13,7 @@ interface CruisePlanTabProps {
 
 export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabProps) {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [selectedRecipie, setSelectedRecipie] = useState<number | null>(null);
+  const [selectedRecipie, setSelectedRecipie] = useState<string | null>(null);
   const [mobileView, setMobileView] = useState<'days' | 'details' | 'recipes'>('days');
 
   const handleDaySelect = (dayNumber: number) => {
@@ -29,7 +29,7 @@ export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabP
     
     // If a day is selected, add the recipie immediately
     if (selectedDay !== null && cruise) {
-      addRecipeToCruiseDay(cruise.id, selectedDay, recipie.id);
+      addRecipeToCruiseDay(cruise.id, selectedDay, recipie.id.toString());
       
       // Trigger parent refresh
       onCruiseChange();
@@ -41,7 +41,7 @@ export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabP
     }
   };
 
-  const handleRemoveRecipe = (dayNumber: number, recipeId: number) => {
+  const handleRemoveRecipe = (dayNumber: number, recipeId: string) => {
     if (!cruise) return;
     
     removeRecipeFromCruiseDay(cruise.id, dayNumber, recipeId);

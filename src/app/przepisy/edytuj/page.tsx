@@ -15,11 +15,8 @@ function EditRecipeForm(){
 
   useEffect(() => {
     if (recipeId) {
-      const parsedId = parseInt(recipeId, 10);
-      if (!isNaN(parsedId)) {
-        const foundRecipe = getRecipeById(parsedId);
-        setRecipe(foundRecipe || null);
-      }
+      const foundRecipe = getRecipeById(recipeId);
+      setRecipe(foundRecipe || null);
     }
     setIsLoading(false);
   }, [recipeId]);

@@ -106,7 +106,7 @@ export function createNewCruise(name: string, length: number, crew: number): Cru
   };
 }
 
-export function addRecipeToCruiseDay(cruiseId: string, dayNumber: number, recipeId: number): void {
+export function addRecipeToCruiseDay(cruiseId: string, dayNumber: number, recipeId: string): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
   
@@ -120,7 +120,7 @@ export function addRecipeToCruiseDay(cruiseId: string, dayNumber: number, recipe
   }
 }
 
-export function removeRecipeFromCruiseDay(cruiseId: string, dayNumber: number, recipeId: number): void {
+export function removeRecipeFromCruiseDay(cruiseId: string, dayNumber: number, recipeId: string): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
   

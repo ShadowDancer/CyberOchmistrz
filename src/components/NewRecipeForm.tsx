@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Recipie, MealType, IngredientAmount } from '@/types';
-import { getIngredients } from '@/lib/recipieData';
+import { getIngredients, getRecipies } from '@/lib/recipieData';
 
 interface NewRecipeFormProps {
   recipe?: Recipie;
@@ -16,7 +16,9 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   const [ingredients, setIngredients] = useState<Array<{ id: string; amount: number }>>([{ id: '', amount: 0 }]);
   const [instructions, setInstructions] = useState<string[]>(['']);
   const [jsonOutput, setJsonOutput] = useState('');
-  const [recipeId, setRecipeId] = useState<number | null>(null);
+  const [recipeId, setRecipeId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const allIngredients = getIngredients();
 
@@ -29,7 +31,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
       setDifficulty(recipe.difficulty);
       setIngredients(recipe.ingredients.length > 0 ? recipe.ingredients : [{ id: '', amount: 0 }]);
       setInstructions(recipe.instructions.length > 0 ? recipe.instructions : ['']);
-      setRecipeId(recipe.id);
+      setRecipeId(recipe.id.toString());
     }
   }, [recipe]);
 
@@ -84,6 +86,15 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   };
 
   const generateJson = () => {
+    // Clear any previous error messages
+    setErrorMessage(null);
+
+    // Check if recipe name is provided
+    if (!recipeName.trim()) {
+      setErrorMessage("Nazwa przepisu jest wymagana.");
+      return null;
+    }
+
     // Filter out empty values
     const filteredIngredients = ingredients
       .filter(ing => ing.id.trim() !== '' && ing.amount > 0)
@@ -92,17 +103,58 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
         amount: ing.amount 
       }));
 
+    // Check if there are any ingredients
+    if (filteredIngredients.length === 0) {
+      setErrorMessage("Dodaj przynajmniej jeden składnik.");
+      return null;
+    }
+
     const filteredInstructions = instructions
       .filter(inst => inst.trim() !== '')
       .map(inst => inst.trim());
+
+    // Check if there are any instructions
+    if (filteredInstructions.length === 0) {
+      setErrorMessage("Dodaj przynajmniej jedną instrukcję.");
+      return null;
+    }
 
     // Ensure at least one meal type is selected
     const mealTypes = selectedMealTypes.length > 0 
       ? selectedMealTypes 
       : [MealType.DINNER];
+    
+    // Check for duplicate name
+    const allRecipies = getRecipies();
+    const isDuplicateName = allRecipies.some(r => 
+      r.name.toLowerCase() === recipeName.trim().toLowerCase() && 
+      r.id !== recipeId
+    );
+    
+    if (isDuplicateName) {
+      setErrorMessage(`Przepis o nazwie "${recipeName.trim()}" już istnieje. Wybierz inną nazwę.`);
+      return null;
+    }
+    
+    // Generate ID from name for new recipes, or use existing ID when editing
+    let finalId = recipeId;
+    if (!finalId) {
+      // Create slug from recipe name: lowercase, replace spaces with hyphens, remove special chars
+      finalId = recipeName.trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]/g, '');
+        
+      // Check for duplicate ID
+      const isDuplicateId = allRecipies.some(r => r.id === finalId);
+      if (isDuplicateId) {
+        setErrorMessage(`Wystąpił błąd: wygenerowane ID już istnieje. Spróbuj zmienić nazwę.`);
+        return null;
+      }
+    }
 
     const recipie: Recipie = {
-      id: recipeId || Date.now(), // use existing ID if editing, or create new one
+      id: finalId,
       name: recipeName.trim(),
       description: description.trim(),
       mealType: mealTypes,
@@ -117,9 +169,11 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   };
 
   const copyToClipboard = () => {
-    generateJson();
-    navigator.clipboard.writeText(jsonOutput);
-    alert('Recipe JSON copied to clipboard!');
+    const recipe = generateJson();
+    if (recipe) {
+      navigator.clipboard.writeText(jsonOutput);
+      alert('Recipe JSON copied to clipboard!');
+    }
   };
 
   const downloadJson = () => {
@@ -136,6 +190,20 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="space-y-6">
+        {/* Error message display */}
+        {errorMessage && (
+          <div className="p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+            {errorMessage}
+          </div>
+        )}
+        
+        {/* Success message display */}
+        {successMessage && (
+          <div className="p-3 bg-green-100 border border-green-300 text-green-700 rounded-md">
+            {successMessage}
+          </div>
+        )}
+        
         {/* Basic Info Section */}
         <div>
           <h2 className="text-xl font-bold mb-4">Informacje podstawowe</h2>

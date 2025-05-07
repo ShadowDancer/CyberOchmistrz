@@ -6,7 +6,8 @@
     "category": "zboża",
     "isVegetarian": true,
     "isVegan": true,
-    "isIngredient": true
+    "isIngredient": true,
+    "defaultAmount": 1000
   },
   {
     "id": "cukier",
@@ -24,7 +25,8 @@
     "category": "nabiał",
     "isVegetarian": true,
     "isVegan": false,
-    "isIngredient": true
+    "isIngredient": true,
+    "defaultAmount": 1000
   },
   {
     "id": "jajka",
@@ -42,7 +44,8 @@
     "category": "nabiał",
     "isVegetarian": true,
     "isVegan": false,
-    "isIngredient": true
+    "isIngredient": true,
+    "defaultAmount": 200
   },
   {
     "id": "sol",

@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": "nalesniki-z-dzemem",
     "name": "Naleśniki z dżemem",
     "ingredients": [
       {
@@ -44,7 +44,7 @@
     ]
   },
   {
-    "id": 2,
+    "id": "spaghetti-bolognese",
     "name": "Spaghetti Bolognese",
     "ingredients": [
       {
@@ -84,7 +84,7 @@
     ]
   },
   {
-    "id": 3,
+    "id": "omlet-z-warzywami",
     "name": "Omlet z warzywami",
     "ingredients": [
       {
@@ -125,7 +125,7 @@
     ]
   },
   {
-    "id": 4,
+    "id": "placki-ziemniaczane",
     "name": "Placki ziemniaczane",
     "ingredients": [
       {
@@ -170,7 +170,7 @@
     ]
   },
   {
-    "id": 5,
+    "id": "risotto-z-grzybami",
     "name": "Risotto z grzybami",
     "ingredients": [
       {
@@ -212,7 +212,7 @@
     ]
   },
   {
-    "id": 6,
+    "id": "kanapki-z-awokado",
     "name": "Kanapki z awokado",
     "ingredients": [
       {
@@ -252,7 +252,7 @@
     ]
   },
   {
-    "id": 7,
+    "id": "zupa-pomidorowa",
     "name": "Zupa pomidorowa",
     "ingredients": [
       {
@@ -296,7 +296,7 @@
     ]
   },
   {
-    "id": 8,
+    "id": "salatka-grecka",
     "name": "Sałatka grecka",
     "ingredients": [
       {
@@ -345,7 +345,7 @@
     ]
   },
   {
-    "id": 9,
+    "id": "kotlet-schabowy",
     "name": "Kotlet schabowy",
     "ingredients": [
       {
@@ -391,7 +391,7 @@
     ]
   },
   {
-    "id": 10,
+    "id": "rosol-z-kurczaka",
     "name": "Rosół z kurczaka",
     "ingredients": [
       {
@@ -451,7 +451,7 @@
     ]
   },
   {
-    "id": 11,
+    "id": "chili-con-carne",
     "name": "Chili con carne",
     "ingredients": [
       {
@@ -501,7 +501,7 @@
     ]
   },
   {
-    "id": 12,
+    "id": "krem-z-pomidorow",
     "name": "Krem z pomidorów",
     "ingredients": [
       {
@@ -551,7 +551,7 @@
     ]
   },
   {
-    "id": 13,
+    "id": "zurek",
     "name": "Żurek",
     "ingredients": [
       {
@@ -610,7 +610,7 @@
     ]
   },
   {
-    "id": 14,
+    "id": "gulasz-z-kurczaka",
     "name": "Gulasz z kurczaka",
     "ingredients": [
       {
@@ -661,7 +661,7 @@
     ]
   },
   {
-    "id": 15,
+    "id": "zupa-krem-z-grzybow",
     "name": "Zupa krem z grzybów",
     "ingredients": [
       {
