@@ -41,7 +41,8 @@
       "Smaż naleśnik przez około 1-2 minuty z każdej strony, aż będzie złoty.",
       "Powtórz z resztą ciasta.",
       "Posmaruj każdy naleśnik dżemem owocowym i złóż w trójkąt lub rulon."
-    ]
+    ],
+    "developedBy": "Magda Gessler"
   },
   {
     "id": "spaghetti-bolognese",
@@ -81,7 +82,8 @@
       "Dopraw solą, pieprzem i ziołami (np. bazylią, oregano).",
       "Duś sos na małym ogniu przez około 20 minut.",
       "Podawaj makaron polany sosem, posypany tartym serem."
-    ]
+    ],
+    "developedBy": "Antonio Carluccio"
   },
   {
     "id": "omlet-z-warzywami",
@@ -122,7 +124,8 @@
       "Wlej roztrzepane jajka na warzywa.",
       "Smaż na średnim ogniu przez około 3-4 minuty.",
       "Złóż omlet na pół i podawaj natychmiast."
-    ]
+    ],
+    "developedBy": "Karol Okrasa"
   },
   {
     "id": "placki-ziemniaczane",
@@ -167,7 +170,8 @@
       "Nakładaj łyżką porcje masy i rozpłaszczaj na placki.",
       "Smaż na złoty kolor z obu stron, około 3-4 minuty z każdej strony.",
       "Odsącz na papierowym ręczniku i podawaj na gorąco."
-    ]
+    ],
+    "developedBy": "Babcia Jadzia"
   },
   {
     "id": "risotto-z-grzybami",
@@ -209,7 +213,8 @@
       "Po około 15 minutach dodaj grzyby i kontynuuj gotowanie.",
       "Risotto jest gotowe, gdy ryż jest al dente, a całość kremowa.",
       "Na koniec wymieszaj z masłem i parmezanem, dopraw solą i pieprzem."
-    ]
+    ],
+    "developedBy": "Gordon Ramsay"
   },
   {
     "id": "kanapki-z-awokado",
