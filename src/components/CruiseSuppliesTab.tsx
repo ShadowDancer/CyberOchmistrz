@@ -192,20 +192,25 @@ export default function CruiseSuppliesTab({
                   <h3 className="text-lg font-medium mb-2">{category}</h3>
                   <ul className="space-y-2">
                     {filteredSupplies[category].map(supply => (
-                      <li key={supply.id} className="flex justify-between items-center py-1 border-b border-gray-200">
-                        <div>
-                          <span>{supply.name}</span>
-                          <span className="text-sm text-gray-500 ml-2">({supply.unit})</span>
+                      <li key={supply.id} className="flex flex-col py-1 border-b border-gray-200">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <span>{supply.name}</span>
+                            <span className="text-sm text-gray-500 ml-2">({supply.unit})</span>
+                          </div>
+                          <button
+                            onClick={() => handleAddSupply(supply.id)}
+                            className="ml-2 p-1 text-blue-600 hover:text-blue-800 rounded-full hover:bg-blue-100"
+                            title="Dodaj do listy zakupów"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                            </svg>
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleAddSupply(supply.id)}
-                          className="ml-2 p-1 text-blue-600 hover:text-blue-800 rounded-full hover:bg-blue-100"
-                          title="Dodaj do listy zakupów"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
-                          </svg>
-                        </button>
+                        {supply.description && (
+                          <span className="text-xs text-gray-500 italic mt-1">{supply.description}</span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -234,37 +239,42 @@ export default function CruiseSuppliesTab({
                       {shoppingListByCategory[category].map(({supply, amount}) => (
                         <li 
                           key={supply.id} 
-                          className="py-1 flex justify-between items-center text-sm"
+                          className="py-1 flex flex-col text-sm"
                         >
-                          <span className="font-medium">{supply.name}</span>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center text-xs">
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">{supply.name}</span>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center text-xs">
+                                <button
+                                  onClick={() => handleUpdateAmount(supply.id, Math.max(1, amount - 1))}
+                                  className="px-1.5 py-0.5 bg-gray-200 rounded-l-md"
+                                >
+                                  -
+                                </button>
+                                <span className="px-2 py-0.5 bg-gray-100">
+                                  {amount} {supply.unit}
+                                </span>
+                                <button
+                                  onClick={() => handleUpdateAmount(supply.id, amount + 1)}
+                                  className="px-1.5 py-0.5 bg-gray-200 rounded-r-md"
+                                >
+                                  +
+                                </button>
+                              </div>
                               <button
-                                onClick={() => handleUpdateAmount(supply.id, Math.max(1, amount - 1))}
-                                className="px-1.5 py-0.5 bg-gray-200 rounded-l-md"
+                                onClick={() => handleRemoveSupply(supply.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                                title="Usuń"
                               >
-                                -
-                              </button>
-                              <span className="px-2 py-0.5 bg-gray-100">
-                                {amount} {supply.unit}
-                              </span>
-                              <button
-                                onClick={() => handleUpdateAmount(supply.id, amount + 1)}
-                                className="px-1.5 py-0.5 bg-gray-200 rounded-r-md"
-                              >
-                                +
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
                               </button>
                             </div>
-                            <button
-                              onClick={() => handleRemoveSupply(supply.id)}
-                              className="text-red-600 hover:text-red-800 text-xs"
-                              title="Usuń"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                              </svg>
-                            </button>
                           </div>
+                          {supply.description && (
+                            <span className="text-xs text-gray-500 italic mt-1">{supply.description}</span>
+                          )}
                         </li>
                       ))}
                     </ul>

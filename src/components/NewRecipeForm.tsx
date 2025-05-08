@@ -255,51 +255,63 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
         <div>
           <h2 className="text-xl font-bold mb-4">Składniki</h2>
           {ingredients.map((ingredient, index) => (
-            <div key={index} className="mb-2 flex items-end gap-2">
-              <div className="w-3/5">
-                <label className="block text-sm mb-1">Składnik</label>
-                <select
-                  value={ingredient.id}
-                  onChange={(e) => updateIngredientId(index, e.target.value)}
-                  className="w-full px-3 py-2 border rounded"
-                >
-                  <option value="">Wybierz składnik</option>
-                  {allIngredients.map((ing) => (
-                    <option key={ing.id} value={ing.id}>
-                      {ing.name} ({ing.unit})
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="w-1/4">
-                <label className="block text-sm mb-1">Ilość</label>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    value={ingredient.amount}
-                    onChange={(e) => updateIngredientAmount(index, e.target.value)}
+            <div key={index} className="mb-2 flex flex-col gap-2">
+              <div className="flex items-start gap-2">
+                <div className="w-3/5">
+                  <label className="block text-sm mb-1">Składnik</label>
+                  <select
+                    value={ingredient.id}
+                    onChange={(e) => updateIngredientId(index, e.target.value)}
                     className="w-full px-3 py-2 border rounded"
-                  />
-                  {ingredient.id && (
-                    <span className="ml-2">
-                      {allIngredients.find(ing => ing.id === ingredient.id)?.unit}
-                    </span>
+                  >
+                    <option value="">Wybierz składnik</option>
+                    {allIngredients.map((ing) => (
+                      <option key={ing.id} value={ing.id}>
+                        {ing.name} ({ing.unit})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-1/4">
+                  <label className="block text-sm mb-1">Ilość</label>
+                  <div className="flex items-center">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={ingredient.amount}
+                      onChange={(e) => updateIngredientAmount(index, e.target.value)}
+                      className="w-full px-3 py-2 border rounded"
+                    />
+                    {ingredient.id && (
+                      <span className="ml-2">
+                        {allIngredients.find(ing => ing.id === ingredient.id)?.unit}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2 self-end">
+                  {ingredients.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeIngredient(index)}
+                      className="px-3 py-2 bg-red-500 text-white rounded"
+                    >
+                      -
+                    </button>
                   )}
                 </div>
               </div>
-              <div className="flex gap-2">
-                {ingredients.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeIngredient(index)}
-                    className="px-3 py-2 bg-red-500 text-white rounded"
-                  >
-                    -
-                  </button>
-                )}
-              </div>
+              {ingredient.id && (() => {
+                const selectedIngredient = allIngredients.find(ing => ing.id === ingredient.id);
+                return selectedIngredient?.description ? (
+                  <div className="pl-1">
+                    <p className="text-xs text-gray-500 italic">
+                      {selectedIngredient.description}
+                    </p>
+                  </div>
+                ) : null;
+              })()}
             </div>
           ))}
           <div className="mt-2 flex justify-end">

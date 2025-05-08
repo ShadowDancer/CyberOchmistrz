@@ -194,17 +194,22 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
               <h3 className="text-lg font-medium mb-3 pb-1 border-b">{category}</h3>
               <ul className="space-y-2">
                 {aggregatedList[category].map(item => (
-                  <li key={item.supply.id} className="py-1 flex justify-between items-center group">
-                    <span className="font-medium">{item.supply.name}</span>
-                    <div className="relative">
-                      <span className="text-gray-700 cursor-help border-b border-dotted border-gray-400">
-                        {item.amount} {item.supply.unit}
-                      </span>
-                      <div className="opacity-0 w-256 bg-black text-white text-sm rounded p-2 absolute right-0 bottom-full mb-1 z-10 group-hover:opacity-100 transition-opacity whitespace-pre-wrap">
-                        {generateCalculationTooltip(item)}
-                        <svg className="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"></polygon></svg>
+                  <li key={item.supply.id} className="py-1 flex flex-col group">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{item.supply.name}</span>
+                      <div className="relative">
+                        <span className="text-gray-700 cursor-help border-b border-dotted border-gray-400">
+                          {item.amount} {item.supply.unit}
+                        </span>
+                        <div className="opacity-0 w-256 bg-black text-white text-sm rounded p-2 absolute right-0 bottom-full mb-1 z-10 group-hover:opacity-100 transition-opacity whitespace-pre-wrap">
+                          {generateCalculationTooltip(item)}
+                          <svg className="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"></polygon></svg>
+                        </div>
                       </div>
                     </div>
+                    {item.supply.description && (
+                      <span className="text-sm text-gray-500 italic mt-1">{item.supply.description}</span>
+                    )}
                   </li>
                 ))}
               </ul>
