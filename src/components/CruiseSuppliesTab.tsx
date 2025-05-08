@@ -73,10 +73,19 @@ export default function CruiseSuppliesTab({
   const handleAddSupply = (supplyId: string) => {
     if (!cruise) return;
     
-    addAdditionalSupplyToCruise(cruise.id, supplyId, 1);
+    // Check if the supply is already in the list
+    const existingSupply = cruise.additionalSupplies?.find(item => item.id === supplyId);
     
-    // Notify parent component of the change
-    onSupplyChange(cruise);
+    if (existingSupply) {
+      // If already in list, increase amount
+      handleUpdateAmount(supplyId, existingSupply.amount + 1);
+    } else {
+      // If not in list, add it
+      addAdditionalSupplyToCruise(cruise.id, supplyId, 1);
+      
+      // Notify parent component of the change
+      onSupplyChange(cruise);
+    }
   };
   
   const handleUpdateAmount = (supplyId: string, amount: number) => {

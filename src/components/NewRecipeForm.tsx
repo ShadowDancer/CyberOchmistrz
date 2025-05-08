@@ -192,13 +192,6 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="space-y-6">
-        {/* Error message display */}
-        {errorMessage && (
-          <div className="p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
-            {errorMessage}
-          </div>
-        )}
-
         {/* Basic Info Section */}
         <div>
           <h2 className="text-xl font-bold mb-4">Informacje podstawowe</h2>
@@ -280,25 +273,23 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
               </div>
               <div className="w-1/4">
                 <label className="block text-sm mb-1">Ilość</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  value={ingredient.amount}
-                  onChange={(e) => updateIngredientAmount(index, e.target.value)}
-                  className="w-full px-3 py-2 border rounded"
-                />
+                <div className="flex items-center">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={ingredient.amount}
+                    onChange={(e) => updateIngredientAmount(index, e.target.value)}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                  {ingredient.id && (
+                    <span className="ml-2">
+                      {allIngredients.find(ing => ing.id === ingredient.id)?.unit}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="flex gap-2">
-                {index === ingredients.length - 1 && (
-                  <button
-                    type="button"
-                    onClick={addIngredient}
-                    className="px-3 py-2 bg-green-500 text-white rounded"
-                  >
-                    +
-                  </button>
-                )}
                 {ingredients.length > 1 && (
                   <button
                     type="button"
@@ -311,6 +302,15 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
               </div>
             </div>
           ))}
+          <div className="mt-2 flex justify-end">
+            <button
+              type="button"
+              onClick={addIngredient}
+              className="px-3 py-2 bg-green-500 text-white rounded"
+            >
+              +
+            </button>
+          </div>
         </div>
 
         {/* Instructions Section */}
@@ -328,15 +328,6 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                 />
               </div>
               <div className="flex gap-2 mt-6">
-                {index === instructions.length - 1 && (
-                  <button
-                    type="button"
-                    onClick={addInstruction}
-                    className="px-3 py-2 bg-green-500 text-white rounded"
-                  >
-                    +
-                  </button>
-                )}
                 {instructions.length > 1 && (
                   <button
                     type="button"
@@ -349,6 +340,15 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
               </div>
             </div>
           ))}
+          <div className="mt-2 flex justify-end">
+            <button
+              type="button"
+              onClick={addInstruction}
+              className="px-3 py-2 bg-green-500 text-white rounded"
+            >
+              +
+            </button>
+          </div>
         </div>
 
         <div>
@@ -365,28 +365,37 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4">
-          <button
-            type="button"
-            onClick={generateJson}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Wygeneruj JSON
-          </button>
-          <button
-            type="button"
-            onClick={copyToClipboard}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            Kopiuj do schowka
-          </button>
-          <button
-            type="button"
-            onClick={downloadJson}
-            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
-          >
-            Pobierz jako JSON
-          </button>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={generateJson}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Wygeneruj JSON
+            </button>
+            <button
+              type="button"
+              onClick={copyToClipboard}
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              Kopiuj do schowka
+            </button>
+            <button
+              type="button"
+              onClick={downloadJson}
+              className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+            >
+              Pobierz jako JSON
+            </button>
+          </div>
+          
+          {/* Display error message here */}
+          {errorMessage && (
+            <div className="p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+              {errorMessage}
+            </div>
+          )}
         </div>
 
         {/* JSON Output */}
