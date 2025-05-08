@@ -47,6 +47,7 @@ function Ingredient({ ingredient }: {
     unit: string; 
     isVegan: boolean; 
     isVegetarian: boolean;
+    description?: string;
   } 
 }) {  
   return (
@@ -63,6 +64,9 @@ function Ingredient({ ingredient }: {
         </div>
         <span className="text-gray-600 text-sm">{ingredient.amount} {ingredient.unit}</span>
       </div>
+      {ingredient.description && (
+        <p className="text-xs text-gray-500 italic mt-1">{ingredient.description}</p>
+      )}
     </div>
   );
 }

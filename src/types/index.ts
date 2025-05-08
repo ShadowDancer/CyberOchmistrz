@@ -2,6 +2,7 @@ export interface Supply {
   id: string;
   name: string;
   unit: string;
+  description?: string;
   isIngredient: boolean;
   category: string;
 }
