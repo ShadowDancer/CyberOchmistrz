@@ -19,6 +19,15 @@
     "isIngredient": true
   },
   {
+    "id": "pesto",
+    "name": "Pesto zielone",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
     "id": "mleko",
     "name": "Mleko",
     "unit": "mililitry",
@@ -57,10 +66,10 @@
     "isIngredient": true
   },
   {
-    "id": "drozdze",
-    "name": "Drożdże",
+    "id": "pieprz",
+    "name": "Pieprz",
     "unit": "gramy",
-    "category": "inne",
+    "category": "przyprawy",
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
@@ -69,14 +78,25 @@
     "id": "olej",
     "name": "Olej",
     "unit": "mililitry",
+    "description": "duża łyżka to 15ml",
     "category": "tłuszcze",
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
   },
   {
-    "id": "pomidory",
-    "name": "Pomidory",
+    "id": "oliwa",
+    "name": "Oliwa",
+    "unit": "mililitry",
+    "description": "duża łyżka to 15ml",
+    "category": "tłuszcze",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "pomidor",
+    "name": "Pomidor",
     "unit": "sztuki",
     "category": "warzywa",
     "isVegetarian": true,
@@ -114,6 +134,7 @@
     "id": "ryz",
     "name": "Ryż",
     "unit": "gramy",
+    "description": "~80g suchego ryżu/osobę/posiłek",
     "category": "zboża",
     "isVegetarian": true,
     "isVegan": true,
@@ -123,15 +144,36 @@
     "id": "makaron",
     "name": "Makaron",
     "unit": "gramy",
+    "description": "~80g suchego makaronu/osobę/posiłek",
     "category": "zboża",
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
   },
   {
+    "id": "makaron_penne",
+    "name": "Makaron Penne",
+    "unit": "gramy",
+    "description": "~80g suchego makaronu/osobę/posiłek",
+    "category": "zboża",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "tunczyk_w_sosie_wlasnym",
+    "name": "Tuńczyk w sosie własnym",
+    "unit": "gramy",
+    "description": "Puszka to ~170 gram",
+    "category": "ryby",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
     "id": "ziemniaki",
     "name": "Ziemniaki",
-    "unit": "gramy",
+    "unit": "sztuki",
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
@@ -140,7 +182,8 @@
   {
     "id": "chleb",
     "name": "Chleb",
-    "unit": "kromki",
+    "unit": "sztuki",
+    "description": "Średni bochenek można pokroić na ~12-16 kromek",
     "category": "pieczywo",
     "isVegetarian": true,
     "isVegan": true,
@@ -156,6 +199,15 @@
     "isIngredient": true
   },
   {
+    "id": "parmezan",
+    "name": "Parmezan",
+    "unit": "gramy",
+    "category": "sery",
+    "isVegetarian": true,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
     "id": "ogorek",
     "name": "Ogórek",
     "unit": "sztuki",
@@ -165,8 +217,17 @@
     "isIngredient": true
   },
   {
-    "id": "oliwki",
-    "name": "Oliwki",
+    "id": "oliwki_czarne",
+    "name": "Oliwki czarne",
+    "unit": "gramy",
+    "category": "warzywa",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "oliwki_zielone",
+    "name": "Oliwki zielone",
     "unit": "gramy",
     "category": "warzywa",
     "isVegetarian": true,
@@ -183,8 +244,17 @@
     "isIngredient": true
   },
   {
+    "id": "woda_butelkowana",
+    "name": "Woda butelkowana",
+    "description": "1,5L/osobę/dzień",
+    "unit": "sztuki",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
     "id": "papier_toaletowy",
     "name": "Papier toaletowy",
+    "description": "Rolka/osobę/4 dni",
     "unit": "rolki",
     "category": "środki czystości",
     "isIngredient": false
@@ -199,6 +269,7 @@
   {
     "id": "mydło",
     "name": "Mydło",
+    "description": "Mydło do mycia rąk, po sztuce do kingstona",
     "unit": "sztuki",
     "category": "środki czystości",
     "isIngredient": false
@@ -211,15 +282,9 @@
     "isIngredient": false
   },
   {
-    "id": "zapałki",
-    "name": "Zapałki",
-    "unit": "opakowania",
-    "category": "inne",
-    "isIngredient": false
-  },
-  {
     "id": "zapalniczka",
     "name": "Zapalniczka",
+    "description": "Zapalniczka do kuchenki, iskrownik rzadko działa :(",
     "unit": "sztuki",
     "category": "inne",
     "isIngredient": false
@@ -227,6 +292,7 @@
   {
     "id": "worki_na_śmieci_120L",
     "name": "Worki na śmieci 120L",
+    "description": "Worki na odpady z kuchni 1-2 dziennie",
     "unit": "sztuki",
     "category": "środki czystości",
     "isIngredient": false
@@ -234,8 +300,45 @@
   {
     "id": "worki_na_śmieci_30L",
     "name": "Worki na śmieci 30L",
+    "description": "Worki na śmieci do kingstona, ~ sztuka/kingston/2dni",
     "unit": "sztuki",
     "category": "środki czystości",
+    "isIngredient": false
+  },
+  {
+    "id": "zelki",
+    "name": "Żelki",
+    "unit": "sztuki",
+    "category": "przekąski",
+    "isIngredient": false
+  },
+  {
+    "id": "czekolada",
+    "name": "Czekolada",
+    "unit": "tabliczka",
+    "category": "przekąski",
+    "isIngredient": false
+  },
+  {
+    "id": "zupki_chinskie",
+    "name": "Zupki chińskie",
+    "description": "Nic tak nie podnosi morale jak zupka o 3 w nocy",
+    "unit": "sztuki",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "herbata",
+    "name": "Herbata",
+    "unit": "sztuki",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "kawa",
+    "name": "Kawa",
+    "unit": "gramy",
+    "category": "napoje",
     "isIngredient": false
   }
 ]
