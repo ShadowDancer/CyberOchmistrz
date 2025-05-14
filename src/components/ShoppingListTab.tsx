@@ -24,6 +24,7 @@ interface AggregatedItem {
 export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
   const [aggregatedList, setAggregatedList] = useState<{[key: string]: AggregatedItem[]}>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   useEffect(() => {
     const aggregateShoppingList = () => {
@@ -33,7 +34,8 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
       // 1. Add ingredients from recipes in the meal plan
       cruise.days.forEach(day => {
         day.recipes.forEach(recipe => {
-          const recipeData = getRecipeById(recipe.originalRecipeId);
+          // Use the recipe data stored in the cruise if available, otherwise fall back to the original recipe
+          const recipeData = recipe.recipeData;
           if (recipeData) {
             recipeData.ingredients.forEach(ingredientAmount => {
               const ingredient = getIngredientById(ingredientAmount.id);
@@ -123,6 +125,10 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
     return <div className="p-6 text-center">Przygotowywanie listy zakupów...</div>;
   }
 
+  const toggleTooltip = (itemId: string) => {
+    setActiveTooltip(activeTooltip === itemId ? null : itemId);
+  };
+
   // Generate tooltip content for an item
   const generateCalculationTooltip = (item: AggregatedItem) => {
     const recipeItems = item.sources.filter(s => s.type === 'recipe');
@@ -193,16 +199,24 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
               <h3 className="text-lg font-medium mb-3 pb-1 border-b">{category}</h3>
               <ul className="space-y-2">
                 {aggregatedList[category].map(item => (
-                  <li key={item.supply.id} className="py-1 flex flex-col group">
+                  <li key={item.supply.id} className="py-1 flex flex-col">
                     <div className="flex justify-between items-center">
                       <span className="font-medium">{item.supply.name}</span>
                       <div className="relative">
-                        <span className="text-gray-700 cursor-help border-b border-dotted border-gray-400">
+                        <span 
+                          className="text-gray-700 cursor-pointer border-b border-dotted border-gray-400"
+                          onClick={() => toggleTooltip(item.supply.id)}
+                        >
                           {item.amount} {item.supply.unit}
                         </span>
-                        <div className="opacity-0 w-256 bg-black text-white text-sm rounded p-2 absolute right-0 bottom-full mb-1 z-10 group-hover:opacity-100 transition-opacity whitespace-pre-wrap">
+                        <div className={`${activeTooltip === item.supply.id ? 'opacity-100 visible' : 'opacity-0 invisible'} 
+                          w-64 md:w-256 bg-black text-white text-sm rounded p-2 absolute right-0 bottom-full mb-1 z-10 
+                          transition-opacity whitespace-pre-wrap`}
+                        >
                           {generateCalculationTooltip(item)}
-                          <svg className="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"></polygon></svg>
+                          <svg className="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255">
+                            <polygon className="fill-current" points="0,0 127.5,127.5 255,0"></polygon>
+                          </svg>
                         </div>
                       </div>
                     </div>
@@ -220,7 +234,7 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
         <h3 className="text-md font-medium mb-2">Wskazówki</h3>
         <p className="text-sm text-gray-600">
           Ta lista zawiera wszystkie produkty zebrane z planu posiłków (skalowane do liczby załogantów) 
-          oraz dodatkowych zakupów. Najedź na produkt, aby zobaczyć szczegóły obliczeń. Możesz wydrukować tę stronę lub zapisać ją jako PDF.          
+          oraz dodatkowych zakupów. Najedź/stuknij na ilość produktu, aby zobaczyć szczegóły obliczeń. Możesz wydrukować tę stronę lub zapisać ją jako PDF.          
         </p>
       </div>
     </div>
