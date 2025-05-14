@@ -6,7 +6,7 @@ import { getCruiseById } from '../lib/cruiseData';
 import { useRouter } from 'next/navigation';
 import CruiseSuppliesTab from './CruiseSuppliesTab';
 import ShoppingListTab from './ShoppingListTab';
-import CruisePlanTab from './CruisePlanTab';
+import CruiseMenuTab from './CruiseMenuTab';
 import CruiseInfoTab from './CruiseInfoTab';
 
 interface CruiseDetailProps {
@@ -122,7 +122,7 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
         )}
 
         {activeTab === 'plan' && (
-          <CruisePlanTab 
+          <CruiseMenuTab 
             cruise={cruise}
             onCruiseChange={handleCruiseChange}
           />

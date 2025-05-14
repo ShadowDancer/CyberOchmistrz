@@ -1,20 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Cruise, Recipie } from '../types';
-import { addRecipeToCruiseDay, removeRecipeFromCruiseDay } from '../lib/cruiseData';
+import { 
+  addRecipeToCruiseDay, 
+  removeRecipeFromCruiseDay,
+  updateRecipeIngredientInCruise,
+  addIngredientToRecipeInCruise,
+  removeIngredientFromRecipeInCruise,
+  getCruiseById
+} from '../lib/cruiseData';
 import { getRecipeById } from '../lib/recipieData';
 import RecipeList from './RecipeList';
+import RecipeIngredientEditor from './RecipeIngredientEditor';
 
 interface CruisePlanTabProps {
   cruise: Cruise;
   onCruiseChange: () => void;
 }
 
-export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabProps) {
+export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabProps) {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedRecipie, setSelectedRecipie] = useState<string | null>(null);
   const [mobileView, setMobileView] = useState<'days' | 'details' | 'recipes'>('days');
+  const [editingRecipe, setEditingRecipe] = useState<{ dayNumber: number, recipeIndex: number, recipe: Recipie } | null>(null);
+
+  useEffect(() => {
+    if (selectedDay === null && cruise.days.length > 0) {
+      const firstDay = cruise.days[0].dayNumber;
+      setSelectedDay(firstDay);
+    }
+  }, [cruise.days, selectedDay]);
 
   const handleDaySelect = (dayNumber: number) => {
     setSelectedDay(dayNumber === selectedDay ? null : dayNumber);
@@ -29,7 +45,14 @@ export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabP
     
     // If a day is selected, add the recipie immediately
     if (selectedDay !== null && cruise) {
-      addRecipeToCruiseDay(cruise.id, selectedDay, recipie.id.toString());
+      // First get the full recipe details
+      const fullRecipe = getRecipeById(recipie.id.toString());
+      if (fullRecipe) {
+        // Create a deep copy of the recipe to store with the day
+        const recipeSnapshot = JSON.parse(JSON.stringify(fullRecipe));
+        // Add original recipe ID reference and the recipe copy to the cruise day
+        addRecipeToCruiseDay(cruise.id, selectedDay, recipie.id.toString(), recipeSnapshot);
+      }
       
       // Trigger parent refresh
       onCruiseChange();
@@ -41,13 +64,99 @@ export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabP
     }
   };
 
-  const handleRemoveRecipe = (dayNumber: number, recipeId: string) => {
+  const handleRemoveRecipe = (dayNumber: number, recipe: {originalRecipeId: string, recipeData?: Recipie}, recipeIndex: number) => {
     if (!cruise) return;
     
-    removeRecipeFromCruiseDay(cruise.id, dayNumber, recipeId);
+    removeRecipeFromCruiseDay(cruise.id, dayNumber, recipe.originalRecipeId, recipeIndex);
     
     // Trigger parent refresh
     onCruiseChange();
+  };
+
+  const handleEditIngredients = (dayNumber: number, recipe: {originalRecipeId: string, recipeData?: Recipie}, recipeIndex: number) => {
+    if (!recipe.recipeData) return;
+    
+    setEditingRecipe({
+      dayNumber,
+      recipeIndex,
+      recipe: recipe.recipeData
+    });
+  };
+
+  const handleIngredientUpdate = (dayNumber: number, recipeIndex: number, ingredientIndex: number, newAmount: number) => {
+    if (!cruise) return;
+    
+    updateRecipeIngredientInCruise(cruise.id, dayNumber, recipeIndex, ingredientIndex, newAmount);
+    onCruiseChange();
+    
+    // Force UI refresh by updating the editingRecipe state with updated recipe
+    if (editingRecipe) {
+      const updatedCruise = getCruiseById(cruise.id);
+      if (updatedCruise) {
+        const dayIndex = updatedCruise.days.findIndex((day) => day.dayNumber === dayNumber);
+        if (dayIndex !== -1) {
+          const updatedRecipe = updatedCruise.days[dayIndex].recipes[recipeIndex];
+          if (updatedRecipe && updatedRecipe.recipeData) {
+            setEditingRecipe({
+              ...editingRecipe,
+              recipe: updatedRecipe.recipeData
+            });
+          }
+        }
+      }
+    }
+  };
+
+  const handleIngredientAdd = (dayNumber: number, recipeIndex: number, ingredientId: string, amount: number) => {
+    if (!cruise) return;
+    
+    addIngredientToRecipeInCruise(cruise.id, dayNumber, recipeIndex, ingredientId, amount);
+    onCruiseChange();
+    
+    // Force UI refresh by updating the editingRecipe state with updated recipe
+    if (editingRecipe) {
+      const updatedCruise = getCruiseById(cruise.id);
+      if (updatedCruise) {
+        const dayIndex = updatedCruise.days.findIndex((day) => day.dayNumber === dayNumber);
+        if (dayIndex !== -1) {
+          const updatedRecipe = updatedCruise.days[dayIndex].recipes[recipeIndex];
+          if (updatedRecipe && updatedRecipe.recipeData) {
+            setEditingRecipe({
+              ...editingRecipe,
+              recipe: updatedRecipe.recipeData
+            });
+          }
+        }
+      }
+    }
+  };
+
+  const handleIngredientRemove = (dayNumber: number, recipeIndex: number, ingredientIndex: number) => {
+    if (!cruise) return;
+    
+    removeIngredientFromRecipeInCruise(cruise.id, dayNumber, recipeIndex, ingredientIndex);
+    onCruiseChange();
+    
+    // Force UI refresh by updating the editingRecipe state with updated recipe
+    if (editingRecipe) {
+      const updatedCruise = getCruiseById(cruise.id);
+      if (updatedCruise) {
+        const dayIndex = updatedCruise.days.findIndex((day) => day.dayNumber === dayNumber);
+        if (dayIndex !== -1) {
+          const updatedRecipe = updatedCruise.days[dayIndex].recipes[recipeIndex];
+          if (updatedRecipe && updatedRecipe.recipeData) {
+            setEditingRecipe({
+              ...editingRecipe,
+              recipe: updatedRecipe.recipeData
+            });
+          }
+        }
+      }
+    }
+  };
+
+  const closeIngredientEditor = () => {
+    setEditingRecipe(null);
   };
 
   const selectedDayData = selectedDay !== null 
@@ -126,11 +235,12 @@ export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabP
                 
                 {dayRecipes > 0 && (
                   <ul className="mt-2 text-xs md:text-sm text-gray-600">
-                    {day.recipes.slice(0, 2).map(recipeId => {
-                      const recipe = getRecipeById(recipeId);
+                    {day.recipes.slice(0, 2).map(recipe => {
+                      // First try to use the stored recipe data if available
+                      const recipeData = recipe.recipeData || getRecipeById(recipe.originalRecipeId);
                       return (
-                        <li key={recipeId} className="truncate">
-                          • {recipe ? recipe.name : `Przepis #${recipeId}`}
+                        <li key={recipe.originalRecipeId} className="truncate">
+                          • {recipeData ? recipeData.name : `Przepis #${recipe.originalRecipeId}`}
                         </li>
                       );
                     })}
@@ -176,29 +286,44 @@ export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabP
               <div className="space-y-3">
                 <h3 className="font-medium text-sm md:text-base">Zaplanowane przepisy:</h3>
                 <ul className="space-y-2">
-                  {selectedDayData.recipes.map(recipeId => {
-                    const recipe = getRecipeById(recipeId);
+                  {selectedDayData.recipes.map((recipe, index) => {
+                    // First try to use the stored recipe data if available
+                    const recipeData = recipe.recipeData || getRecipeById(recipe.originalRecipeId);
                     return (
                       <li 
-                        key={recipeId} 
-                        className="p-2 md:p-3 border rounded-lg flex justify-between items-center"
+                        key={`${recipe.originalRecipeId}-${index}`} 
+                        className="p-2 md:p-3 border rounded-lg"
                       >
-                        <div>
-                          <span className="font-medium text-sm md:text-base">
-                            {recipe ? recipe.name : `Przepis #${recipeId}`}
-                          </span>
-                          {recipe && (
-                            <p className="text-xs md:text-sm text-gray-600 mt-1">
-                              {recipe.mealType.join(', ')}
-                            </p>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="font-medium text-sm md:text-base">
+                                {recipeData ? recipeData.name : `Przepis #${recipe.originalRecipeId}`}
+                              </span>
+                              {recipeData && (
+                                <p className="text-xs md:text-sm text-gray-600 mt-1">
+                                  {recipeData.mealType.join(', ')}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          {recipeData && (
+                            <div className="flex justify-end gap-2 mt-1">
+                              <button
+                                onClick={() => handleEditIngredients(selectedDay, recipe, index)}
+                                className="text-blue-600 hover:text-blue-800 text-xs md:text-sm px-2 py-1 border border-blue-600 rounded"
+                              >
+                                Edytuj składniki
+                              </button>
+                              <button
+                                onClick={() => handleRemoveRecipe(selectedDay, recipe, index)}
+                                className="text-red-600 hover:text-red-800 text-xs md:text-sm px-2 py-1 border border-red-600 rounded"
+                              >
+                                Usuń
+                              </button>
+                            </div>
                           )}
                         </div>
-                        <button
-                          onClick={() => handleRemoveRecipe(selectedDay, recipeId)}
-                          className="text-red-600 hover:text-red-800 text-xs md:text-sm"
-                        >
-                          Usuń
-                        </button>
                       </li>
                     );
                   })}
@@ -249,6 +374,19 @@ export default function CruisePlanTab({ cruise, onCruiseChange }: CruisePlanTabP
           </div>
         )}
       </div>
+      
+      {/* Recipe ingredient editor modal */}
+      {editingRecipe && (
+        <RecipeIngredientEditor
+          recipe={editingRecipe.recipe}
+          dayNumber={editingRecipe.dayNumber}
+          recipeIndex={editingRecipe.recipeIndex}
+          onIngredientUpdate={handleIngredientUpdate}
+          onIngredientAdd={handleIngredientAdd}
+          onIngredientRemove={handleIngredientRemove}
+          onClose={closeIngredientEditor}
+        />
+      )}
     </div>
   );
 } 

@@ -1,57 +1,10 @@
-import { Cruise } from '../types';
+import {Cruise, Recipie} from '../types';
 
 const STORAGE_KEY = 'cyber-ochmistrz-cruises';
-
-// Function to check and update cruises to add the days property if missing
-function migrateCruises(): void {
-  if (typeof window === 'undefined') return;
-  
-  const storedCruises = localStorage.getItem(STORAGE_KEY);
-  if (!storedCruises) return;
-  
-  try {
-    const cruises = JSON.parse(storedCruises) as Cruise[];
-    let hasChanges = false;
-    
-    const updatedCruises = cruises.map(cruise => {
-      const updatedCruise = { ...cruise };
-      let needsUpdate = false;
-      
-      if (!updatedCruise.days) {
-        // Create days array based on cruise length
-        const days = Array.from({ length: updatedCruise.length }, (_, i) => ({
-          dayNumber: i + 1,
-          recipes: []
-        }));
-        updatedCruise.days = days;
-        needsUpdate = true;
-      }
-      
-      if (!updatedCruise.additionalSupplies) {
-        updatedCruise.additionalSupplies = [];
-        needsUpdate = true;
-      }
-      
-      if (needsUpdate) {
-        hasChanges = true;
-      }
-      
-      return updatedCruise;
-    });
-    
-    if (hasChanges) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedCruises));
-    }
-  } catch (error) {
-    console.error('Failed to migrate cruises:', error);
-  }
-}
 
 export function getCruises(): Cruise[] {
   if (typeof window === 'undefined') return [];
   
-  // Run migration to ensure all cruises have the days property
-  migrateCruises();
   
   const storedCruises = localStorage.getItem(STORAGE_KEY);
   return storedCruises ? JSON.parse(storedCruises) : [];
@@ -106,29 +59,33 @@ export function createNewCruise(name: string, length: number, crew: number): Cru
   };
 }
 
-export function addRecipeToCruiseDay(cruiseId: string, dayNumber: number, recipeId: string): void {
+export function addRecipeToCruiseDay(cruiseId: string, dayNumber: number, recipeId: string, recipeData?: Recipie): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
   
   const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
   if (dayIndex === -1) return;
   
-  // Add recipe if it doesn't already exist
-  if (!cruise.days[dayIndex].recipes.includes(recipeId)) {
-    cruise.days[dayIndex].recipes.push(recipeId);
-    saveCruise(cruise);
-  }
+  cruise.days[dayIndex].recipes.push({ 
+    originalRecipeId: recipeId,
+    recipeData: recipeData || undefined 
+  });
+  saveCruise(cruise);
 }
 
-export function removeRecipeFromCruiseDay(cruiseId: string, dayNumber: number, recipeId: string): void {
+export function removeRecipeFromCruiseDay(cruiseId: string, dayNumber: number, recipeId: string, recipeIndex: number): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
   
   const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
   if (dayIndex === -1) return;
   
-  cruise.days[dayIndex].recipes = cruise.days[dayIndex].recipes.filter(id => id !== recipeId);
-  saveCruise(cruise);
+  const recipies = cruise.days[dayIndex].recipes;
+  // Remove only the recipe at the specific index
+  if (recipeIndex >= 0 && recipeIndex < recipies.length && recipies[recipeIndex].originalRecipeId === recipeId) {
+    recipies.splice(recipeIndex, 1);
+    saveCruise(cruise);
+  }
 }
 
 // Function to add a supply to a cruise's additional supplies list
@@ -173,5 +130,92 @@ export function removeAdditionalSupplyFromCruise(cruiseId: string, supplyId: str
   if (!cruise || !cruise.additionalSupplies) return;
   
   cruise.additionalSupplies = cruise.additionalSupplies.filter(s => s.id !== supplyId);
+  saveCruise(cruise);
+}
+
+// Function to update an ingredient in a recipe that's part of a cruise
+export function updateRecipeIngredientInCruise(
+  cruiseId: string, 
+  dayNumber: number, 
+  recipeIndex: number, 
+  ingredientIndex: number, 
+  newAmount: number
+): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+  
+  const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
+  if (dayIndex === -1) return;
+  
+  // Get the recipe at the specified index
+  const recipe = cruise.days[dayIndex].recipes[recipeIndex];
+  if (!recipe || !recipe.recipeData) return;
+  
+  // Ensure ingredients array exists and the index is valid
+  if (!recipe.recipeData.ingredients || 
+      ingredientIndex < 0 || 
+      ingredientIndex >= recipe.recipeData.ingredients.length) {
+    return;
+  }
+  
+  // Update the ingredient amount
+  recipe.recipeData.ingredients[ingredientIndex].amount = newAmount;
+  saveCruise(cruise);
+}
+
+// Function to add a new ingredient to a recipe that's part of a cruise
+export function addIngredientToRecipeInCruise(
+  cruiseId: string,
+  dayNumber: number,
+  recipeIndex: number,
+  ingredientId: string,
+  amount: number
+): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+  
+  const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
+  if (dayIndex === -1) return;
+  
+  // Get the recipe at the specified index
+  const recipe = cruise.days[dayIndex].recipes[recipeIndex];
+  if (!recipe || !recipe.recipeData) return;
+  
+  // Ensure ingredients array exists
+  if (!recipe.recipeData.ingredients) {
+    recipe.recipeData.ingredients = [];
+  }
+  
+  // Add the new ingredient
+  recipe.recipeData.ingredients.push({ id: ingredientId, amount });
+  saveCruise(cruise);
+}
+
+// Function to remove an ingredient from a recipe that's part of a cruise
+export function removeIngredientFromRecipeInCruise(
+  cruiseId: string,
+  dayNumber: number,
+  recipeIndex: number,
+  ingredientIndex: number
+): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+  
+  const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
+  if (dayIndex === -1) return;
+  
+  // Get the recipe at the specified index
+  const recipe = cruise.days[dayIndex].recipes[recipeIndex];
+  if (!recipe || !recipe.recipeData) return;
+  
+  // Ensure ingredients array exists and the index is valid
+  if (!recipe.recipeData.ingredients || 
+      ingredientIndex < 0 || 
+      ingredientIndex >= recipe.recipeData.ingredients.length) {
+    return;
+  }
+  
+  // Remove the ingredient
+  recipe.recipeData.ingredients.splice(ingredientIndex, 1);
   saveCruise(cruise);
 } 

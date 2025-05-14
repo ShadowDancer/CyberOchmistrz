@@ -43,7 +43,10 @@ export interface CruiseSupply {
 
 export interface CruiseDay {
   dayNumber: number;
-  recipes: string[]; // Recipie IDs as strings
+  recipes: { 
+    originalRecipeId: string;
+    recipeData?: Recipie;  // Stored copy of the recipe at the time it was added to the cruise
+  }[];
 }
 
 export interface Cruise {

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Cruise, Supply } from '../types';
 import { getSupplyById, getIngredientById } from '../lib/supplyData';
-import { getRecipeById } from '../lib/recipieData';
 
 interface ShoppingListTabProps {
   cruise: Cruise;
@@ -33,10 +32,10 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
       
       // 1. Add ingredients from recipes in the meal plan
       cruise.days.forEach(day => {
-        day.recipes.forEach(recipeId => {
-          const recipe = getRecipeById(recipeId);
-          if (recipe) {
-            recipe.ingredients.forEach(ingredientAmount => {
+        day.recipes.forEach(recipe => {
+          const recipeData = getRecipeById(recipe.originalRecipeId);
+          if (recipeData) {
+            recipeData.ingredients.forEach(ingredientAmount => {
               const ingredient = getIngredientById(ingredientAmount.id);
               if (ingredient) {
                 // Adjust amount based on crew size
@@ -44,7 +43,7 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
                 const source: AmountSource = {
                   type: 'recipe',
                   amount: scaledAmount,
-                  recipeName: recipe.name,
+                  recipeName: recipeData.name,
                   dayNumber: day.dayNumber
                 };
                 
