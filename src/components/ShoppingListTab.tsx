@@ -26,6 +26,28 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
+  // Helper function to add items to the itemsMap
+  const addToItemsMap = (
+    itemsMap: Map<string, { supply: Supply, amount: number, sources: AmountSource[] }>,
+    supply: Supply,
+    amount: number,
+    source: AmountSource
+  ) => {
+    if (itemsMap.has(supply.id)) {
+      // Add to existing item
+      const existingItem = itemsMap.get(supply.id)!;
+      existingItem.amount += amount;
+      existingItem.sources.push(source);
+    } else {
+      // Add new item
+      itemsMap.set(supply.id, {
+        supply,
+        amount,
+        sources: [source]
+      });
+    }
+  };
+
   useEffect(() => {
     const aggregateShoppingList = () => {
       // Map to hold all items with their total amounts and sources
@@ -49,19 +71,7 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
                   dayNumber: day.dayNumber
                 };
                 
-                if (itemsMap.has(ingredient.id)) {
-                  // Add to existing item
-                  const existingItem = itemsMap.get(ingredient.id)!;
-                  existingItem.amount += scaledAmount;
-                  existingItem.sources.push(source);
-                } else {
-                  // Add new item
-                  itemsMap.set(ingredient.id, {
-                    supply: ingredient,
-                    amount: scaledAmount,
-                    sources: [source]
-                  });
-                }
+                addToItemsMap(itemsMap, ingredient, scaledAmount, source);
               }
             });
           }
@@ -78,19 +88,7 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
               amount: item.amount
             };
             
-            if (itemsMap.has(supply.id)) {
-              // Add to existing item
-              const existingItem = itemsMap.get(supply.id)!;
-              existingItem.amount += item.amount;
-              existingItem.sources.push(source);
-            } else {
-              // Add new item
-              itemsMap.set(supply.id, {
-                supply,
-                amount: item.amount,
-                sources: [source]
-              });
-            }
+            addToItemsMap(itemsMap, supply, item.amount, source);
           }
         });
       }
@@ -134,19 +132,24 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
     const recipeItems = item.sources.filter(s => s.type === 'recipe');
     const additionalItems = item.sources.filter(s => s.type === 'additional');
     
-    // Group by recipe
-    const recipeGroups: Record<string, {dayNumber: number, amount: number, originalAmount: number}[]> = {};
+    // Group by recipe and day
+    const recipeGroups: Record<string, Record<number, {count: number, amount: number, originalAmount: number}>> = {};
     recipeItems.forEach(source => {
-      if (source.recipeName) {
+      if (source.recipeName && source.dayNumber !== undefined) {
         if (!recipeGroups[source.recipeName]) {
-          recipeGroups[source.recipeName] = [];
+          recipeGroups[source.recipeName] = {};
         }
-        // Store both scaled and original amounts
-        recipeGroups[source.recipeName].push({
-          dayNumber: source.dayNumber!,
-          amount: source.amount,
-          originalAmount: source.amount / cruise.crew // Calculate original recipe amount before crew scaling
-        });
+        
+        if (!recipeGroups[source.recipeName][source.dayNumber]) {
+          recipeGroups[source.recipeName][source.dayNumber] = {
+            count: 0,
+            amount: 0,
+            originalAmount: source.amount / cruise.crew // Calculate original recipe amount before crew scaling
+          };
+        }
+        
+        recipeGroups[source.recipeName][source.dayNumber].count += 1;
+        recipeGroups[source.recipeName][source.dayNumber].amount += source.amount;
       }
     });
     
@@ -155,21 +158,16 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
     // Add recipe info
     if (Object.keys(recipeGroups).length > 0) {
       tooltipContent += `Z przepisów (załoga: ${cruise.crew} osób):\n`;
-      Object.entries(recipeGroups).forEach(([recipeName, occurrences]) => {
-        // Group by amount
-        const amountGroups: Record<string, number[]> = {};
-        occurrences.forEach(occ => {
-          const key = `${occ.originalAmount}:${occ.amount}`;
-          if (!amountGroups[key]) {
-            amountGroups[key] = [];
+      Object.entries(recipeGroups).forEach(([recipeName, dayEntries]) => {
+        Object.entries(dayEntries).forEach(([dayNumberStr, data]) => {
+          const dayNumber = parseInt(dayNumberStr);
+          const originalAmountPerRecipe = data.originalAmount / data.count;
+          
+          if (data.count === 1) {
+            tooltipContent += `- ${recipeName} (dzień ${dayNumber}): ${originalAmountPerRecipe} ${item.supply.unit} × ${cruise.crew} załogantów = ${data.amount} ${item.supply.unit}\n`;
+          } else {
+            tooltipContent += `- ${recipeName} (dzień ${dayNumber}, ${data.count}×): ${originalAmountPerRecipe} ${item.supply.unit} × ${data.count} × ${cruise.crew} załogantów = ${data.amount} ${item.supply.unit}\n`;
           }
-          amountGroups[key].push(occ.dayNumber);
-        });
-        
-        Object.entries(amountGroups).forEach(([amountKey, days]) => {
-          days.sort((a, b) => a - b);
-          const [originalAmount, scaledAmount] = amountKey.split(':').map(Number);
-          tooltipContent += `- ${recipeName} (dzień ${days.join(', ')}): ${originalAmount} ${item.supply.unit} × ${cruise.crew} załogantów = ${scaledAmount} ${item.supply.unit}\n`;
         });
       });
     }
