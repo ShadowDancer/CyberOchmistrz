@@ -28,6 +28,15 @@
     "isIngredient": true
   },
   {
+    "id": "pesto_czerwone",
+    "name": "Pesto czerwone",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
     "id": "mleko",
     "name": "Mleko",
     "unit": "mililitry",
@@ -69,6 +78,60 @@
     "id": "pieprz",
     "name": "Pieprz",
     "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "bazylia",
+    "name": "Bazylia",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "papryka_ostra",
+    "name": "Papryka ostra",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "papryka_slodka",
+    "name": "Papryka słodka",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "curry",
+    "name": "Przyprawa curry",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "tabasco",
+    "name": "Sos tabasco",
+    "unit": "mililitry",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "sriracha",
+    "name": "Sos sriracha",
+    "unit": "mililitry",
     "category": "przyprawy",
     "isVegetarian": true,
     "isVegan": true,
@@ -161,6 +224,16 @@
     "isIngredient": true
   },
   {
+    "id": "makaron_spaghetti",
+    "name": "Makaron Spaghetti",
+    "unit": "gramy",
+    "description": "~80g suchego makaronu/osobę/posiłek",
+    "category": "zboża",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
     "id": "tunczyk_w_sosie_wlasnym",
     "name": "Tuńczyk w sosie własnym",
     "unit": "gramy",
@@ -235,6 +308,24 @@
     "isIngredient": true
   },
   {
+    "id": "jablka",
+    "name": "Jabłka",
+    "unit": "kilogramy",
+    "category": "owoce",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "banany",
+    "name": "Banany",
+    "unit": "kilogramy",
+    "category": "owoce",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
     "id": "ser_feta",
     "name": "Ser Feta",
     "unit": "gramy",
@@ -245,9 +336,32 @@
   },
   {
     "id": "woda_butelkowana",
-    "name": "Woda butelkowana",
+    "name": "Woda butelkowana niegazowana",
     "description": "1,5L/osobę/dzień",
     "unit": "sztuki",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "woda_butelkowana_gazowana",
+    "name": "Woda butelkowana gazowana",
+    "description": "1,5L/osobę/dzień",
+    "unit": "sztuki",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "coca_cola",
+    "name": "Coca Cola",
+    "description": "Może być też Pepsi, Sprite, Mirinda",
+    "unit": "litry",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "sok_owocowy",
+    "name": "Sok owocowy",
+    "unit": "litry",
     "category": "napoje",
     "isIngredient": false
   },
@@ -267,6 +381,14 @@
     "isIngredient": false
   },
   {
+    "id": "folia_aluminiowa",
+    "name": "Folia aluminiowa",
+    "description": "Do pakowania na potem",
+    "unit": "sztuki",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
     "id": "mydło",
     "name": "Mydło",
     "description": "Mydło do mycia rąk, po sztuce do kingstona",
@@ -277,6 +399,20 @@
   {
     "id": "płyn_do_naczyń",
     "name": "Płyn do naczyń",
+    "unit": "sztuki",
+    "category": "środki czystości",
+    "isIngredient": false
+  },
+  {
+    "id": "scierki_do_naczyń",
+    "name": "Ścierki do naczyń",
+    "unit": "sztuki",
+    "category": "środki czystości",
+    "isIngredient": false
+  },
+  {
+    "id": "gabki_do_naczyń",
+    "name": "Gąbki do naczyń",
     "unit": "sztuki",
     "category": "środki czystości",
     "isIngredient": false
@@ -306,6 +442,14 @@
     "isIngredient": false
   },
   {
+    "id": "worki_do_lodu",
+    "name": "Woreczki do lodu",
+    "description": "Do zrobienia lodu do różnych rzeczy",
+    "unit": "sztuki",
+    "category": "inne",
+    "isIngredient": false
+  },
+  {
     "id": "zelki",
     "name": "Żelki",
     "unit": "sztuki",
@@ -322,23 +466,380 @@
   {
     "id": "zupki_chinskie",
     "name": "Zupki chińskie",
-    "description": "Nic tak nie podnosi morale jak zupka o 3 w nocy",
+    "description": "NIC tak nie podnosi morale jak zupka o 3 w nocy",
+    "unit": "sztuki",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "zupki_w_proszku",
+    "name": "Zupki w proszku",
+    "description": "Coś w stylu gorącego kubka",
     "unit": "sztuki",
     "category": "napoje",
     "isIngredient": false
   },
   {
     "id": "herbata",
-    "name": "Herbata",
-    "unit": "sztuki",
+    "name": "Herbata czarna",
+    "unit": "torebka",
     "category": "napoje",
     "isIngredient": false
+  },
+  {
+    "id": "herbata_owocowa",
+    "name": "Herbata owocowa",
+    "unit": "torebka",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "herbata_zielona",
+    "name": "Herbata zielona",
+    "unit": "torebka",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "syrop_malinowy",
+    "name": "Syrop malinowy do herbaty",
+    "unit": "litry",
+    "category": "przyprawy",
+    "isIngredient": false
+  },
+  {
+    "id": "cytryna",
+    "name": "Cytryna",
+    "unit": "sztuki",
+    "category": "owoce",
+    "isIngredient": true,
+    "isVegan": true,
+    "isVegetarian": true
+  },
+  {
+    "id": "limonka",
+    "name": "Limonka",
+    "unit": "sztuki",
+    "category": "owoce",
+    "isIngredient": true,
+    "isVegan": true,
+    "isVegetarian": true
+  },
+  {
+    "id": "imbir_korzen",
+    "name": "Korzeń imbiru",
+    "unit": "sztuki",
+    "category": "przyprawy",
+    "isIngredient": true,
+    "isVegan": true,
+    "isVegetarian": true
   },
   {
     "id": "kawa",
     "name": "Kawa",
     "unit": "gramy",
     "category": "napoje",
+    "isIngredient": false
+  },
+  {
+    "id": "sos_sojowy",
+    "name": "Sos sojowy",
+    "unit": "mililitry",
+    "category": "przyprawy",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "smietana_30",
+    "name": "Śmietana 30%",
+    "unit": "litry",
+    "category": "nabiał",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": false
+  },
+  {
+    "id": "tortellini",
+    "name": "Tortellini",
+    "unit": "kilogramy",
+    "category": "inne",
+    "isIngredient": true,
+    "isVegetarian": false,
+    "isVegan": false
+  },
+  {
+    "id": "kukurydza_puszka",
+    "name": "Kukurydza w puszcze",
+    "unit": "gramy",
+    "category": "warzywa",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "pieczarki_swieze",
+    "name": "Pieczarki swieże",
+    "unit": "gramy",
+    "category": "warzywa",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "passata_pomidorowa",
+    "name": "Passata pomidorowa",
+    "unit": "litry",
+    "category": "inne",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "baklazan_swiezy",
+    "name": "Bakłażan świeży",
+    "unit": "gramy",
+    "category": "warzywa",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "kurczak_filety",
+    "name": "Filet z kurczaka",
+    "unit": "kilogramy",
+    "category": "mięso",
+    "isIngredient": true,
+    "isVegetarian": false,
+    "isVegan": false
+  },
+  {
+    "id": "sos_indyjski",
+    "name": "Sos indyjski",
+    "unit": "mililitry",
+    "category": "przyprawy",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "sos_meksykanski",
+    "name": "Sos meksykański",
+    "unit": "mililitry",
+    "category": "przyprawy",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "kostka_rosolowa",
+    "name": "Kostka rosołowa",
+    "unit": "sztuki",
+    "category": "przyprawy",
+    "isIngredient": true,
+    "isVegetarian": false,
+    "isVegan": false
+  },
+  {
+    "id": "groszek_puszka",
+    "name": "Groszek w puszcze",
+    "unit": "gramy",
+    "category": "warzywa",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "pomidory_suszone_oliwa",
+    "name": "Pomidory szuszone w oliwie",
+    "unit": "gramy",
+    "category": "warzywa",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "tymianek",
+    "name": "Tymianek",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "serek_topiony",
+    "name": "Serek topiony",
+    "unit": "sztuki",
+    "category": "inne",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
+    "id": "ser_zolty",
+    "name": "Ser żółty",
+    "unit": "gramy",
+    "category": "sery",
+    "isVegetarian": true,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "wędlina_prozniowo",
+    "name": "Wędlina pakowana próżniowo",
+    "unit": "gramy",
+    "category": "mięso",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "hummus",
+    "name": "Hummus",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "serek_kanapkowy",
+    "name": "Serek kanapkowy (Hochland itd.)",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "wege_pasta",
+    "name": "Wege pasta do kanapek",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "majonez",
+    "name": "Majonez",
+    "unit": "gramy",
+    "category": "tłuszcze",
+    "isVegetarian": true,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "keczup",
+    "name": "Keczup",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "nutella",
+    "name": "Nutella",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "kielbasa",
+    "name": "Kiełbasa",
+    "unit": "gramy",
+    "category": "mięso",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "parowka",
+    "name": "Parówka",
+    "unit": "gramy",
+    "category": "mięso",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "platki_sniadaniowe",
+    "name": "Płatki śniadaniowe",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "wafle_ryzowe",
+    "name": "Wafle ryżowe",
+    "unit": "paczka",
+    "description": "Mogą służyć jako przekąska np. z Nutellą",
+    "category": "przekąski",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": false
+  },
+  {
+    "id": "wino_w_kartonie",
+    "name": "Wino w kartonie",
+    "description": "Koniecznie najtańsze w sklepie, takie do gotowania, idealne gdyby karton miał kranik",
+    "unit": "litry",
+    "category": "alkohol",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "kabanosy",
+    "name": "Kabanosy",
+    "unit": "kilogramy",
+    "category": "przekąski",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": false
+  },
+  {
+    "id": "paluszki",
+    "name": "Paluszki",
+    "unit": "gramy",
+    "category": "przekąski",
+    "isIngredient": false
+  },
+  {
+    "id": "orzeszki_solone",
+    "name": "Orzeszki solone",
+    "description": "Prażone, solone, itd.",
+    "unit": "gramy",
+    "category": "przekąski",
+    "isIngredient": false
+  },
+  {
+    "id": "chipsy",
+    "name": "Chipsy",
+    "unit": "gramy",
+    "category": "przekąski",
+    "isIngredient": false
+  },
+  {
+    "id": "kisiel",
+    "name": "Kisiel",
+    "description": "Saszetka mała - taka na jedną osobę",
+    "unit": "saszetki",
+    "category": "przekąski",
+    "isIngredient": false
+  },
+  {
+    "id": "budyn",
+    "name": "Budyń",
+    "description": "Saszetka mała - taka na jedną osobę",
+    "unit": "saszetki",
+    "category": "przekąski",
     "isIngredient": false
   }
 ]
