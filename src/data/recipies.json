@@ -3,10 +3,7 @@
     "id": "jajecznica",
     "name": "Jajecznica",
     "description": "Pyszna. Na jachcie może być konieczność robienia na 2 tury.",
-    "mealType": [
-      "śniadanie",
-      "kolacja"
-    ],
+    "mealType": ["śniadanie", "kolacja"],
     "difficulty": 3,
     "ingredients": [
       {
@@ -30,18 +27,14 @@
         "amount": 2
       }
     ],
-    "instructions": [
-      "Każdy umie zrobić jajecznicę."
-    ],
+    "instructions": ["Każdy umie zrobić jajecznicę."],
     "developedBy": "Przemysław Onak"
   },
   {
     "id": "pesto-z-tuczykiem",
     "name": "Pesto z tuńczykiem",
     "description": "Szybkie i dobre, łatwo zrobić nawet na fali. Zamiast zielonego pesto można użyć czerwonego.",
-    "mealType": [
-      "obiad"
-    ],
+    "mealType": ["obiad"],
     "difficulty": 2,
     "ingredients": [
       {
@@ -67,9 +60,7 @@
     "id": "pesto-z-tuczykiem-i-parmezanem",
     "name": "Pesto z tuńczykiem i parmezanem",
     "description": "Szybkie i dobre, łatwo zrobić nawet na fali. Zamiast zielonego pesto można użyć czerwonego. Zamiast Parmezanu można użyć Grana Padano lub innego startego sera.",
-    "mealType": [
-      "obiad"
-    ],
+    "mealType": ["obiad"],
     "difficulty": 2,
     "ingredients": [
       {
@@ -95,5 +86,224 @@
       "Przed podaniem posypać parmezanem"
     ],
     "developedBy": "Przemysław Onak"
+  },
+  {
+    "id": "carbonara",
+    "name": "Spaghetti Carbonara",
+    "description": "Klasyczny włoski przepis na kremowy makaron bez dodatku śmietany. Kluczem jest odpowiednie połączenie gorącego makaronu z masą jajeczną.",
+    "mealType": ["obiad"],
+    "difficulty": 3,
+    "ingredients": [
+      {
+        "id": "makaron_spaghetti",
+        "amount": 90
+      },
+      {
+        "id": "boczek",
+        "amount": 75
+      },
+      {
+        "id": "jajka",
+        "amount": 2
+      },
+      {
+        "id": "parmezan",
+        "amount": 25
+      },
+      {
+        "id": "pieprz",
+        "amount": 2
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      }
+    ],
+    "instructions": [
+      "Makaron ugotuj al dente w dobrze osolonej wodzie.",
+      "W międzyczasie pokrój boczek w drobną kostkę i podsmaż na patelni na małym ogniu, aż stanie się chrupiący.",
+      "W misce roztrzep jajka (lub same żółtka dla bardziej kremowej konsystencji) z większością startego parmezanu i dużą ilością świeżo mielonego pieprzu.",
+      "Odcedź makaron, ale zachowaj około pół szklanki wody z gotowania.",
+      "Gorący makaron przełóż bezpośrednio na patelnię z boczkiem i wymieszaj.",
+      "Zdejmij patelnię z ognia, wlej masę jajeczną i energicznie mieszaj, aby jajka stworzyły kremowy sos, a nie jajecznicę. Jeśli sos jest zbyt gęsty, dodaj odrobinę zachowanej wody z makaronu.",
+      "Podawaj natychmiast, posypane resztą parmezanu i dodatkową porcją pieprzu."
+    ],
+    "developedBy": "Na podstawie przepisu AniaGotuje.pl (https://aniagotuje.pl/przepis/carbonara)"
+  },
+  {
+    "id": "kurczak-curry",
+    "name": "Kurczak w sosie curry z ryżem",
+    "description": "Szybki i aromatyczny obiad w stylu indyjskim. Soczyste kawałki kurczaka w kremowym sosie z mleka kokosowego z pomidorami i przyprawami.",
+    "mealType": ["obiad"],
+    "difficulty": 2,
+    "ingredients": [
+      {
+        "id": "kurczak_filety",
+        "amount": 100
+      },
+      {
+        "id": "mleko_kokosowe",
+        "amount": 67
+      },
+      {
+        "id": "passata_pomidorowa",
+        "amount": 67
+      },
+      {
+        "id": "ryz",
+        "amount": 80
+      },
+      {
+        "id": "cebula",
+        "amount": 0.16
+      },
+      {
+        "id": "czosnek",
+        "amount": 0.5
+      },
+      {
+        "id": "curry",
+        "amount": 2
+      },
+      {
+        "id": "olej",
+        "amount": 5
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      },
+      {
+        "id": "pieprz",
+        "amount": 1
+      }
+    ],
+    "instructions": [
+      "Ryż ugotuj w osolonej wodzie zgodnie z instrukcją na opakowaniu.",
+      "Pierś z kurczaka umyj, osusz i pokrój w kostkę.",
+      "Cebulę i czosnek drobno posiekaj.",
+      "Na patelni rozgrzej olej, zeszklij cebulę z czosnkiem.",
+      "Dodaj kurczaka i smaż przez około 3 minuty, aż się zarumieni.",
+      "Wsyp przyprawę curry i smaż jeszcze przez minutę, ciągle mieszając.",
+      "Dodaj pomidory (passatę), mleko kokosowe, sól i pieprz. Wymieszaj i zagotuj.",
+      "Gotuj na średnim ogniu bez przykrycia przez około 10-15 minut, aż sos lekko zgęstnieje.",
+      "Podawaj z ugotowanym ryżem."
+    ],
+    "developedBy": "Na podstawie przepisu AniaGotuje.pl (https://aniagotuje.pl/przepis/kurczak-curry)"
+  },
+  {
+    "id": "chili-con-carne",
+    "name": "Chili con carne",
+    "description": "Klasyczne, sycące danie kuchni meksykańskiej. Aromatyczne, pikantne i rozgrzewające, idealne na obiad lub kolację.",
+    "mealType": ["obiad", "kolacja"],
+    "difficulty": 3,
+    "ingredients": [
+      {
+        "id": "mieso_mielone_wolowe",
+        "amount": 125
+      },
+      {
+        "id": "passata_pomidorowa",
+        "amount": 125
+      },
+      {
+        "id": "fasola_czerwona_puszka",
+        "amount": 100
+      },
+      {
+        "id": "kukurydza_puszka",
+        "amount": 50
+      },
+      {
+        "id": "papryka",
+        "amount": 0.5
+      },
+      {
+        "id": "cebula",
+        "amount": 0.25
+      },
+      {
+        "id": "czosnek",
+        "amount": 1
+      },
+      {
+        "id": "olej",
+        "amount": 5
+      },
+      {
+        "id": "papryka_ostra",
+        "amount": 1
+      },
+      {
+        "id": "papryka_slodka",
+        "amount": 1
+      },
+      {
+        "id": "kmin_rzymski",
+        "amount": 1
+      }
+    ],
+    "instructions": [
+      "Cebulę i czosnek drobno posiekaj. Paprykę pokrój w kostkę.",
+      "Na patelni lub w garnku rozgrzej oliwę i zeszklij cebulę z czosnkiem.",
+      "Dodaj wszystkie suche przyprawy (papryki, kmin) i smaż przez minutę, mieszając.",
+      "Dodaj mięso mielone i smaż na większym ogniu, rozdrabniając je łopatką, aż całkowicie zmieni kolor.",
+      "Wlej passatę pomidorową i około 50 ml wody. Dodaj pokrojoną paprykę.",
+      "Zagotuj, a następnie zmniejsz ogień i duś pod przykryciem przez około 20-30 minut.",
+      "Dodaj odsączoną fasolę i kukurydzę. Gotuj razem jeszcze przez 10 minut.",
+      "Dopraw do smaku solą i pieprzem. Podawaj z ryżem, plackami tortilla lub guacamole."
+    ],
+    "developedBy": "Na podstawie przepisu AniaGotuje.pl (https://aniagotuje.pl/przepis/chili-con-carne)"
+  },
+  {
+    "id": "makaron-szpinak-feta",
+    "name": "Makaron ze szpinakiem i fetą",
+    "description": "Szybkie i kremowe danie, które przygotujesz w czasie gotowania makaronu. Idealne na szybki obiad lub kolację.",
+    "mealType": ["obiad", "kolacja"],
+    "difficulty": 2,
+    "ingredients": [
+      {
+        "id": "makaron",
+        "amount": 90
+      },
+      {
+        "id": "szpinak_mrozony",
+        "amount": 150
+      },
+      {
+        "id": "ser_feta",
+        "amount": 70
+      },
+      {
+        "id": "smietana_30",
+        "amount": 50
+      },
+      {
+        "id": "czosnek",
+        "amount": 1
+      },
+      {
+        "id": "maslo",
+        "amount": 10
+      },
+      {
+        "id": "galka_muszkatalowa",
+        "amount": 1
+      },
+      {
+        "id": "pieprz",
+        "amount": 1
+      }
+    ],
+    "instructions": [
+      "Makaron ugotuj al dente w osolonej wodzie.",
+      "Na głębokiej patelni rozpuść masło i zeszklij na nim drobno posiekany czosnek.",
+      "Dodaj mrożony szpinak i duś, aż cała woda odparuje.",
+      "Wlej śmietanę, dodaj pokruszoną fetę i przyprawy (gałkę muszkatołową i pieprz).",
+      "Mieszaj i podgrzewaj na małym ogniu, aż ser się rozpuści i powstanie kremowy sos.",
+      "Ugotowany makaron odcedź i dodaj bezpośrednio na patelnię z sosem. Dokładnie wymieszaj.",
+      "Podawaj od razu, opcjonalnie posypane dodatkową fetą lub parmezanem."
+    ],
+    "developedBy": "Na podstawie przepisu AniaGotuje.pl (https://aniagotuje.pl/przepis/makaron-ze-szpinakiem-i-feta)"
   }
 ]

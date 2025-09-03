@@ -124,6 +124,15 @@
     "isIngredient": true
   },
   {
+    "id": "mleko_kokosowe",
+    "name": "Mleko kokosowe",
+    "unit": "mililitry",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
     "id": "passata_pomidorowa",
     "name": "Passata pomidorowa",
     "unit": "litry",
@@ -189,7 +198,7 @@
   {
     "id": "tortellini",
     "name": "Tortellini",
-    "unit": "kilogramy",
+    "unit": "gramy",
     "category": "inne",
     "isIngredient": true,
     "isVegetarian": false,
@@ -221,6 +230,15 @@
     "isIngredient": false
   },
   {
+    "id": "boczek",
+    "name": "Boczek wędzony",
+    "unit": "gramy",
+    "category": "mięso",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
     "id": "kielbasa",
     "name": "Kiełbasa",
     "unit": "gramy",
@@ -232,7 +250,7 @@
   {
     "id": "kurczak_filety",
     "name": "Filet z kurczaka",
-    "unit": "kilogramy",
+    "unit": "gramy",
     "category": "mięso",
     "isIngredient": true,
     "isVegetarian": false,
@@ -241,6 +259,15 @@
   {
     "id": "parowka",
     "name": "Parówka",
+    "unit": "gramy",
+    "category": "mięso",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "mieso_mielone_wolowe",
+    "name": "Mięso mielone wołowe",
     "unit": "gramy",
     "category": "mięso",
     "isVegetarian": false,
@@ -692,6 +719,24 @@
     "isVegan": true
   },
   {
+    "id": "kmin_rzymski",
+    "name": "Kmin rzymski",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "galka_muszkatalowa",
+    "name": "Gałka muszkatołowa",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
     "id": "tunczyk_w_sosie_wlasnym",
     "name": "Tuńczyk w sosie własnym",
     "unit": "gramy",
@@ -878,6 +923,15 @@
     "id": "ziemniaki",
     "name": "Ziemniaki",
     "unit": "sztuki",
+    "category": "warzywa",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "szpinak_mrozony",
+    "name": "Szpinak mrożony",
+    "unit": "gramy",
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
