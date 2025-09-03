@@ -1077,5 +1077,32 @@
     "unit": "sztuki",
     "category": "środki czystości",
     "isIngredient": false
+  },
+  {
+    "id": "ryz_do_risotto",
+    "name": "Ryż do risotto (Arborio)",
+    "unit": "gramy",
+    "category": "zboża",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "cukinia",
+    "name": "Cukinia",
+    "unit": "sztuki",
+    "category": "warzywa",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "ser_gorgonzola",
+    "name": "Ser gorgonzola",
+    "unit": "gramy",
+    "category": "sery",
+    "isVegetarian": true,
+    "isVegan": false,
+    "isIngredient": true
   }
 ]

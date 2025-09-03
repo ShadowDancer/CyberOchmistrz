@@ -31,6 +31,51 @@
     "developedBy": "Przemysław Onak"
   },
   {
+    "id": "jajecznica-z-kielbasa",
+    "name": "Jajecznica z kiełbasą",
+    "description": "Pożywna i klasyczna wersja jajecznicy, idealna na solidne śniadanie lub szybką kolację.",
+    "mealType": ["śniadanie", "kolacja"],
+    "difficulty": 2,
+    "ingredients": [
+      {
+        "id": "jajka",
+        "amount": 3
+      },
+      {
+        "id": "kielbasa",
+        "amount": 75
+      },
+      {
+        "id": "cebula",
+        "amount": 0.25
+      },
+      {
+        "id": "maslo",
+        "amount": 10
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      },
+      {
+        "id": "pieprz",
+        "amount": 1
+      },
+      {
+        "id": "chleb",
+        "amount": 0.3
+      }
+    ],
+    "instructions": [
+      "Kiełbasę i cebulę pokrój w drobną kostkę.",
+      "Na patelni rozgrzej masło, zeszklij cebulę, a następnie dodaj kiełbasę i smaż do zarumienienia.",
+      "W misce roztrzep jajka z solą i pieprzem.",
+      "Wlej masę jajeczną na patelnię i smaż, mieszając, aż jajka osiągną pożądaną konsystencję.",
+      "Podawaj natychmiast, najlepiej ze świeżym pieczywem."
+    ],
+    "developedBy": "Na podstawie przepisu MniamMniam.com"
+  },
+  {
     "id": "pesto-z-tuczykiem",
     "name": "Pesto z tuńczykiem",
     "description": "Szybkie i dobre, łatwo zrobić nawet na fali. Zamiast zielonego pesto można użyć czerwonego.",
@@ -305,5 +350,281 @@
       "Podawaj od razu, opcjonalnie posypane dodatkową fetą lub parmezanem."
     ],
     "developedBy": "Na podstawie przepisu AniaGotuje.pl (https://aniagotuje.pl/przepis/makaron-ze-szpinakiem-i-feta)"
+  },
+  {
+    "id": "szakszuka",
+    "name": "Szakszuka",
+    "description": "Aromatyczne i sycące danie śniadaniowe prosto z Bliskiego Wschodu. Jajka gotowane w gęstym, pikantnym sosie pomidorowym z papryką.",
+    "mealType": ["śniadanie"],
+    "difficulty": 2,
+    "ingredients": [
+      {
+        "id": "jajka",
+        "amount": 2
+      },
+      {
+        "id": "pomidory_krojone_puszka",
+        "amount": 200
+      },
+      {
+        "id": "cebula",
+        "amount": 0.25
+      },
+      {
+        "id": "czosnek",
+        "amount": 1
+      },
+      {
+        "id": "olej",
+        "amount": 10
+      },
+      {
+        "id": "papryka_slodka",
+        "amount": 1
+      },
+      {
+        "id": "papryka_ostra",
+        "amount": 1
+      },
+      {
+        "id": "kmin_rzymski",
+        "amount": 1
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      },
+      {
+        "id": "pieprz",
+        "amount": 1
+      }
+    ],
+    "instructions": [
+      "Na patelni rozgrzej oliwę, dodaj pokrojoną w kostkę cebulę. Smaż, aż warzywa zmiękną.",
+      "Dodaj posiekany czosnek oraz wszystkie przyprawy (paprykę słodką, ostrą, kmin rzymski) i smaż jeszcze przez minutę.",
+      "Wlej na patelnię pomidory z puszki, dopraw solą i pieprzem. Wymieszaj i duś na małym ogniu przez około 10 minut, aż sos zgęstnieje.",
+      "Zrób w sosie dwa wgłębienia i wbij w nie jajka.",
+      "Przykryj patelnię i gotuj przez 5-7 minut, aż białka się zetną, a żółtka pozostaną płynne.",
+      "Podawaj natychmiast, prosto z patelni, najlepiej ze świeżym pieczywem."
+    ],
+    "developedBy": "Na podstawie przepisu AniaGotuje.pl (https://aniagotuje.pl/przepis/szakszuka)"
+  },
+  {
+    "id": "owsianka",
+    "name": "Owsianka",
+    "description": "Klasyczne, pożywne i zdrowe śniadanie. Idealny sposób na rozpoczęcie dnia, który można dowolnie modyfikować ulubionymi dodatkami.",
+    "mealType": ["śniadanie"],
+    "difficulty": 1,
+    "ingredients": [
+      {
+        "id": "platki_owsiane",
+        "amount": 50
+      },
+      {
+        "id": "mleko",
+        "amount": 125
+      },
+      {
+        "id": "woda_butelkowana",
+        "amount": 125
+      },
+      {
+        "id": "banany",
+        "amount": 0.5
+      },
+      {
+        "id": "jablka",
+        "amount": 0.5
+      },
+      {
+        "id": "miod",
+        "amount": 10
+      },
+      {
+        "id": "orzechy_wloskie",
+        "amount": 15
+      }
+    ],
+    "instructions": [
+      "Płatki owsiane wsyp do garnka, zalej mlekiem i wodą. Gotuj na małym ogniu, często mieszając.",
+      "W międzyczasie zetrzyj jabłko na tarce o grubych oczkach, a banana pokrój w plasterki. Orzechy posiekaj.",
+      "Gdy owsianka zacznie gęstnieć (po około 5-7 minutach), dodaj starte jabłko i gotuj jeszcze przez 2-3 minuty.",
+      "Gotową owsiankę przełóż do miseczki.",
+      "Dodaj plasterki banana, posiekane orzechy i polej miodem.",
+      "Podawaj od razu, na ciepło."
+    ],
+    "developedBy": "Na podstawie przepisu AniaGotuje.pl (https://aniagotuje.pl/przepis/owsianka)"
+  },
+  {
+    "id": "risotto-kurczak-warzywa",
+    "name": "Risotto z kurczakiem i warzywami",
+    "description": "Kremowe i sycące risotto z kawałkami kurczaka, kolorową papryką i cukinią. Dodatek sera gorgonzola nadaje potrawie wyrazistego smaku.",
+    "mealType": ["obiad"],
+    "difficulty": 4,
+    "ingredients": [
+      {
+        "id": "kurczak_filety",
+        "amount": 125
+      },
+      {
+        "id": "ryz_do_risotto",
+        "amount": 80
+      },
+      {
+        "id": "papryka",
+        "amount": 0.5
+      },
+      {
+        "id": "cukinia",
+        "amount": 0.5
+      },
+      {
+        "id": "cebula",
+        "amount": 0.25
+      },
+      {
+        "id": "czosnek",
+        "amount": 1
+      },
+      {
+        "id": "kostka_rosolowa",
+        "amount": 1
+      },
+      {
+        "id": "parmezan",
+        "amount": 30
+      },
+      {
+        "id": "ser_gorgonzola",
+        "amount": 25
+      },
+      {
+        "id": "maslo",
+        "amount": 15
+      },
+      {
+        "id": "oliwa",
+        "amount": 10
+      },
+      {
+        "id": "tymianek",
+        "amount": 1
+      }
+    ],
+    "instructions": [
+      "Przygotuj bulion: w garnku zagotuj 500 ml wody z kostką rosołową.",
+      "W drugim, szerokim garnku na oliwie zeszklij posiekaną cebulę i czosnek.",
+      "Dodaj masło oraz pokrojonego w kostkę kurczaka. Dopraw solą i pieprzem, smaż około 3 minuty.",
+      "Wsyp ryż i smaż przez minutę, ciągle mieszając.",
+      "Dodaj pokrojoną w kostkę paprykę i cukinię, smaż razem przez minutę, dodając przyprawy (tymianek).",
+      "Wlewaj po jednej chochli gorącego bulionu, gotując bez przykrycia i mieszając od czasu do czasu. Kolejną porcję bulionu dodawaj, gdy poprzednia zostanie wchłonięta przez ryż.",
+      "Gotuj przez około 15-17 minut, aż ryż będzie al dente.",
+      "Zdejmij risotto z ognia, dodaj starty parmezan, pokrojoną gorgonzolę i łyżkę masła. Energicznie wymieszaj do uzyskania kremowej konsystencji.",
+      "Podawaj natychmiast, posypane dodatkowym parmezanem."
+    ],
+    "developedBy": "Na podstawie przepisu KwestiaSmaku.com"
+  },
+  {
+    "id": "nalesniki-z-dzemem",
+    "name": "Naleśniki z dżemem",
+    "description": "Klasyczne, cienkie naleśniki, idealne na słodki obiad, deser lub kolację. Proste do wykonania i zawsze smaczne.",
+    "mealType": ["obiad", "deser", "kolacja"],
+    "difficulty": 2,
+    "ingredients": [
+      {
+        "id": "maka",
+        "amount": 100
+      },
+      {
+        "id": "jajka",
+        "amount": 0.3
+      },
+      {
+        "id": "mleko",
+        "amount": 125
+      },
+      {
+        "id": "woda_butelkowana",
+        "amount": 125
+      },
+      {
+        "id": "cukier",
+        "amount": 10
+      },
+      {
+        "id": "olej",
+        "amount": 15
+      },
+      {
+        "id": "dzem",
+        "amount": 30
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      }
+    ],
+    "instructions": [
+      "Do miski wsyp mąkę, dodaj jajko, mleko, wodę, cukier i szczyptę soli.",
+      "Zmiskuj wszystkie składniki na gładkie, lejące ciasto bez grudek. Odstaw ciasto na około 15 minut.",
+      "Rozgrzej patelnię z niewielką ilością oleju.",
+      "Wylewaj porcje ciasta na patelnię, rozprowadzając je cienką warstwą po całej powierzchni.",
+      "Smaż naleśniki z obu stron na złoty kolor.",
+      "Gotowe naleśniki posmaruj dżemem i złóż w trójkąty lub zroluj.",
+      "Podawaj na ciepło."
+    ],
+    "developedBy": "Na podstawie przepisu DorotaKaminska.pl"
+  },
+  {
+    "id": "szwedzki-stol-kanapki",
+    "name": "Szwedzki stół / Kolacja kanapkowa",
+    "description": "Zestaw składników do samodzielnego przygotowania kanapek. Idealne rozwiązanie na luźną, integracyjną kolację, gdzie każdy może skomponować coś dla siebie.",
+    "mealType": ["kolacja"],
+    "difficulty": 1,
+    "ingredients": [
+      {
+        "id": "chleb",
+        "amount": 0.3
+      },
+      {
+        "id": "maslo",
+        "amount": 10
+      },
+      {
+        "id": "wedlina_prozniowo",
+        "amount": 50
+      },
+      {
+        "id": "ser_zolty",
+        "amount": 50
+      },
+      {
+        "id": "pomidor",
+        "amount": 1
+      },
+      {
+        "id": "ogorek",
+        "amount": 1
+      },
+      {
+        "id": "cebula",
+        "amount": 0.2
+      },
+      {
+        "id": "serek_topiony",
+        "amount": 2
+      },
+      {
+        "id": "dzem",
+        "amount": 50
+      }
+    ],
+    "instructions": [
+      "Przygotowanie składników: Chleb pokrój na kromki. Warzywa (pomidory, ogórki, cebulę) umyj i pokrój w plasterki.",
+      "Aranżacja stołu: Na stół wyłóż wszystkie składniki na osobnych talerzach lub w miseczkach: pokrojony chleb, masło, plastry wędliny i sera żółtego, pokrojone warzywa, serki topione oraz dżem.",
+      "Komponowanie kanapek: Każdy z uczestników kolacji samodzielnie komponuje kanapki według własnych upodobań, smarując chleb masłem lub serkiem topionym i dobierając ulubione dodatki.",
+      "Propozycje połączeń: Klasyczna kanapka z masłem, szynką, serem i pomidorem. Wersja wegetariańska z serem, ogórkiem i cebulą. Kanapka na słodko z dżemem."
+    ],
+    "developedBy": "Na podstawie dostępnych składników"
   }
 ]
