@@ -19,16 +19,6 @@ export function getIngredientById(id: string): Ingredient | undefined {
   return getIngredients().find(ingredient => ingredient.id === id);
 }
 
-export function getIngredientName(id: string): string {
-  const ingredient = getIngredientById(id);
-  return ingredient ? ingredient.name : 'Unknown Ingredient';
-}
-
-export function getIngredientUnit(id: string): string {
-  const ingredient = getIngredientById(id);
-  return ingredient ? ingredient.unit : '';
-}
-
 export function getRecipieIngredients(ingredients: IngredientAmount[]): (IngredientAmount & Ingredient)[] {
  
   return ingredients.map(ing => {
@@ -68,13 +58,3 @@ export function isRecipieVegan(dish: Recipie): boolean {
   return ingredients.every(ing => ing.isVegan);
 }
 
-export function getIngredientsByCategory(): Record<string, Ingredient[]> {
-  const ingredients = getIngredients();
-  return ingredients.reduce((acc, ingredient) => {
-    if (!acc[ingredient.category]) {
-      acc[ingredient.category] = [];
-    }
-    acc[ingredient.category].push(ingredient);
-    return acc;
-  }, {} as Record<string, Ingredient[]>);
-} 
