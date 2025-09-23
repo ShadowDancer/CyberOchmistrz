@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Cruise } from '../types';
-import { getCruiseById } from '../lib/cruiseData';
+import { getCruiseById } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import CruiseSuppliesTab from './CruiseSuppliesTab';
 import ShoppingListTab from './ShoppingListTab';

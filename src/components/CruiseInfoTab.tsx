@@ -1,7 +1,7 @@
 'use client';
 
 import { Cruise } from '../types';
-import { deleteCruise } from '../lib/cruiseData';
+import { deleteCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 
 interface CruiseInfoTabProps {

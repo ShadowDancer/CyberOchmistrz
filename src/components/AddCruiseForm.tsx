@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createNewCruise, saveCruise } from '../lib/cruiseData';
+import { createNewCruise, saveCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 
 export default function AddCruiseForm() {

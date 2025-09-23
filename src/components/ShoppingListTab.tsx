@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Cruise, Supply } from '../types';
-import { getSupplyById, getIngredientById } from '../lib/supplyData';
+import { getSupplyById, getIngredientById } from '../model/supplyData';
 
 interface ShoppingListTabProps {
   cruise: Cruise;

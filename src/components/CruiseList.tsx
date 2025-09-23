@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Cruise } from '../types';
-import { getCruises } from '../lib/cruiseData';
+import { getCruises } from '../model/cruiseData';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 

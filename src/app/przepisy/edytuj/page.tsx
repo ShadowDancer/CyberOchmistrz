@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Recipie } from '@/types';
 import NewRecipeForm from '@/components/NewRecipeForm';
-import { getRecipeById } from '@/lib/recipieData';
+import { getRecipeById } from '@/model/recipieData';
 
 function EditRecipeForm(){
   const searchParams = useSearchParams();

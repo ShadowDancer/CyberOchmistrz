@@ -6,8 +6,8 @@ import {
   addAdditionalSupplyToCruise,
   updateAdditionalSupplyAmount,
   removeAdditionalSupplyFromCruise
-} from '../lib/cruiseData';
-import { getSuppliesByType, getSupplyById } from '../lib/supplyData';
+} from '../model/cruiseData';
+import { getSuppliesByType, getSupplyById } from '../model/supplyData';
 
 interface CruiseSuppliesTabProps {
   cruise: Cruise;

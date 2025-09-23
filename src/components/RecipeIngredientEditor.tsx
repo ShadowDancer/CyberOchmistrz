@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Recipie } from '../types';
-import { getRecipieIngredients } from '../lib/recipieData';
-import { getIngredients } from '../lib/supplyData';
+import { getRecipieIngredients } from '../model/recipieData';
+import { getIngredients } from '../model/supplyData';
 
 interface RecipeIngredientEditorProps {
   recipe: Recipie;

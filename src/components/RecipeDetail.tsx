@@ -1,7 +1,7 @@
 "use client";
 
 import { Recipie } from '@/types';
-import { getRecipieIngredients, isRecipieVegetarian, isRecipieVegan } from '@/lib/recipieData';
+import { getRecipieIngredients, isRecipieVegetarian, isRecipieVegan } from '@/model/recipieData';
 import Link from 'next/link';
 
 interface RecipeDetailProps {

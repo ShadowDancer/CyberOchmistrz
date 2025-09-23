@@ -1,6 +1,6 @@
 "use client";
 
-import { getRecipies, isRecipieVegetarian, isRecipieVegan } from '@/lib/recipieData';
+import { getRecipies, isRecipieVegetarian, isRecipieVegan } from '@/model/recipieData';
 import { Recipie, MealType } from '@/types';
 import { useState } from 'react';
 

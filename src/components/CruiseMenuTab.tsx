@@ -9,8 +9,8 @@ import {
   addIngredientToRecipeInCruise,
   removeIngredientFromRecipeInCruise,
   getCruiseById
-} from '../lib/cruiseData';
-import { getRecipeById } from '../lib/recipieData';
+} from '../model/cruiseData';
+import { getRecipeById } from '../model/recipieData';
 import RecipeList from './RecipeList';
 import RecipeIngredientEditor from './RecipeIngredientEditor';
 

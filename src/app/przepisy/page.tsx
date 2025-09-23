@@ -5,7 +5,7 @@ import Link from 'next/link';
 import RecipeList from '@/components/RecipeList';
 import RecipeDetail from '@/components/RecipeDetail';
 import { Recipie } from '@/types';
-import { getRecipies } from '@/lib/recipieData';
+import { getRecipies } from '@/model/recipieData';
 
 export default function RecipesPage() {
   const [selectedDish, setSelectedDish] = useState<Recipie | null>(null);

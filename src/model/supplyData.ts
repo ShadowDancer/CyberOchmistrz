@@ -1,6 +1,6 @@
 'use client';
 
-import { Supply, Ingredient } from '../types';
+import { Supply, Ingredient } from '@/types';
 import suppliesData from '../data/supplies.json';
 
 // Helper to cast raw JSON data to our types
@@ -36,5 +36,5 @@ export function getIngredientById(id: string): Ingredient | undefined {
 
 // Function to get supplies filtered by isIngredient value
 export function getSuppliesByType(showIngredients: boolean): Supply[] {
-  return castData().filter(supply => supply.isIngredient === showIngredients);
+  return showIngredients ? getIngredients() : getNonIngredients();
 } 

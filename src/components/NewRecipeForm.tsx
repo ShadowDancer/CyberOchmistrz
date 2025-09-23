@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Recipie, MealType, IngredientAmount } from '@/types';
-import { getIngredients, getRecipies } from '@/lib/recipieData';
+import { getIngredients, getRecipies } from '@/model/recipieData';
 
 interface NewRecipeFormProps {
   recipe?: Recipie;
