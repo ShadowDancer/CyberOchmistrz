@@ -62,13 +62,13 @@ export function createNewCruise(name: string, length: number, crew: number): Cru
 export function addRecipeToCruiseDay(cruiseId: string, dayNumber: number, recipeId: string, recipeData?: Recipie): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
-  
+
   const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
   if (dayIndex === -1) return;
-  
-  cruise.days[dayIndex].recipes.push({ 
+
+  cruise.days[dayIndex].recipes.push({
     originalRecipeId: recipeId,
-    recipeData: recipeData || undefined 
+    recipeData: recipeData ? JSON.parse(JSON.stringify(recipeData)) : undefined
   });
   saveCruise(cruise);
 }
@@ -218,4 +218,4 @@ export function removeIngredientFromRecipeInCruise(
   // Remove the ingredient
   recipe.recipeData.ingredients.splice(ingredientIndex, 1);
   saveCruise(cruise);
-} 
+}
