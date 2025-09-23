@@ -8,7 +8,7 @@ export interface Supply {
 }
 
 export interface Ingredient extends Supply {
-  category: 'nabiał' | 'mięso' | 'warzywa' | 'owoce' | 'pieczywo' | 'zboża' | 'przyprawy' | 'tłuszcze' | 'inne';
+  category: 'nabiał' | 'mięso' | 'warzywa' | 'owoce' | 'pieczywo' | 'zboża' | 'przyprawy' | 'tłuszcze' | 'napoje' | 'środki czystości' | 'inne';
   isVegetarian: boolean;
   isVegan: boolean;
 }
