@@ -1,120 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, Supply } from '../types';
-import { getSupplyById, getIngredientById } from '../model/supplyData';
+import { Cruise, AggregatedShoppingList, AggregatedItem } from '../types';
+import { aggregateShoppingList } from '../model/cruiseData';
 
 interface ShoppingListTabProps {
   cruise: Cruise;
 }
 
-interface AmountSource {
-  type: 'recipe' | 'additional';
-  amount: number;
-  recipeName?: string;
-  dayNumber?: number;
-}
-
-interface AggregatedItem {
-  supply: Supply;
-  amount: number;
-  sources: AmountSource[];
-}
-
 export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
-  const [aggregatedList, setAggregatedList] = useState<{[key: string]: AggregatedItem[]}>({});
+  const [aggregatedList, setAggregatedList] = useState<AggregatedShoppingList>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
-  // Helper function to add items to the itemsMap
-  const addToItemsMap = (
-    itemsMap: Map<string, { supply: Supply, amount: number, sources: AmountSource[] }>,
-    supply: Supply,
-    amount: number,
-    source: AmountSource
-  ) => {
-    if (itemsMap.has(supply.id)) {
-      // Add to existing item
-      const existingItem = itemsMap.get(supply.id)!;
-      existingItem.amount += amount;
-      existingItem.sources.push(source);
-    } else {
-      // Add new item
-      itemsMap.set(supply.id, {
-        supply,
-        amount,
-        sources: [source]
-      });
-    }
-  };
-
   useEffect(() => {
-    const aggregateShoppingList = () => {
-      // Map to hold all items with their total amounts and sources
-      const itemsMap: Map<string, { supply: Supply, amount: number, sources: AmountSource[] }> = new Map();
-      
-      // 1. Add ingredients from recipes in the meal plan
-      cruise.days.forEach(day => {
-        day.recipes.forEach(recipe => {
-          // Use the recipe data stored in the cruise if available, otherwise fall back to the original recipe
-          const recipeData = recipe.recipeData;
-          if (recipeData) {
-            recipeData.ingredients.forEach(ingredientAmount => {
-              const ingredient = getIngredientById(ingredientAmount.id);
-              if (ingredient) {
-                // Adjust amount based on crew size
-                const scaledAmount = ingredientAmount.amount * cruise.crew;
-                const source: AmountSource = {
-                  type: 'recipe',
-                  amount: scaledAmount,
-                  recipeName: recipeData.name,
-                  dayNumber: day.dayNumber
-                };
-                
-                addToItemsMap(itemsMap, ingredient, scaledAmount, source);
-              }
-            });
-          }
-        });
-      });
-      
-      // 2. Add items from additional supplies
-      if (cruise.additionalSupplies) {
-        cruise.additionalSupplies.forEach(item => {
-          const supply = getSupplyById(item.id);
-          if (supply) {
-            const source: AmountSource = {
-              type: 'additional',
-              amount: item.amount
-            };
-            
-            addToItemsMap(itemsMap, supply, item.amount, source);
-          }
-        });
-      }
-      
-      // Group items by category
-      const groupedItems: {[key: string]: AggregatedItem[]} = {};
-      
-      itemsMap.forEach((item) => {
-        const category = item.supply.category || (item.supply.isIngredient ? 'inne' : 'Pozostałe produkty');
-        
-        if (!groupedItems[category]) {
-          groupedItems[category] = [];
-        }
-        
-        groupedItems[category].push(item);
-      });
-      
-      // Sort items in each category alphabetically
-      Object.keys(groupedItems).forEach(category => {
-        groupedItems[category].sort((a, b) => a.supply.name.localeCompare(b.supply.name, 'pl'));
-      });
-      
-      return groupedItems;
-    };
-    
-    const groupedItems = aggregateShoppingList();
+    const groupedItems = aggregateShoppingList(cruise);
     setAggregatedList(groupedItems);
     setLoading(false);
   }, [cruise]);
@@ -237,4 +137,4 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
       </div>
     </div>
   );
-} 
+}

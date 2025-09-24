@@ -49,6 +49,23 @@ export interface CruiseDay {
   }[];
 }
 
+export interface AmountSource {
+  type: 'recipe' | 'additional';
+  amount: number;
+  recipeName?: string;
+  dayNumber?: number;
+}
+
+export interface AggregatedItem {
+  supply: Supply;
+  amount: number;
+  sources: AmountSource[];
+}
+
+export interface AggregatedShoppingList {
+  [category: string]: AggregatedItem[];
+}
+
 export interface Cruise {
   id: string;
   name: string;
@@ -58,4 +75,4 @@ export interface Cruise {
   crew: number;
   days: CruiseDay[];
   additionalSupplies?: CruiseSupply[];
-} 
+}

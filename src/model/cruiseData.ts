@@ -1,4 +1,5 @@
-import {Cruise, Recipie} from '../types';
+import {Cruise, Recipie, AggregatedShoppingList, AggregatedItem, AmountSource, Supply} from '../types';
+import { getSupplyById } from './supplyData';
 
 const STORAGE_KEY = 'cyber-ochmistrz-cruises';
 
@@ -218,4 +219,103 @@ export function removeIngredientFromRecipeInCruise(
   // Remove the ingredient
   recipe.recipeData.ingredients.splice(ingredientIndex, 1);
   saveCruise(cruise);
+}
+
+// Function to aggregate shopping list for a cruise
+export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
+  // Map to hold all items with their total amounts and sources
+  const itemsMap: Map<string, { supply: Supply, amount: number, sources: AmountSource[] }> = new Map();
+
+  // Helper function to add items to the itemsMap
+  const addToItemsMap = (
+    itemsMap: Map<string, { supply: Supply, amount: number, sources: AmountSource[] }>,
+    supply: Supply,
+    amount: number,
+    source: AmountSource
+  ) => {
+    if (itemsMap.has(supply.id)) {
+      // Add to existing item
+      const existingItem = itemsMap.get(supply.id)!;
+      existingItem.amount += amount;
+      existingItem.sources.push(source);
+    } else {
+      // Add new item
+      itemsMap.set(supply.id, {
+        supply,
+        amount,
+        sources: [source]
+      });
+    }
+  };
+
+  // Helper function to create invalid supply placeholder
+  const createInvalidSupply = (id: string, isIngredient: boolean): Supply => ({
+    id,
+    name: `Nieprawidłowy produkt: ${id}`,
+    unit: 'sztuki',
+    isIngredient: isIngredient,
+    category: 'Nieprawidłowe produkty'
+  });
+
+  // 1. Add ingredients from recipes in the meal plan
+  cruise.days.forEach(day => {
+    day.recipes.forEach(recipe => {
+      // Use the recipe data stored in the cruise if available, otherwise fall back to the original recipe
+      const recipeData = recipe.recipeData;
+      if (recipeData) {
+        recipeData.ingredients.forEach(ingredientAmount => {
+          let ingredient = getSupplyById(ingredientAmount.id);
+          if (!ingredient) {
+            ingredient = createInvalidSupply(ingredientAmount.id, true);
+          }
+          // Adjust amount based on crew size
+          const scaledAmount = ingredientAmount.amount * cruise.crew;
+          const source: AmountSource = {
+            type: 'recipe',
+            amount: scaledAmount,
+            recipeName: recipeData.name,
+            dayNumber: day.dayNumber
+          };
+
+          addToItemsMap(itemsMap, ingredient, scaledAmount, source);
+        });
+      }
+    });
+  });
+
+  // 2. Add items from additional supplies
+  if (cruise.additionalSupplies) {
+    cruise.additionalSupplies.forEach(item => {
+      let supply = getSupplyById(item.id);
+      if (!supply) {
+        supply = createInvalidSupply(item.id, false);
+      }
+      const source: AmountSource = {
+        type: 'additional',
+        amount: item.amount
+      };
+
+      addToItemsMap(itemsMap, supply, item.amount, source);
+    });
+  }
+
+  // Group items by category
+  const groupedItems: AggregatedShoppingList = {};
+
+  itemsMap.forEach((item) => {
+    const category = item.supply.category || (item.supply.isIngredient ? 'inne' : 'Pozostałe produkty');
+
+    if (!groupedItems[category]) {
+      groupedItems[category] = [];
+    }
+
+    groupedItems[category].push(item as AggregatedItem);
+  });
+
+  // Sort items in each category alphabetically
+  Object.keys(groupedItems).forEach(category => {
+    groupedItems[category].sort((a, b) => a.supply.name.localeCompare(b.supply.name, 'pl'));
+  });
+
+  return groupedItems;
 }
