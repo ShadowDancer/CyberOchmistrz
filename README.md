@@ -12,3 +12,9 @@ https://shadowdancer.github.io/CyberOchmistrz/
 npm install
 npm run dev
 ```
+
+## Problemy i TODO
+- Przeciąganie między dniami nie działa
+- Dane zapisywane są w local storage, więc nie są współdzielone między urządzeniami
+- Brak możliwości modyfikacji przepisów/składników online
+- Brak możliwości dodawania/usuwania dni z rejsu

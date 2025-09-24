@@ -8,11 +8,27 @@ import {
   updateRecipeIngredientInCruise,
   addIngredientToRecipeInCruise,
   removeIngredientFromRecipeInCruise,
-  getCruiseById
+  getCruiseById,
+  reorderRecipesInCruiseDay,
+  moveRecipeBetweenCruiseDays
 } from '../model/cruiseData';
 import { getRecipeById } from '../model/recipieData';
 import RecipeList from './RecipeList';
 import RecipeIngredientEditor from './RecipeIngredientEditor';
+import DroppableRecipieContainer from './DroppableRecipieContainer';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverEvent,
+  DragOverlay,
+  DragStartEvent,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import DroppableDayItem from './DroppableDayItem';
 
 interface CruisePlanTabProps {
   cruise: Cruise;
@@ -24,6 +40,25 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
   const [selectedRecipie, setSelectedRecipie] = useState<string | null>(null);
   const [mobileView, setMobileView] = useState<'days' | 'details' | 'recipes'>('days');
   const [editingRecipe, setEditingRecipe] = useState<{ dayNumber: number, recipeIndex: number, recipe: Recipie } | null>(null);
+  
+  // Drag and drop state
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
+  
+  // Configure sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 5,
+      },
+    })
+  );
 
   useEffect(() => {
     if (selectedDay === null && cruise.days.length > 0) {
@@ -159,6 +194,81 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
     setEditingRecipe(null);
   };
 
+  // Drag and drop event handlers
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    setOverId(event.over?.id as string || null);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    setActiveId(null);
+    setOverId(null);
+    
+    if (!over || !active.data.current) return;
+    
+    const activeData = active.data.current;
+    const overId = over.id as string;
+    
+    // Parse active item data
+    const sourceDayNumber = activeData.dayNumber;
+    const sourceIndex = activeData.index;
+    
+    // Determine target based on over id
+    let targetDayNumber: number;
+    let targetIndex: number | undefined;
+    
+    if (overId.startsWith('day-list-') || overId.startsWith('day-container-')) {
+      // Dropped on a day container
+      targetDayNumber = parseInt(overId.split('-').pop() || '0');
+      targetIndex = undefined; // Will be added to the end
+    } else {
+      // Dropped on another recipe item
+      const overData = over.data.current;
+      if (overData) {
+        targetDayNumber = overData.dayNumber;
+        targetIndex = overData.index;
+      } else {
+        return; // Invalid drop target
+      }
+    }
+    
+    // Handle the drop
+    if (sourceDayNumber === targetDayNumber) {
+      // Reordering within the same day
+      if (targetIndex !== undefined && sourceIndex !== targetIndex) {
+        reorderRecipesInCruiseDay(cruise.id, sourceDayNumber, sourceIndex, targetIndex);
+        onCruiseChange();
+      }
+    } else {
+      // Moving between different days
+      moveRecipeBetweenCruiseDays(cruise.id, sourceDayNumber, targetDayNumber, sourceIndex, targetIndex);
+      onCruiseChange();
+    }
+  };
+
+  // Get the active recipe for drag overlay
+  const getActiveRecipe = () => {
+    if (!activeId) return null;
+
+    const [dayStr, indexStr] = activeId.split('-');
+    const dayNumber = parseInt(dayStr);
+    const index = parseInt(indexStr);
+    
+    const day = cruise.days.find(d => d.dayNumber === dayNumber);
+    if (!day || !day.recipes[index]) return null;
+    
+    return {
+      recipe: day.recipes[index],
+      index,
+      dayNumber
+    };
+  };
+
   const selectedDayData = selectedDay !== null 
     ? cruise.days.find(day => day.dayNumber === selectedDay) 
     : null;
@@ -175,8 +285,17 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
     setMobileView('details');
   };
 
+  const activeRecipe = getActiveRecipe();
+
   return (
-    <div className="flex flex-col md:grid md:grid-cols-3 h-full">
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex flex-col md:grid md:grid-cols-3 h-full">
       {/* Mobile navigation controls */}
       <div className="flex justify-center gap-2 py-2 md:hidden border-b mb-2">
         <button 
@@ -212,48 +331,21 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
         mobileView !== 'days' ? 'hidden md:block' : ''
       }`}>
         <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4">Dni rejsu</h2>
-        <div className="space-y-2">
-          {cruise.days.map(day => {
-            const dayRecipes = day.recipes.length;
-            return (
-              <div 
+        <div className={`min-h-[100px] p-2 rounded-lg transition-colors ${
+          !!activeId ? 'border-2 border-gray-300 border-dashed' : ''
+        }`}>
+          <div className="space-y-2">
+            {cruise.days.map(day => (
+              <DroppableDayItem
                 key={day.dayNumber}
+                dayNumber={day.dayNumber}
+                recipes={day.recipes}
+                isSelected={selectedDay === day.dayNumber}
+                isOver={overId === `day-list-${day.dayNumber}`}
                 onClick={() => handleDaySelect(day.dayNumber)}
-                className={`p-2 md:p-3 border rounded-lg cursor-pointer transition-colors ${
-                  selectedDay === day.dayNumber
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'hover:bg-gray-50'
-                }`}
-              >
-                <div className="flex justify-between items-center">
-                  <h3 className="font-medium text-sm md:text-base">Dzień {day.dayNumber}</h3>
-                  <span className="text-xs md:text-sm text-gray-500">
-                    {dayRecipes} {dayRecipes === 1 ? 'przepis' : 
-                      dayRecipes > 1 && dayRecipes < 5 ? 'przepisy' : 'przepisów'}
-                  </span>
-                </div>
-                
-                {dayRecipes > 0 && (
-                  <ul className="mt-2 text-xs md:text-sm text-gray-600">
-                    {day.recipes.slice(0, 2).map(recipe => {
-                      // First try to use the stored recipe data if available
-                      const recipeData = recipe.recipeData || getRecipeById(recipe.originalRecipeId);
-                      return (
-                        <li key={recipe.originalRecipeId} className="truncate">
-                          • {recipeData ? recipeData.name : `Przepis #${recipe.originalRecipeId}`}
-                        </li>
-                      );
-                    })}
-                    {dayRecipes > 2 && (
-                      <li className="text-blue-600">
-                        + {dayRecipes - 2} więcej...
-                      </li>
-                    )}
-                  </ul>
-                )}
-              </div>
-            );
-          })}
+              />
+            ))}
+          </div>
         </div>
       </div>
       
@@ -272,64 +364,26 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
                 Dodaj przepis
               </button>
             </div>
-            {selectedDayData.recipes.length === 0 ? (
-              <p className="text-gray-500 italic text-sm md:text-base">
-                Brak przepisów na ten dzień. 
-                <button 
-                  onClick={switchToRecipesView}
-                  className="text-blue-600 underline ml-1 md:hidden"
-                >
-                  Dodaj przepis
-                </button>
-              </p>
-            ) : (
-              <div className="space-y-3">
-                <h3 className="font-medium text-sm md:text-base">Zaplanowane przepisy:</h3>
-                <ul className="space-y-2">
-                  {selectedDayData.recipes.map((recipe, index) => {
-                    // First try to use the stored recipe data if available
-                    const recipeData = recipe.recipeData || getRecipeById(recipe.originalRecipeId);
-                    return (
-                      <li 
-                        key={`${recipe.originalRecipeId}-${index}`} 
-                        className="p-2 md:p-3 border rounded-lg"
-                      >
-                        <div className="flex flex-col gap-2">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <span className="font-medium text-sm md:text-base">
-                                {recipeData ? recipeData.name : `Przepis #${recipe.originalRecipeId}`}
-                              </span>
-                              {recipeData && (
-                                <p className="text-xs md:text-sm text-gray-600 mt-1">
-                                  {recipeData.mealType.join(', ')}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          {recipeData && (
-                            <div className="flex justify-end gap-2 mt-1">
-                              <button
-                                onClick={() => handleEditIngredients(selectedDay, recipe, index)}
-                                className="text-blue-600 hover:text-blue-800 text-xs md:text-sm px-2 py-1 border border-blue-600 rounded"
-                              >
-                                Edytuj składniki
-                              </button>
-                              <button
-                                onClick={() => handleRemoveRecipe(selectedDay, recipe, index)}
-                                className="text-red-600 hover:text-red-800 text-xs md:text-sm px-2 py-1 border border-red-600 rounded"
-                              >
-                                Usuń
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
+            <div className="space-y-3">
+              <h3 className="font-medium text-sm md:text-base">Zaplanowane przepisy:</h3>
+              <DroppableRecipieContainer
+                dayNumber={selectedDay}
+                recipes={selectedDayData.recipes}
+                onEditIngredients={handleEditIngredients}
+                onRemoveRecipe={handleRemoveRecipe}
+                isDragging={!!activeId}
+              />
+              {selectedDayData.recipes.length === 0 && (
+                <p className="text-gray-500 italic text-sm md:text-base text-center mt-4">
+                  <button 
+                    onClick={switchToRecipesView}
+                    className="text-blue-600 underline md:hidden"
+                  >
+                    Dodaj przepis
+                  </button>
+                </p>
+              )}
+            </div>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
@@ -387,6 +441,27 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
           onClose={closeIngredientEditor}
         />
       )}
-    </div>
+      </div>
+      
+      {/* Drag overlay */}
+      <DragOverlay style={{ zIndex: 1000, opacity: 0.5 }}>
+        {activeRecipe ? (
+          <div className="p-2 md:p-3 border rounded-lg bg-blue-50 border-blue-500">
+            <div className="flex items-center">
+              <div className="flex-1">
+                <span className="font-medium text-sm md:text-base">
+                  {activeRecipe.recipe.recipeData ? activeRecipe.recipe.recipeData.name : `Przepis #${activeRecipe.recipe.originalRecipeId}`}
+                </span>
+                {activeRecipe.recipe.recipeData && (
+                  <p className="text-xs md:text-sm text-gray-600 mt-1">
+                    {activeRecipe.recipe.recipeData.mealType.join(', ')}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
-} 
+}

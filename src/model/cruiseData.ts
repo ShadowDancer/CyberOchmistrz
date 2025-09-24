@@ -221,6 +221,62 @@ export function removeIngredientFromRecipeInCruise(
   saveCruise(cruise);
 }
 
+// Function to reorder recipes within a day
+export function reorderRecipesInCruiseDay(
+  cruiseId: string,
+  dayNumber: number,
+  fromIndex: number,
+  toIndex: number
+): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+
+  const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
+  if (dayIndex === -1) return;
+
+  const recipes = cruise.days[dayIndex].recipes;
+  if (fromIndex < 0 || fromIndex >= recipes.length || toIndex < 0 || toIndex >= recipes.length) {
+    return;
+  }
+
+  // Reorder the recipes array
+  const [movedRecipe] = recipes.splice(fromIndex, 1);
+  recipes.splice(toIndex, 0, movedRecipe);
+
+  saveCruise(cruise);
+}
+
+// Function to move a recipe from one day to another
+export function moveRecipeBetweenCruiseDays(
+  cruiseId: string,
+  fromDayNumber: number,
+  toDayNumber: number,
+  fromIndex: number,
+  toIndex?: number
+): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+
+  const fromDayIndex = cruise.days.findIndex(day => day.dayNumber === fromDayNumber);
+  const toDayIndex = cruise.days.findIndex(day => day.dayNumber === toDayNumber);
+
+  if (fromDayIndex === -1 || toDayIndex === -1) return;
+
+  const fromRecipes = cruise.days[fromDayIndex].recipes;
+  const toRecipes = cruise.days[toDayIndex].recipes;
+
+  if (fromIndex < 0 || fromIndex >= fromRecipes.length) return;
+
+  // Remove recipe from source day
+  const [movedRecipe] = fromRecipes.splice(fromIndex, 1);
+
+  // Add recipe to target day at specified index or at the end
+  const insertIndex = toIndex !== undefined && toIndex >= 0 && toIndex <= toRecipes.length ? toIndex : toRecipes.length;
+  toRecipes.splice(insertIndex, 0, movedRecipe);
+
+  saveCruise(cruise);
+}
+
 // Function to aggregate shopping list for a cruise
 export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
   // Map to hold all items with their total amounts and sources
