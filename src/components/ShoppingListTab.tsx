@@ -10,75 +10,40 @@ interface ShoppingListTabProps {
 
 export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
   const [aggregatedList, setAggregatedList] = useState<AggregatedShoppingList>({});
-  const [loading, setLoading] = useState<boolean>(true);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   useEffect(() => {
     const groupedItems = aggregateShoppingList(cruise);
     setAggregatedList(groupedItems);
-    setLoading(false);
   }, [cruise]);
-
-  if (loading) {
-    return <div className="p-6 text-center">Przygotowywanie listy zakupów...</div>;
-  }
 
   const toggleTooltip = (itemId: string) => {
     setActiveTooltip(activeTooltip === itemId ? null : itemId);
   };
 
-  // Generate tooltip content for an item
   const generateCalculationTooltip = (item: AggregatedItem) => {
-    const recipeItems = item.sources.filter(s => s.type === 'recipe');
-    const additionalItems = item.sources.filter(s => s.type === 'additional');
-    
-    // Group by recipe and day
-    const recipeGroups: Record<string, Record<number, {count: number, amount: number, originalAmount: number}>> = {};
-    recipeItems.forEach(source => {
-      if (source.recipeName && source.dayNumber !== undefined) {
-        if (!recipeGroups[source.recipeName]) {
-          recipeGroups[source.recipeName] = {};
-        }
-        
-        if (!recipeGroups[source.recipeName][source.dayNumber]) {
-          recipeGroups[source.recipeName][source.dayNumber] = {
-            count: 0,
-            amount: 0,
-            originalAmount: source.amount / cruise.crew // Calculate original recipe amount before crew scaling
-          };
-        }
-        
-        recipeGroups[source.recipeName][source.dayNumber].count += 1;
-        recipeGroups[source.recipeName][source.dayNumber].amount += source.amount;
-      }
-    });
-    
     let tooltipContent = '';
-    
-    // Add recipe info
-    if (Object.keys(recipeGroups).length > 0) {
+
+    // Add recipes
+    const recipeSources = item.sources.filter(s => s.type === 'recipe');
+    if (recipeSources.length > 0) {
       tooltipContent += `Z przepisów (załoga: ${cruise.crew} osób):\n`;
-      Object.entries(recipeGroups).forEach(([recipeName, dayEntries]) => {
-        Object.entries(dayEntries).forEach(([dayNumberStr, data]) => {
-          const dayNumber = parseInt(dayNumberStr);
-          const originalAmountPerRecipe = data.originalAmount / data.count;
-          
-          if (data.count === 1) {
-            tooltipContent += `- ${recipeName} (dzień ${dayNumber}): ${originalAmountPerRecipe} ${item.supply.unit} × ${cruise.crew} załogantów = ${data.amount} ${item.supply.unit}\n`;
-          } else {
-            tooltipContent += `- ${recipeName} (dzień ${dayNumber}, ${data.count}×): ${originalAmountPerRecipe} ${item.supply.unit} × ${data.count} × ${cruise.crew} załogantów = ${data.amount} ${item.supply.unit}\n`;
-          }
-        });
+      recipeSources.forEach(source => {
+        if (source.recipeName && source.dayNumber !== undefined) {
+          const originalAmount = source.amount / cruise.crew;
+          tooltipContent += `- ${source.recipeName} (dzień ${source.dayNumber}): ${originalAmount} ${item.supply.unit} × ${cruise.crew} załogantów = ${source.amount} ${item.supply.unit}\n`;
+        }
       });
     }
-    
-    // Add additional supplies info
-    if (additionalItems.length > 0) {
+
+    // Add additional supplies
+    const additionalSources = item.sources.filter(s => s.type === 'additional');
+    if (additionalSources.length > 0) {
       if (tooltipContent) tooltipContent += '\n';
-      const totalAdditional = additionalItems.reduce((sum, item) => sum + item.amount, 0);
+      const totalAdditional = additionalSources.reduce((sum, source) => sum + source.amount, 0);
       tooltipContent += `Z dodatkowych zakupów: ${totalAdditional} ${item.supply.unit}`;
     }
-    
+
     return tooltipContent;
   };
 
