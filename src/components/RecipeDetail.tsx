@@ -3,21 +3,10 @@
 import { Recipie } from '@/types';
 import { getRecipieIngredients, isRecipieVegetarian, isRecipieVegan } from '@/model/recipieData';
 import Link from 'next/link';
+import StarRating from './StarRating';
 
 interface RecipeDetailProps {
   dish: Recipie | null;
-}
-
-function StarRating({ score }: { score: number }) {
-  return (
-    <div className="flex">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} className={`text-md md:text-xl ${star <= score ? 'text-yellow-400' : 'text-gray-300'}`}>
-          ★
-        </span>
-      ))}
-    </div>
-  );
 }
 
 function DietaryBadge({ isVegetarian, isVegan }: { isVegetarian: boolean; isVegan: boolean }) {
@@ -163,4 +152,4 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
       </div>
     </div>
   );
-} 
+}

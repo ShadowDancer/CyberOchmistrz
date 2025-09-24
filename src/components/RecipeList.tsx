@@ -3,22 +3,11 @@
 import { getRecipies, isRecipieVegetarian, isRecipieVegan } from '@/model/recipieData';
 import { Recipie, MealType } from '@/types';
 import { useState } from 'react';
+import StarRating from './StarRating';
 
 interface RecipeListProps {
   onSelectRecipie: (recipie: Recipie) => void;
   selectedRecipieId: string | null;
-}
-
-function StarRating({ score }: { score: number }) {
-  return (
-    <div className="flex">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} className={`text-sm ${star <= score ? 'text-yellow-400' : 'text-gray-200'}`}>
-          ★
-        </span>
-      ))}
-    </div>
-  );
 }
 
 function DietBadge({ isVegetarian, isVegan }: { isVegetarian: boolean; isVegan: boolean }) {
@@ -168,7 +157,7 @@ export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedR
                     <div className="flex flex-col items-end text-xs text-gray-500 ml-2 shrink-0">
                       <div className="flex items-center gap-1 mb-1">
                         <span className="hidden sm:inline">Trudność:</span>
-                        <StarRating score={recipie.difficulty} />
+                        <StarRating score={recipie.difficulty} size="small" />
                       </div>
                     </div>
                   </div>
@@ -184,4 +173,4 @@ export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedR
       </div>
     </div>
   );
-} 
+}
