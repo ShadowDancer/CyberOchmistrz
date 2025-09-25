@@ -89,11 +89,13 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
           <h2 className="text-xl md:text-2xl font-bold">{recipie.name}</h2>
           <div className="flex flex-wrap items-center gap-2 md:gap-3">
             <DietaryBadge isVegetarian={isVegetarian} isVegan={isVegan} />
-            <span className="inline-block px-2 py-0.5 md:px-3 md:py-1 bg-blue-100 text-blue-800 rounded-full text-xs md:text-sm">
-              {recipie.mealType}
-            </span>
+            {recipie.mealType.map((mealType, index) => (
+              <span key={index} className="inline-block px-2 py-0.5 md:px-3 md:py-1 bg-blue-100 text-blue-800 rounded-full text-xs md:text-sm">
+                {mealType}
+              </span>
+            ))}
             <div className="flex items-center gap-1">
-              <span className="text-sm">Trudność:</span> 
+              <span className="text-sm">Trudność:</span>
               <StarRating score={recipie.difficulty} />
             </div>
           </div>
