@@ -40,16 +40,16 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
   };
 
   if (loading) {
-    return <div className="text-center py-8">Ładowanie...</div>;
+    return <div className="loading-state">Ładowanie...</div>;
   }
 
   if (!cruise) {
     return (
-      <div className="text-center py-8">
-        <p className="text-xl text-gray-700">Nie znaleziono rejsu</p>
-        <button 
+      <div className="empty-state">
+        <p className="text-xl text-muted-dark">Nie znaleziono rejsu</p>
+        <button
           onClick={() => router.push('/rejsy')}
-          className="mt-4 text-blue-600 hover:underline"
+          className="empty-state-link"
         >
           Wróć do listy rejsów
         </button>
@@ -58,57 +58,57 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow-sm flex flex-col h-full">
-      <div className="flex justify-between items-center p-3 md:p-6 border-b">
-        <h1 className="text-xl md:text-2xl font-bold truncate">{cruise.name}</h1>
+    <div className="container-centered container-max-w-lg container-white flex flex-col h-full">
+      <div className="flex-between p-3 md:p-6 border-b">
+        <h1 className="heading-primary truncate">{cruise.name}</h1>
         <div className="flex gap-3">
           <button
             onClick={() => router.push('/rejsy')}
-            className="text-gray-600 hover:text-gray-900"
+            className="text-muted hover:text-gray-900"
           >
             Wróć
           </button>
         </div>
       </div>
 
-      <div className="p-2 md:p-4 border-b bg-gray-50 overflow-x-auto">
-        <div className="flex gap-1 md:gap-4 min-w-max">
+      <div className="tab-container">
+        <div className="tab-buttons">
           <button
             onClick={() => setActiveTab('info')}
-            className={`px-2 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${
-              activeTab === 'info' 
-                ? 'bg-blue-600 text-white'
-                : 'bg-white hover:bg-gray-100'
+            className={`btn-tab ${
+              activeTab === 'info'
+                ? 'btn-tab-active'
+                : 'btn-tab-inactive'
             }`}
           >
             Informacje
           </button>
           <button
             onClick={() => setActiveTab('plan')}
-            className={`px-2 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${
-              activeTab === 'plan' 
-                ? 'bg-blue-600 text-white'
-                : 'bg-white hover:bg-gray-100'
+            className={`btn-tab ${
+              activeTab === 'plan'
+                ? 'btn-tab-active'
+                : 'btn-tab-inactive'
             }`}
           >
             Plan posiłków
           </button>
           <button
             onClick={() => setActiveTab('supplies')}
-            className={`px-2 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${
-              activeTab === 'supplies' 
-                ? 'bg-blue-600 text-white'
-                : 'bg-white hover:bg-gray-100'
+            className={`btn-tab ${
+              activeTab === 'supplies'
+                ? 'btn-tab-active'
+                : 'btn-tab-inactive'
             }`}
           >
             Dodatkowe zakupy
           </button>
           <button
             onClick={() => setActiveTab('shopping')}
-            className={`px-2 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${
-              activeTab === 'shopping' 
-                ? 'bg-blue-600 text-white'
-                : 'bg-white hover:bg-gray-100'
+            className={`btn-tab ${
+              activeTab === 'shopping'
+                ? 'btn-tab-active'
+                : 'btn-tab-inactive'
             }`}
           >
             Lista zakupów
@@ -141,4 +141,4 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
       </div>
     </div>
   );
-} 
+}

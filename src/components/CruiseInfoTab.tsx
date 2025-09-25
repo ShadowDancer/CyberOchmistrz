@@ -23,45 +23,45 @@ export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
   };
 
   return (
-    <div className="p-3 md:p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        <div className="p-3 md:p-4 bg-gray-50 rounded-lg">
-          <h2 className="text-base md:text-lg font-medium mb-2">Informacje podstawowe</h2>
-          <div className="grid gap-2 text-sm md:text-base">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Utworzono:</span>
+    <div className="content-padding">
+      <div className="info-grid">
+        <div className="info-card">
+          <h2 className="info-card-title">Informacje podstawowe</h2>
+          <div className="info-details">
+            <div className="info-detail-row">
+              <span className="info-detail-label">Utworzono:</span>
               <span>{formatDate(cruise.dateCreated)}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Ostatnia modyfikacja:</span>
+            <div className="info-detail-row">
+              <span className="info-detail-label">Ostatnia modyfikacja:</span>
               <span>{formatDate(cruise.dateModified)}</span>
             </div>
           </div>
         </div>
-        
-        <div className="p-3 md:p-4 bg-gray-50 rounded-lg">
-          <h2 className="text-base md:text-lg font-medium mb-2">Parametry rejsu</h2>
-          <div className="grid gap-2 text-sm md:text-base">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Długość rejsu:</span>
+
+        <div className="info-card">
+          <h2 className="info-card-title">Parametry rejsu</h2>
+          <div className="info-details">
+            <div className="info-detail-row">
+              <span className="info-detail-label">Długość rejsu:</span>
               <span>{cruise.length} dni</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Liczba załogantów:</span>
+            <div className="info-detail-row">
+              <span className="info-detail-label">Liczba załogantów:</span>
               <span>{cruise.crew} osób</span>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div className="mt-4 md:mt-6 flex justify-end">
         <button
           onClick={handleDelete}
-          className="px-3 py-1.5 md:px-4 md:py-2 bg-red-600 text-white rounded-md text-sm md:text-base hover:bg-red-700 transition-colors"
+          className="btn-small btn-remove"
         >
           Usuń rejs
         </button>
       </div>
     </div>
   );
-} 
+}

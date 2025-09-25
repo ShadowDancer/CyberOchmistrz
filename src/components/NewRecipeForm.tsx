@@ -190,33 +190,34 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="space-y-6">
+    <div className="container-white-md p-6">
+      <div className="space-y-section">
         {/* Basic Info Section */}
         <div>
-          <h2 className="text-xl font-bold mb-4">Informacje podstawowe</h2>
+          <h2 className="heading-secondary">Informacje podstawowe</h2>
           <div>
-            <label className="block mb-1">Nazwa przepisu</label>
+            <label className="form-label">Nazwa przepisu</label>
             <input
               type="text"
               value={recipeName}
               onChange={(e) => setRecipeName(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="input-simple"
             />
           </div>
 
           <div className="mt-4">
-            <label className="block mb-1">Rodzaj posiłku (jeden lub więcej)</label>
+            <label className="form-label">Rodzaj posiłku (jeden lub więcej)</label>
             <div className="flex flex-wrap gap-2">
               {Object.values(MealType).map((type) => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => toggleMealType(type)}
-                  className={`px-3 py-1 rounded-full text-sm ${selectedMealTypes.includes(type)
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 hover:bg-gray-300'
-                    }`}
+                  className={`btn-filter ${
+                    selectedMealTypes.includes(type)
+                      ? 'btn-filter-active'
+                      : 'btn-filter-inactive'
+                  }`}
                 >
                   {type}
                 </button>
@@ -225,11 +226,11 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
           </div>
 
           <div className="mt-4">
-            <label className="block mb-1">Opis</label>
+            <label className="form-label">Opis</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="input-simple"
               rows={3}
             />
           </div>
@@ -237,32 +238,32 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
 
         {/* Ratings Section */}
         <div>
-          <h2 className="text-xl font-bold mb-4">Oceny</h2>
+          <h2 className="heading-secondary">Oceny</h2>
           <div>
-            <label className="block mb-1">Trudność (1-5)</label>
+            <label className="form-label">Trudność (1-5)</label>
             <input
               type="number"
               min="1"
               max="5"
               value={difficulty}
               onChange={(e) => setDifficulty(Number(e.target.value))}
-              className="w-full px-3 py-2 border rounded"
+              className="input-simple"
             />
           </div>
         </div>
 
         {/* Ingredients Section */}
         <div>
-          <h2 className="text-xl font-bold mb-4">Składniki</h2>
+          <h2 className="heading-secondary">Składniki</h2>
           {ingredients.map((ingredient, index) => (
             <div key={index} className="mb-2 flex flex-col gap-2">
               <div className="flex items-start gap-2">
                 <div className="w-3/5">
-                  <label className="block text-sm mb-1">Składnik</label>
+                  <label className="form-label">Składnik</label>
                   <select
                     value={ingredient.id}
                     onChange={(e) => updateIngredientId(index, e.target.value)}
-                    className="w-full px-3 py-2 border rounded"
+                    className="input-simple"
                   >
                     <option value="">Wybierz składnik</option>
                     {allIngredients.map((ing) => (
@@ -273,7 +274,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                   </select>
                 </div>
                 <div className="w-1/4">
-                  <label className="block text-sm mb-1">Ilość</label>
+                  <label className="form-label">Ilość</label>
                   <div className="flex items-center">
                     <input
                       type="number"
@@ -281,7 +282,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                       step="0.1"
                       value={ingredient.amount}
                       onChange={(e) => updateIngredientAmount(index, e.target.value)}
-                      className="w-full px-3 py-2 border rounded"
+                      className="input-simple"
                     />
                     {ingredient.id && (
                       <span className="ml-2">
@@ -295,7 +296,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                     <button
                       type="button"
                       onClick={() => removeIngredient(index)}
-                      className="px-3 py-2 bg-red-500 text-white rounded"
+                      className="btn-small btn-remove"
                     >
                       -
                     </button>
@@ -306,7 +307,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                 const selectedIngredient = allIngredients.find(ing => ing.id === ingredient.id);
                 return selectedIngredient?.description ? (
                   <div className="pl-1">
-                    <p className="text-xs text-gray-500 italic">
+                    <p className="text-xs text-muted-light italic">
                       {selectedIngredient.description}
                     </p>
                   </div>
@@ -318,7 +319,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
             <button
               type="button"
               onClick={addIngredient}
-              className="px-3 py-2 bg-green-500 text-white rounded"
+              className="btn-small btn-add"
             >
               +
             </button>
@@ -327,15 +328,15 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
 
         {/* Instructions Section */}
         <div>
-          <h2 className="text-xl font-bold mb-4">Instrukcje</h2>
+          <h2 className="heading-secondary">Instrukcje</h2>
           {instructions.map((instruction, index) => (
             <div key={index} className="mb-2 flex items-start gap-2">
               <div className="w-4/5">
-                <label className="block text-sm mb-1">Krok {index + 1}</label>
+                <label className="form-label">Krok {index + 1}</label>
                 <textarea
                   value={instruction}
                   onChange={(e) => updateInstruction(index, e.target.value)}
-                  className="w-full px-3 py-2 border rounded"
+                  className="input-simple"
                   rows={2}
                 />
               </div>
@@ -344,7 +345,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                   <button
                     type="button"
                     onClick={() => removeInstruction(index)}
-                    className="px-3 py-2 bg-red-500 text-white rounded"
+                    className="btn-small btn-remove"
                   >
                     -
                   </button>
@@ -356,7 +357,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
             <button
               type="button"
               onClick={addInstruction}
-              className="px-3 py-2 bg-green-500 text-white rounded"
+              className="btn-small btn-add"
             >
               +
             </button>
@@ -365,12 +366,12 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
 
         <div>
           <div className="mt-4">
-            <label className="block mb-1">Opracował/a</label>
+            <label className="form-label">Opracował/a</label>
             <input
               type="text"
               value={developedBy}
               onChange={(e) => setDevelopedBy(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="input-simple"
               placeholder="Imię i nazwisko lub pseudonim"
             />
           </div>
@@ -382,29 +383,29 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
             <button
               type="button"
               onClick={generateJson}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="btn-primary"
             >
               Wygeneruj JSON
             </button>
             <button
               type="button"
               onClick={copyToClipboard}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="btn-small btn-add"
             >
               Kopiuj do schowka
             </button>
             <button
               type="button"
               onClick={downloadJson}
-              className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+              className="btn-small bg-purple-500 text-white hover:bg-purple-600"
             >
               Pobierz jako JSON
             </button>
           </div>
-          
+
           {/* Display error message here */}
           {errorMessage && (
-            <div className="p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+            <div className="error-banner">
               {errorMessage}
             </div>
           )}
@@ -422,4 +423,4 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
       </div>
     </div>
   );
-} 
+}

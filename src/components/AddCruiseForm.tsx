@@ -75,12 +75,12 @@ export default function AddCruiseForm() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded-lg shadow-sm">
-      <h1 className="text-2xl font-bold mb-6">Dodaj nowy rejs</h1>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="container-centered container-max-w-sm p-6 container-white">
+      <h1 className="heading-primary mb-6">Dodaj nowy rejs</h1>
+
+      <form onSubmit={handleSubmit} className="space-y-form">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="form-label">
             Nazwa rejsu
           </label>
           <input
@@ -89,15 +89,15 @@ export default function AddCruiseForm() {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.name ? 'border-red-500' : 'border-gray-300'
+            className={`input-field ${
+              errors.name ? 'input-field-error' : 'input-field-valid'
             }`}
           />
-          {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+          {errors.name && <p className="error-text">{errors.name}</p>}
         </div>
-        
+
         <div>
-          <label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="length" className="form-label">
             Długość rejsu (dni)
           </label>
           <input
@@ -107,15 +107,15 @@ export default function AddCruiseForm() {
             min="1"
             value={formData.length}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.length ? 'border-red-500' : 'border-gray-300'
+            className={`input-field ${
+              errors.length ? 'input-field-error' : 'input-field-valid'
             }`}
           />
-          {errors.length && <p className="mt-1 text-sm text-red-600">{errors.length}</p>}
+          {errors.length && <p className="error-text">{errors.length}</p>}
         </div>
-        
+
         <div>
-          <label htmlFor="crew" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="crew" className="form-label">
             Liczba załogantów
           </label>
           <input
@@ -125,24 +125,24 @@ export default function AddCruiseForm() {
             min="1"
             value={formData.crew}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.crew ? 'border-red-500' : 'border-gray-300'
+            className={`input-field ${
+              errors.crew ? 'input-field-error' : 'input-field-valid'
             }`}
           />
-          {errors.crew && <p className="mt-1 text-sm text-red-600">{errors.crew}</p>}
+          {errors.crew && <p className="error-text">{errors.crew}</p>}
         </div>
-        
+
         <div className="flex gap-4 pt-4">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Zapisz rejs
           </button>
           <button
             type="button"
             onClick={() => router.push('/rejsy')}
-            className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
+            className="btn-secondary"
           >
             Anuluj
           </button>
@@ -150,4 +150,4 @@ export default function AddCruiseForm() {
       </form>
     </div>
   );
-} 
+}
