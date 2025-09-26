@@ -1,4 +1,4 @@
-import {Cruise, Recipie, AggregatedShoppingList, AggregatedItem, AmountSource, Supply} from '../types';
+import {Cruise, Recipie, AggregatedShoppingList, AggregatedItem, AmountSource, Supply, RecipeAmountSource, AdditionalSupplyAmountSource} from '../types';
 import { getSupplyById } from './supplyData';
 
 const STORAGE_KEY = 'cyber-ochmistrz-cruises';
@@ -89,52 +89,139 @@ export function removeRecipeFromCruiseDay(cruiseId: string, dayNumber: number, r
   }
 }
 
-// Function to add a supply to a cruise's additional supplies list
-export function addAdditionalSupplyToCruise(cruiseId: string, supplyId: string, amount: number): void {
+export function addAdditionalSupplyToCruise(cruiseId: string, supplyId: string, amount: number, isPerPerson: boolean, isPerDay: boolean): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
-  
+
   // Initialize additional supplies array if it doesn't exist
   if (!cruise.additionalSupplies) {
     cruise.additionalSupplies = [];
   }
-  
-  // Check if the supply already exists
-  const existingSupplyIndex = cruise.additionalSupplies.findIndex(s => s.id === supplyId);
-  
+
+  // Check if the supply with same flags already exists
+  const existingSupplyIndex = cruise.additionalSupplies.findIndex(s => s.id === supplyId && s.isPerPerson === isPerPerson && s.isPerDay === isPerDay);
+
   if (existingSupplyIndex >= 0) {
     // Update existing supply
-    cruise.additionalSupplies[existingSupplyIndex].amount = amount;
+    cruise.additionalSupplies[existingSupplyIndex].amount += amount;
   } else {
     // Add new supply
-    cruise.additionalSupplies.push({ id: supplyId, amount });
+    cruise.additionalSupplies.push({ id: supplyId, amount, isPerPerson, isPerDay });
   }
-  
+
   saveCruise(cruise);
 }
 
-// Function to update the amount of an additional supply
-export function updateAdditionalSupplyAmount(cruiseId: string, supplyId: string, amount: number): void {
+export function updateAdditionalSupplyAmount(cruiseId: string, supplyId: string, amount: number, isPerPerson: boolean, isPerDay: boolean): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+
+  // Initialize additional supplies array if it doesn't exist
+  if (!cruise.additionalSupplies) {
+    cruise.additionalSupplies = [];
+  }
+
+  const supplyIndex = cruise.additionalSupplies.findIndex(s => s.id === supplyId && s.isPerPerson === isPerPerson && s.isPerDay === isPerDay);
+  if (supplyIndex >= 0) {
+    // Update existing supply
+    cruise.additionalSupplies[supplyIndex].amount = amount;
+  } else {
+    // Add new supply if it doesn't exist
+    cruise.additionalSupplies.push({ id: supplyId, amount, isPerPerson, isPerDay });
+  }
+
+  saveCruise(cruise);
+}
+
+export function removeAdditionalSupplyFromCruise(cruiseId: string, supplyId: string, isPerPerson: boolean, isPerDay: boolean): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise || !cruise.additionalSupplies) return;
-  
-  const supplyIndex = cruise.additionalSupplies.findIndex(s => s.id === supplyId);
-  if (supplyIndex === -1) return;
-  
-  cruise.additionalSupplies[supplyIndex].amount = amount;
+
+  cruise.additionalSupplies = cruise.additionalSupplies.filter(s => !(s.id === supplyId && s.isPerPerson === isPerPerson && s.isPerDay === isPerDay));
   saveCruise(cruise);
 }
 
-// Function to remove a supply from a cruise's additional supplies list
-export function removeAdditionalSupplyFromCruise(cruiseId: string, supplyId: string): void {
+export function hasAdditionalSupply(cruiseId: string, supplyId: string, isPerPerson: boolean, isPerDay: boolean): boolean {
   const cruise = getCruiseById(cruiseId);
-  if (!cruise || !cruise.additionalSupplies) return;
-  
-  cruise.additionalSupplies = cruise.additionalSupplies.filter(s => s.id !== supplyId);
-  saveCruise(cruise);
+  if (!cruise || !cruise.additionalSupplies) return false;
+
+  return cruise.additionalSupplies.some(item =>
+    item.id === supplyId && item.isPerPerson === isPerPerson && item.isPerDay === isPerDay
+  );
 }
 
-// Function to update an ingredient in a recipe that's part of a cruise
+export function getAdditionalSupplyAmount(cruiseId: string, supplyId: string, isPerPerson: boolean, isPerDay: boolean): number | null {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise || !cruise.additionalSupplies) return null;
+
+  const item = cruise.additionalSupplies.find(item =>
+    item.id === supplyId && item.isPerPerson === isPerPerson && item.isPerDay === isPerDay
+  );
+
+  return item ? item.amount : null;
+}
+
+export interface AdditionalSupplyItem {
+  supply: Supply;
+  amount: number;
+  isPerPerson: boolean;
+  isPerDay: boolean;
+}
+
+export interface AdditionalSupplyCategoryGroup {
+  category: string;
+  supplies: AdditionalSupplyItem[];
+}
+
+export function groupAdditionalSuppliesByCategory(cruiseId: string): AdditionalSupplyCategoryGroup[] {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise || !cruise.additionalSupplies) return [];
+
+  const grouped: {[key: string]: AdditionalSupplyItem[]} = {};
+
+  cruise.additionalSupplies.forEach(item => {
+    const supplyDetails = getSupplyById(item.id);
+    if (supplyDetails) {
+      const category = supplyDetails.category || (supplyDetails.isIngredient ? 'inne' : 'Pozostałe produkty');
+
+      if (!grouped[category]) {
+        grouped[category] = [];
+      }
+
+      grouped[category].push({
+        supply: supplyDetails,
+        amount: item.amount,
+        isPerPerson: item.isPerPerson,
+        isPerDay: item.isPerDay
+      });
+    }
+  });
+
+  // Convert to array and sort by category name for consistent display order
+  return Object.keys(grouped)
+    .sort()
+    .map(category => ({
+      category,
+      supplies: grouped[category].sort((a, b) => {
+        // First sort by supply name
+        const nameComparison = a.supply.name.localeCompare(b.supply.name, 'pl');
+        if (nameComparison !== 0) {
+          return nameComparison;
+        }
+
+        // If names are equal, sort by flag combination priority: fixed -> per person -> per day -> per person per day
+        const getPriority = (item: AdditionalSupplyItem) => {
+          if (!item.isPerPerson && !item.isPerDay) return 0; // fixed
+          if (item.isPerPerson && !item.isPerDay) return 1; // per person
+          if (!item.isPerPerson && item.isPerDay) return 2; // per day
+          return 3; // per person per day
+        };
+
+        return getPriority(a) - getPriority(b);
+      })
+    }));
+}
+
 export function updateRecipeIngredientInCruise(
   cruiseId: string, 
   dayNumber: number, 
@@ -164,7 +251,6 @@ export function updateRecipeIngredientInCruise(
   saveCruise(cruise);
 }
 
-// Function to add a new ingredient to a recipe that's part of a cruise
 export function addIngredientToRecipeInCruise(
   cruiseId: string,
   dayNumber: number,
@@ -192,7 +278,6 @@ export function addIngredientToRecipeInCruise(
   saveCruise(cruise);
 }
 
-// Function to remove an ingredient from a recipe that's part of a cruise
 export function removeIngredientFromRecipeInCruise(
   cruiseId: string,
   dayNumber: number,
@@ -221,7 +306,6 @@ export function removeIngredientFromRecipeInCruise(
   saveCruise(cruise);
 }
 
-// Function to reorder recipes within a day
 export function reorderRecipesInCruiseDay(
   cruiseId: string,
   dayNumber: number,
@@ -326,12 +410,7 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
           }
           // Adjust amount based on crew size
           const scaledAmount = ingredientAmount.amount * cruise.crew;
-          const source: AmountSource = {
-            type: 'recipe',
-            amount: scaledAmount,
-            recipeName: recipeData.name,
-            dayNumber: day.dayNumber
-          };
+          const source = new RecipeAmountSource(ingredientAmount.amount, recipeData.name, day.dayNumber);
 
           addToItemsMap(itemsMap, ingredient, scaledAmount, source);
         });
@@ -346,12 +425,13 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
       if (!supply) {
         supply = createInvalidSupply(item.id, false);
       }
-      const source: AmountSource = {
-        type: 'additional',
-        amount: item.amount
-      };
+      // Calculate scaled amount based on flags
+      const crewMultiplier = item.isPerPerson ? cruise.crew : 1;
+      const dayMultiplier = item.isPerDay ? cruise.length : 1;
+      const scaledAmount = item.amount * crewMultiplier * dayMultiplier;
+      const source = new AdditionalSupplyAmountSource(item.amount, item.isPerPerson, item.isPerDay);
 
-      addToItemsMap(itemsMap, supply, item.amount, source);
+      addToItemsMap(itemsMap, supply, scaledAmount, source);
     });
   }
 

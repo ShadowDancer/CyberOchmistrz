@@ -1,4 +1,4 @@
-import { getAllSupplies, getIngredients, getNonIngredients } from '../src/model/supplyData';
+import { getAllSupplies, getIngredients, getNonIngredients, groupSuppliesByCategory, CategoryGroup } from '../src/model/supplyData';
 
 // Tests which validate correctness of supplies in data file
 
@@ -40,6 +40,94 @@ describe('supplyData functions', () => {
         expect(supply).not.toHaveProperty('isVegetarian');
         expect(supply).not.toHaveProperty('isVegan');
       });
+    });
+  });
+
+  describe('groupSuppliesByCategory', () => {
+    it('should group supplies by their category', () => {
+      const supplies = [
+        { id: '1', name: 'Jabłko', category: 'owoce', isIngredient: true },
+        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true },
+        { id: '3', name: 'Chleb', category: 'pieczywo', isIngredient: false },
+        { id: '4', name: 'Mleko', category: 'nabiał', isIngredient: true }
+      ];
+
+      const grouped = groupSuppliesByCategory(supplies);
+
+      expect(Array.isArray(grouped)).toBe(true);
+      expect(grouped).toHaveLength(3);
+
+      const owoceGroup = grouped.find(g => g.category === 'owoce');
+      expect(owoceGroup).toBeDefined();
+      expect(owoceGroup!.supplies).toHaveLength(2);
+
+      const pieczywoGroup = grouped.find(g => g.category === 'pieczywo');
+      expect(pieczywoGroup).toBeDefined();
+      expect(pieczywoGroup!.supplies).toHaveLength(1);
+
+      const nabialGroup = grouped.find(g => g.category === 'nabiał');
+      expect(nabialGroup).toBeDefined();
+      expect(nabialGroup!.supplies).toHaveLength(1);
+
+      expect(owoceGroup!.supplies).toEqual([
+        { id: '1', name: 'Jabłko', category: 'owoce', isIngredient: true },
+        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true }
+      ]);
+    });
+
+    it('should use "inne" category for supplies without category', () => {
+      const supplies = [
+        { id: '1', name: 'Jabłko', isIngredient: true },
+        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true }
+      ];
+
+      const grouped = groupSuppliesByCategory(supplies);
+
+      expect(Array.isArray(grouped)).toBe(true);
+      expect(grouped).toHaveLength(2);
+
+      const inneGroup = grouped.find(g => g.category === 'inne');
+      expect(inneGroup).toBeDefined();
+      expect(inneGroup!.supplies).toHaveLength(1);
+
+      const owoceGroup = grouped.find(g => g.category === 'owoce');
+      expect(owoceGroup).toBeDefined();
+      expect(owoceGroup!.supplies).toHaveLength(1);
+    });
+
+    it('should return empty array for empty supplies array', () => {
+      const grouped = groupSuppliesByCategory([]);
+      expect(grouped).toEqual([]);
+    });
+
+    it('should handle supplies with undefined category', () => {
+      const supplies = [
+        { id: '1', name: 'Jabłko', category: undefined, isIngredient: true }
+      ];
+
+      const grouped = groupSuppliesByCategory(supplies);
+
+      expect(Array.isArray(grouped)).toBe(true);
+      expect(grouped).toHaveLength(1);
+
+      const inneGroup = grouped.find(g => g.category === 'inne');
+      expect(inneGroup).toBeDefined();
+      expect(inneGroup!.supplies).toHaveLength(1);
+    });
+
+    it('should sort categories alphabetically', () => {
+      const supplies = [
+        { id: '1', name: 'Mleko', category: 'nabiał', isIngredient: true },
+        { id: '2', name: 'Jabłko', category: 'owoce', isIngredient: true },
+        { id: '3', name: 'Chleb', category: 'pieczywo', isIngredient: false }
+      ];
+
+      const grouped = groupSuppliesByCategory(supplies);
+
+      expect(grouped).toHaveLength(3);
+      expect(grouped[0].category).toBe('nabiał');
+      expect(grouped[1].category).toBe('owoce');
+      expect(grouped[2].category).toBe('pieczywo');
     });
   });
 });

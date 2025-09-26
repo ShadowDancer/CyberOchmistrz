@@ -22,10 +22,6 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
   useEffect(() => {
     const cruiseData = getCruiseById(id);
     if (cruiseData) {
-      // Initialize additionalSupplies array if it doesn't exist
-      if (!cruiseData.additionalSupplies) {
-        cruiseData.additionalSupplies = [];
-      }
       setCruise(cruiseData);
     }
     setLoading(false);

@@ -39,6 +39,8 @@ export interface Recipie {
 export interface CruiseSupply {
   id: string;
   amount: number;
+  isPerPerson: boolean;
+  isPerDay: boolean;
 }
 
 export interface CruiseDay {
@@ -49,16 +51,37 @@ export interface CruiseDay {
   }[];
 }
 
-export interface AmountSource {
-  type: 'recipe' | 'additional';
-  amount: number;
+export class RecipeAmountSource {
+  readonly type = 'recipe' as const;
+  amount: number; // base amount before crew scaling
   recipeName?: string;
   dayNumber?: number;
+
+  constructor(amount: number, recipeName?: string, dayNumber?: number) {
+    this.amount = amount;
+    this.recipeName = recipeName;
+    this.dayNumber = dayNumber;
+  }
 }
+
+export class AdditionalSupplyAmountSource {
+  readonly type = 'additional' as const;
+  amount: number; // base amount before scaling by flags
+  isPerPerson: boolean;
+  isPerDay: boolean;
+
+  constructor(amount: number, isPerPerson: boolean, isPerDay: boolean) {
+    this.amount = amount;
+    this.isPerPerson = isPerPerson;
+    this.isPerDay = isPerDay;
+  }
+}
+
+export type AmountSource = RecipeAmountSource | AdditionalSupplyAmountSource;
 
 export interface AggregatedItem {
   supply: Supply;
-  amount: number;
+  amount: number; // total amount needed
   sources: AmountSource[];
 }
 

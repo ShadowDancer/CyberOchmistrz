@@ -1,13 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, Supply } from '../types';
-import { 
+import { Cruise } from '../types';
+import {
   addAdditionalSupplyToCruise,
   updateAdditionalSupplyAmount,
-  removeAdditionalSupplyFromCruise
+  removeAdditionalSupplyFromCruise,
+  getCruiseById,
+  hasAdditionalSupply,
+  getAdditionalSupplyAmount,
+  groupAdditionalSuppliesByCategory,
+  AdditionalSupplyCategoryGroup
 } from '../model/cruiseData';
-import { getSuppliesByType, getSupplyById } from '../model/supplyData';
+import { getSuppliesByType, groupSuppliesByCategory, CategoryGroup } from '../model/supplyData';
 
 interface CruiseSuppliesTabProps {
   cruise: Cruise;
@@ -21,89 +26,78 @@ export default function CruiseSuppliesTab({
   const [showIngredients, setShowIngredients] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [suppliesByCategory, setSuppliesByCategory] = useState<{[key: string]: Supply[]}>({});
-  const [shoppingListByCategory, setShoppingListByCategory] = useState<{[key: string]: {supply: Supply, amount: number}[]}>({});
+  const [suppliesByCategory, setSuppliesByCategory] = useState<CategoryGroup[]>([]);
+  const [shoppingListByCategory, setShoppingListByCategory] = useState<AdditionalSupplyCategoryGroup[]>([]);
   
   // Load supplies directly, filtered by isIngredient flag
   useEffect(() => {
     const allSupplies = getSuppliesByType(showIngredients);
-    
-    // Group supplies by category
-    const grouped: {[key: string]: Supply[]} = {};
-  
-    // For ingredients, we can use their actual categories
-    allSupplies.forEach(supply => {
-      const category = supply.category || 'inne';
-      if (!grouped[category]) {
-        grouped[category] = [];
-      }
-      grouped[category].push(supply);
-    });
-    
+
+    // Group supplies by category using the domain function
+    const grouped = groupSuppliesByCategory(allSupplies);
+
     setSuppliesByCategory(grouped);
     // Reset category filter when changing ingredient type
     setSelectedCategory('');
   }, [showIngredients]);
   
-  // Group shopping list items by category
+  // Group shopping list items by category using domain function
   useEffect(() => {
-    if (!cruise.additionalSupplies) return;
-    
-    const groupedShoppingList: {[key: string]: {supply: Supply, amount: number}[]} = {};
-    
-    cruise.additionalSupplies.forEach(item => {
-      const supplyDetails = getSupplyById(item.id);
-      if (supplyDetails) {
-        const category = supplyDetails.category || (supplyDetails.isIngredient ? 'inne' : 'Pozostałe produkty');
-        
-        if (!groupedShoppingList[category]) {
-          groupedShoppingList[category] = [];
-        }
-        
-        groupedShoppingList[category].push({
-          supply: supplyDetails,
-          amount: item.amount
-        });
-      }
-    });
-    
+    const groupedShoppingList = groupAdditionalSuppliesByCategory(cruise.id);
     setShoppingListByCategory(groupedShoppingList);
-  }, [cruise.additionalSupplies]);
+  }, [cruise.additionalSupplies, cruise.id]);
   
   const handleAddSupply = (supplyId: string) => {
     if (!cruise) return;
+
+    addAdditionalSupplyToCruise(cruise.id, supplyId, 1, false, false);
     
-    // Check if the supply is already in the list
-    const existingSupply = cruise.additionalSupplies?.find(item => item.id === supplyId);
-    
-    if (existingSupply) {
-      // If already in list, increase amount
-      handleUpdateAmount(supplyId, existingSupply.amount + 1);
-    } else {
-      // If not in list, add it
-      addAdditionalSupplyToCruise(cruise.id, supplyId, 1);
-      
-      // Notify parent component of the change
-      onSupplyChange(cruise);
+    const updatedCruise = getCruiseById(cruise.id);
+    if (updatedCruise) {
+      onSupplyChange(updatedCruise);
     }
   };
-  
-  const handleUpdateAmount = (supplyId: string, amount: number) => {
+
+  const handleUpdateAmount = (supplyId: string, amount: number, isPerPerson: boolean, isPerDay: boolean) => {
     if (!cruise || amount < 0) return;
-    
-    updateAdditionalSupplyAmount(cruise.id, supplyId, amount);
-    
-    // Notify parent component of the change
-    onSupplyChange(cruise);
+
+    updateAdditionalSupplyAmount(cruise.id, supplyId, amount, isPerPerson, isPerDay);
+
+    const updatedCruise = getCruiseById(cruise.id);
+    if (updatedCruise) {
+      onSupplyChange(updatedCruise);
+    }
   };
-  
-  const handleRemoveSupply = (supplyId: string) => {
+
+  const handleRemoveSupply = (supplyId: string, isPerPerson: boolean, isPerDay: boolean) => {
     if (!cruise) return;
-    
-    removeAdditionalSupplyFromCruise(cruise.id, supplyId);
-    
-    // Notify parent component of the change
-    onSupplyChange(cruise);
+
+    removeAdditionalSupplyFromCruise(cruise.id, supplyId, isPerPerson, isPerDay);
+
+    const updatedCruise = getCruiseById(cruise.id);
+    if (updatedCruise) {
+      onSupplyChange(updatedCruise);
+    }
+  };
+
+  const handleUpdateFlags = (supplyId: string, oldIsPerPerson: boolean, oldIsPerDay: boolean, newIsPerPerson: boolean, newIsPerDay: boolean, amount: number) => {
+    if (!cruise) return;
+
+    if (hasAdditionalSupply(cruise.id, supplyId, newIsPerPerson, newIsPerDay)) {
+      const existingAmount = getAdditionalSupplyAmount(cruise.id, supplyId, newIsPerPerson, newIsPerDay);
+      const confirmed = window.confirm(
+        `Zmiana flag spowoduje połączenie z istniejącym wpisem (${existingAmount} szt.). Czy chcesz kontynuować?`
+      );
+      if (!confirmed) return;
+    }
+
+    removeAdditionalSupplyFromCruise(cruise.id, supplyId, oldIsPerPerson, oldIsPerDay);
+    addAdditionalSupplyToCruise(cruise.id, supplyId, amount, newIsPerPerson, newIsPerDay);
+
+    const updatedCruise = getCruiseById(cruise.id);
+    if (updatedCruise) {
+      onSupplyChange(updatedCruise);
+    }
   };
   
   const toggleShowIngredients = () => {
@@ -111,35 +105,26 @@ export default function CruiseSuppliesTab({
     setFilterText('');
   };
   
-  // Filter supplies based on the search text and selected category
-  const filteredSupplies = Object.keys(suppliesByCategory).reduce((acc, category) => {
-    // Skip categories that don't match the selected category filter (if any)
-    if (selectedCategory && category !== selectedCategory) {
-      return acc;
-    }
-    
-    const filteredCategory = suppliesByCategory[category].filter(supply => 
-      supply.name.toLowerCase().includes(filterText.toLowerCase())
-    );
-    
-    if (filteredCategory.length > 0) {
-      acc[category] = filteredCategory;
-    }
-    
-    return acc;
-  }, {} as {[key: string]: Supply[]});
-  
-  // Get all available categories for the category filter
-  const availableCategories = Object.keys(suppliesByCategory).sort();
+  const filteredSupplies = suppliesByCategory
+    .filter(categoryGroup => !selectedCategory || categoryGroup.category === selectedCategory)
+    .map(categoryGroup => ({
+      ...categoryGroup,
+      supplies: categoryGroup.supplies.filter(supply =>
+        supply.name.toLowerCase().includes(filterText.toLowerCase())
+      )
+    }))
+    .filter(categoryGroup => categoryGroup.supplies.length > 0);
+
+  const availableCategories = suppliesByCategory.map(group => group.category).sort();
   
   return (
-    <div className="p-6">      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="content-padding">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         {/* Left column - All supplies */}
         <div>
-          <h2 className="text-lg font-bold mb-4">Dostępne zapasy</h2>
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <div className="flex justify-between items-center mb-3">
+          <h2 className="heading-secondary">Dostępne zapasy</h2>
+          <div className="info-card mb-6">
+            <div className="flex-between mb-4">
               <h3 className="text-lg font-medium">Filtruj</h3>
               <div className="flex items-center">
                 <input
@@ -154,13 +139,13 @@ export default function CruiseSuppliesTab({
                 </label>
               </div>
             </div>
-            <div className="grid gap-3">
-              <div>
-                <label className="block text-sm font-medium mb-1">Kategoria</label>
+            <div className="form-section">
+              <div className="form-group">
+                <label className="form-label">Kategoria</label>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="input-field"
                 >
                   <option value="">Wszystkie kategorie</option>
                   {availableCategories.map(category => (
@@ -170,46 +155,46 @@ export default function CruiseSuppliesTab({
                   ))}
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Szukaj produktu</label>
+              <div className="form-group">
+                <label className="form-label">Szukaj produktu</label>
                 <input
                   type="text"
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
                   placeholder="Wpisz nazwę produktu..."
-                  className="w-full p-2 border rounded-md"
+                  className="input-field"
                 />
               </div>
             </div>
           </div>
           
           <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-            {Object.keys(filteredSupplies).length === 0 ? (
-              <p className="text-gray-500 italic py-4">Brak produktów do wyświetlenia.</p>
+            {filteredSupplies.length === 0 ? (
+              <p className="text-muted-light italic py-4">Brak produktów do wyświetlenia.</p>
             ) : (
-              Object.keys(filteredSupplies).map(category => (
-                <div key={category} className="p-4 bg-gray-50 rounded-lg mb-4">
-                  <h3 className="text-lg font-medium mb-2">{category}</h3>
+              filteredSupplies.map(categoryGroup => (
+                <div key={categoryGroup.category} className="info-card">
+                  <h3 className="section-header">{categoryGroup.category}</h3>
                   <ul className="space-y-2">
-                    {filteredSupplies[category].map(supply => (
+                    {categoryGroup.supplies.map(supply => (
                       <li key={supply.id} className="flex flex-col py-1 border-b border-gray-200">
                         <div className="flex justify-between items-center">
                           <div>
                             <span>{supply.name}</span>
-                            <span className="text-sm text-gray-500 ml-2">({supply.unit})</span>
+                            <span className="text-muted-light ml-2">({supply.unit})</span>
                           </div>
                           <button
                             onClick={() => handleAddSupply(supply.id)}
-                            className="ml-2 p-1 text-blue-600 hover:text-blue-800 rounded-full hover:bg-blue-100"
+                            className="btn-add btn-small"
                             title="Dodaj do listy zakupów"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
                             </svg>
                           </button>
                         </div>
                         {supply.description && (
-                          <span className="text-xs text-gray-500 italic mt-1">{supply.description}</span>
+                          <span className="text-muted-light italic mt-1">{supply.description}</span>
                         )}
                       </li>
                     ))}
@@ -222,69 +207,85 @@ export default function CruiseSuppliesTab({
         
         {/* Right column - Additional supplies to buy */}
         <div>
-          <h2 className="text-lg font-bold mb-4">Lista zakupów</h2>
-          {(!cruise.additionalSupplies || cruise.additionalSupplies.length === 0) ? (
-            <p className="text-gray-500 italic py-4">
+          <h2 className="heading-secondary">Lista zakupów</h2>
+          {shoppingListByCategory.length === 0 ? (
+            <p className="text-muted-light italic py-4">
               Brak produktów na liście zakupów. Dodaj produkty z listy po lewej stronie.
             </p>
           ) : (
             <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-              {Object.keys(shoppingListByCategory).length === 0 ? (
-                <p className="text-gray-500 italic py-4">Ładowanie...</p>
-              ) : (
-                Object.keys(shoppingListByCategory).sort().map(category => (
-                  <div key={category} className="p-3 bg-gray-50 rounded-lg mb-2">
-                    <h3 className="text-md font-medium mb-2 pb-1 border-b">{category}</h3>
-                    <ul className="space-y-1">
-                      {shoppingListByCategory[category].map(({supply, amount}) => (
-                        <li 
-                          key={supply.id} 
-                          className="py-1 flex flex-col text-sm"
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className="font-medium">{supply.name}</span>
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center text-xs">
-                                <button
-                                  onClick={() => handleUpdateAmount(supply.id, Math.max(1, amount - 1))}
-                                  className="px-1.5 py-0.5 bg-gray-200 rounded-l-md"
-                                >
-                                  -
-                                </button>
-                                <span className="px-2 py-0.5 bg-gray-100">
-                                  {amount} {supply.unit}
-                                </span>
-                                <button
-                                  onClick={() => handleUpdateAmount(supply.id, amount + 1)}
-                                  className="px-1.5 py-0.5 bg-gray-200 rounded-r-md"
-                                >
-                                  +
-                                </button>
-                              </div>
+              {shoppingListByCategory.map(categoryGroup => (
+                <div key={categoryGroup.category} className="info-card">
+                  <h3 className="section-header">{categoryGroup.category}</h3>
+                  <ul className="space-y-1">
+                    {categoryGroup.supplies.map(({supply, amount, isPerPerson, isPerDay}) => (
+                      <li
+                        key={`${supply.id}-${isPerPerson}-${isPerDay}`}
+                        className="shopping-item"
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{supply.name}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center text-xs">
                               <button
-                                onClick={() => handleRemoveSupply(supply.id)}
-                                className="text-red-600 hover:text-red-800 text-xs"
-                                title="Usuń"
+                                onClick={() => handleUpdateAmount(supply.id, Math.max(1, amount - 1), isPerPerson, isPerDay)}
+                                className="btn-secondary px-1.5 py-0.5 rounded-l-md rounded-r-none text-xs"
                               >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
+                                -
+                              </button>
+                              <span className="px-2 py-0.5 bg-gray-100 border">
+                                {amount} {supply.unit}
+                              </span>
+                              <button
+                                onClick={() => handleUpdateAmount(supply.id, amount + 1, isPerPerson, isPerDay)}
+                                className="btn-secondary px-1.5 py-0.5 rounded-r-md rounded-l-none text-xs"
+                              >
+                                +
                               </button>
                             </div>
+                            <div className="flex items-center gap-1 text-xs">
+                              <label className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  checked={isPerPerson}
+                                  onChange={(e) => handleUpdateFlags(supply.id, isPerPerson, isPerDay, e.target.checked, isPerDay, amount)}
+                                  className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                />
+                                <span className="ml-1">na osobę</span>
+                              </label>
+                              <label className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  checked={isPerDay}
+                                  onChange={(e) => handleUpdateFlags(supply.id, isPerPerson, isPerDay, isPerPerson, e.target.checked, amount)}
+                                  className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                />
+                                <span className="ml-1">na dzień</span>
+                              </label>
+                            </div>
+                            <button
+                              onClick={() => handleRemoveSupply(supply.id, isPerPerson, isPerDay)}
+                              className="btn-remove btn-small"
+                              title="Usuń"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
+                            </button>
                           </div>
-                          {supply.description && (
-                            <span className="text-xs text-gray-500 italic mt-1">{supply.description}</span>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))
-              )}
+                        </div>
+                        {supply.description && (
+                          <span className="shopping-item-description">{supply.description}</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           )}
         </div>
       </div>
     </div>
   );
-} 
+}

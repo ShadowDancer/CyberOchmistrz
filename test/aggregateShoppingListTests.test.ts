@@ -1,5 +1,5 @@
 import { aggregateShoppingList } from '../src/model/cruiseData';
-import { Cruise, Recipie, AggregatedShoppingList } from '../src/types';
+import { Cruise, Recipie, AggregatedShoppingList, RecipeAmountSource, AdditionalSupplyAmountSource } from '../src/types';
 
 // Mock the supplies data
 jest.mock('../src/data/supplies.json', () => [
@@ -133,11 +133,11 @@ describe('aggregateShoppingList', () => {
       id: 'jajecznica',
       name: 'Jajecznica',
       ingredients: [
-        { id: 'jajka', amount: 3 }, // 3 eggs
-        { id: 'sol', amount: 1 }, // 1g salt
-        { id: 'pieprz', amount: 1 }, // 1g pepper
-        { id: 'chleb', amount: 0.15 }, // 0.15 bread
-        { id: 'maslo', amount: 2 } // 2g butter
+        { id: 'jajka', amount: 3 },
+        { id: 'sol', amount: 1 },
+        { id: 'pieprz', amount: 1 },
+        { id: 'chleb', amount: 0.15 },
+        { id: 'maslo', amount: 2 }
       ],
       description: 'Pyszna. Na jachcie może być konieczność robienia na 2 tury.',
       mealType: ['śniadanie', 'kolacja'],
@@ -152,7 +152,7 @@ describe('aggregateShoppingList', () => {
       dateCreated: '2023-01-01T00:00:00.000Z',
       dateModified: '2023-01-01T00:00:00.000Z',
       length: 1,
-      crew: 4, // Scale by 4
+      crew: 4,
       days: [
         { dayNumber: 1, recipes: [{ originalRecipeId: 'jajecznica', recipeData: recipe }] }
       ]
@@ -166,23 +166,18 @@ describe('aggregateShoppingList', () => {
 
     const eggsItem = result['nabiał'].find(item => item.supply.id === 'jajka');
     expect(eggsItem).toBeDefined();
-    expect(eggsItem!.amount).toBe(12); // 3 * 4
+    expect(eggsItem!.amount).toBe(12);
     expect(eggsItem!.sources).toHaveLength(1);
-    expect(eggsItem!.sources[0]).toEqual({
-      type: 'recipe',
-      amount: 12,
-      recipeName: 'Jajecznica',
-      dayNumber: 1
-    });
+    expect(eggsItem!.sources[0]).toEqual(new RecipeAmountSource(3, 'Jajecznica', 1));
 
     const butterItem = result['nabiał'].find(item => item.supply.id === 'maslo');
-    expect(butterItem!.amount).toBe(8); // 2 * 4
+    expect(butterItem!.amount).toBe(8);
 
     const saltItem = result['przyprawy'].find(item => item.supply.id === 'sol');
-    expect(saltItem!.amount).toBe(4); // 1 * 4
+    expect(saltItem!.amount).toBe(4);
 
     const breadItem = result['pieczywo'].find(item => item.supply.id === 'chleb');
-    expect(breadItem!.amount).toBe(0.6); // 0.15 * 4
+    expect(breadItem!.amount).toBe(0.6);
   });
 
   it('should aggregate additional supplies', () => {
@@ -195,9 +190,9 @@ describe('aggregateShoppingList', () => {
       crew: 2,
       days: [{ dayNumber: 1, recipes: [] }],
       additionalSupplies: [
-        { id: 'woda_butelkowana', amount: 6 }, // 6 bottles of water
-        { id: 'papier_toaletowy', amount: 4 }, // 4 rolls of toilet paper
-        { id: 'mydło', amount: 2 } // 2 soaps
+        { id: 'woda_butelkowana', amount: 6, isPerPerson: false, isPerDay: false },
+        { id: 'papier_toaletowy', amount: 4, isPerPerson: false, isPerDay: false },
+        { id: 'mydło', amount: 2, isPerPerson: false, isPerDay: false }
       ]
     };
 
@@ -210,10 +205,7 @@ describe('aggregateShoppingList', () => {
     expect(waterItem.supply.name).toBe('Woda butelkowana');
     expect(waterItem.amount).toBe(6);
     expect(waterItem.sources).toHaveLength(1);
-    expect(waterItem.sources[0]).toEqual({
-      type: 'additional',
-      amount: 6
-    });
+    expect(waterItem.sources[0]).toEqual(new AdditionalSupplyAmountSource(6, false, false));
 
     const toiletPaperItem = result['środki czystości'].find(item => item.supply.id === 'papier_toaletowy');
     expect(toiletPaperItem!.amount).toBe(4);
@@ -246,7 +238,7 @@ describe('aggregateShoppingList', () => {
       length: 1,
       crew: 3,
       days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'pesto-z-tuczykiem', recipeData: recipe }] }],
-      additionalSupplies: [{ id: 'woda_butelkowana', amount: 9 }] // 9 bottles of water
+      additionalSupplies: [{ id: 'woda_butelkowana', amount: 9, isPerPerson: false, isPerDay: false }]
     };
 
     const result = aggregateShoppingList(cruise);
@@ -284,7 +276,7 @@ describe('aggregateShoppingList', () => {
     const recipe2: Recipie = {
       id: 'pesto-z-tuczykiem-i-parmezanem',
       name: 'Pesto z tuńczykiem i parmezanem',
-      ingredients: [{ id: 'jajka', amount: 2 }], // Same ingredient, different amount
+    ingredients: [{ id: 'jajka', amount: 2 }],
       description: 'Test',
       mealType: [],
       difficulty: 1,
@@ -303,7 +295,7 @@ describe('aggregateShoppingList', () => {
         { dayNumber: 1, recipes: [{ originalRecipeId: 'jajecznica', recipeData: recipe1 }] },
         { dayNumber: 2, recipes: [{ originalRecipeId: 'pesto-z-tuczykiem-i-parmezanem', recipeData: recipe2 }] }
       ],
-      additionalSupplies: [{ id: 'jajka', amount: 6 }] // Additional eggs
+      additionalSupplies: [{ id: 'jajka', amount: 6, isPerPerson: false, isPerDay: false }]
     };
 
     const result = aggregateShoppingList(cruise);
@@ -311,22 +303,9 @@ describe('aggregateShoppingList', () => {
     const eggsItem = result['nabiał'][0];
     expect(eggsItem.amount).toBe(16); // (3 + 2) * 2 + 6 = 6 + 4 + 6
     expect(eggsItem.sources).toHaveLength(3);
-    expect(eggsItem.sources[0]).toEqual({
-      type: 'recipe',
-      amount: 6,
-      recipeName: 'Jajecznica',
-      dayNumber: 1
-    });
-    expect(eggsItem.sources[1]).toEqual({
-      type: 'recipe',
-      amount: 4,
-      recipeName: 'Pesto z tuńczykiem i parmezanem',
-      dayNumber: 2
-    });
-    expect(eggsItem.sources[2]).toEqual({
-      type: 'additional',
-      amount: 6
-    });
+    expect(eggsItem.sources[0]).toEqual(new RecipeAmountSource(3, 'Jajecznica', 1));
+    expect(eggsItem.sources[1]).toEqual(new RecipeAmountSource(2, 'Pesto z tuńczykiem i parmezanem', 2));
+    expect(eggsItem.sources[2]).toEqual(new AdditionalSupplyAmountSource(6, false, false));
   });
 
   it('should sort items alphabetically within categories', () => {
@@ -339,8 +318,8 @@ describe('aggregateShoppingList', () => {
       crew: 1,
       days: [{ dayNumber: 1, recipes: [] }],
       additionalSupplies: [
-        { id: 'papier_toaletowy', amount: 1 },
-        { id: 'mydło', amount: 1 }
+        { id: 'papier_toaletowy', amount: 1, isPerPerson: false, isPerDay: false },
+        { id: 'mydło', amount: 1, isPerPerson: false, isPerDay: false }
       ]
     };
 
@@ -371,7 +350,7 @@ describe('aggregateShoppingList', () => {
       length: 1,
       crew: 2,
       days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'recipe-1', recipeData: recipe }] }],
-      additionalSupplies: [{ id: 'missing-supply', amount: 3 }]
+      additionalSupplies: [{ id: 'missing-supply', amount: 3, isPerPerson: false, isPerDay: false }]
     };
 
     const result = aggregateShoppingList(cruise);
@@ -388,5 +367,44 @@ describe('aggregateShoppingList', () => {
     expect(invalidSupply).toBeDefined();
     expect(invalidSupply!.supply.name).toBe('Nieprawidłowy produkt: missing-supply');
     expect(invalidSupply!.amount).toBe(3);
+  });
+
+  it('should handle multiple additional supplies with different flags', () => {
+    const cruise: Cruise = {
+      id: 'test-cruise',
+      name: 'Test Cruise',
+      dateCreated: '2023-01-01T00:00:00.000Z',
+      dateModified: '2023-01-01T00:00:00.000Z',
+      length: 5, // 5 days
+      crew: 3, // 3 crew
+      days: [{ dayNumber: 1, recipes: [] }],
+      additionalSupplies: [
+        { id: 'woda_butelkowana', amount: 2, isPerPerson: false, isPerDay: false }, // Fixed: 2
+        { id: 'woda_butelkowana', amount: 1, isPerPerson: true, isPerDay: false },  // Per person: 1 * 3 = 3
+        { id: 'woda_butelkowana', amount: 1, isPerPerson: false, isPerDay: true },  // Per day: 1 * 5 = 5
+        { id: 'woda_butelkowana', amount: 1, isPerPerson: true, isPerDay: true },   // Per person per day: 1 * 3 * 5 = 15
+        { id: 'papier_toaletowy', amount: 2, isPerPerson: true, isPerDay: false }   // Per person: 2 * 3 = 6
+      ]
+    };
+
+    const result = aggregateShoppingList(cruise);
+
+    expect(result).toHaveProperty('napoje');
+    expect(result).toHaveProperty('środki czystości');
+
+    const waterItem = result['napoje'][0];
+    expect(waterItem.supply.name).toBe('Woda butelkowana');
+    expect(waterItem.amount).toBe(25); // 2 + 3 + 5 + 15
+    expect(waterItem.sources).toHaveLength(4);
+    expect(waterItem.sources[0]).toEqual(new AdditionalSupplyAmountSource(2, false, false));
+    expect(waterItem.sources[1]).toEqual(new AdditionalSupplyAmountSource(1, true, false));
+    expect(waterItem.sources[2]).toEqual(new AdditionalSupplyAmountSource(1, false, true));
+    expect(waterItem.sources[3]).toEqual(new AdditionalSupplyAmountSource(1, true, true));
+
+    const toiletPaperItem = result['środki czystości'][0];
+    expect(toiletPaperItem.supply.name).toBe('Papier toaletowy');
+    expect(toiletPaperItem.amount).toBe(6); // 2 * 3
+    expect(toiletPaperItem.sources).toHaveLength(1);
+    expect(toiletPaperItem.sources[0]).toEqual(new AdditionalSupplyAmountSource(2, true, false));
   });
 });

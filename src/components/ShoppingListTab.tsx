@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, AggregatedShoppingList, AggregatedItem } from '../types';
+import { Cruise, AggregatedShoppingList, AggregatedItem, RecipeAmountSource, AdditionalSupplyAmountSource } from '../types';
 import { aggregateShoppingList } from '../model/cruiseData';
 
 interface ShoppingListTabProps {
@@ -25,26 +25,35 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
     let tooltipContent = '';
 
     // Add recipes
-    const recipeSources = item.sources.filter(s => s.type === 'recipe');
+    const recipeSources = item.sources.filter(s => s.type === 'recipe') as RecipeAmountSource[];
     if (recipeSources.length > 0) {
       tooltipContent += `Z przepisów (załoga: ${cruise.crew} osób):\n`;
       recipeSources.forEach(source => {
         if (source.recipeName && source.dayNumber !== undefined) {
-          const originalAmount = source.amount / cruise.crew;
-          tooltipContent += `- ${source.recipeName} (dzień ${source.dayNumber}): ${originalAmount} ${item.supply.unit} × ${cruise.crew} załogantów = ${source.amount} ${item.supply.unit}\n`;
+          const scaledAmount = source.amount * cruise.crew;
+          tooltipContent += `- ${source.recipeName} (dzień ${source.dayNumber}): ${source.amount} ${item.supply.unit} × ${cruise.crew} załogantów = ${scaledAmount} ${item.supply.unit}\n`;
         }
       });
     }
 
     // Add additional supplies
-    const additionalSources = item.sources.filter(s => s.type === 'additional');
+    const additionalSources = item.sources.filter(s => s.type === 'additional') as AdditionalSupplyAmountSource[];
     if (additionalSources.length > 0) {
       if (tooltipContent) tooltipContent += '\n';
-      const totalAdditional = additionalSources.reduce((sum, source) => sum + source.amount, 0);
-      tooltipContent += `Z dodatkowych zakupów: ${totalAdditional} ${item.supply.unit}`;
+      tooltipContent += `Z dodatkowych zakupów:\n`;
+      additionalSources.forEach(source => {
+        const crewMultiplier = source.isPerPerson ? cruise.crew : 1;
+        const dayMultiplier = source.isPerDay ? cruise.length : 1;
+        const scaledAmount = source.amount * crewMultiplier * dayMultiplier;
+        let calculation = `${source.amount} ${item.supply.unit}`;
+        if (source.isPerPerson) calculation += ` × ${cruise.crew} załogantów`;
+        if (source.isPerDay) calculation += ` × ${cruise.length} dni`;
+        calculation += ` = ${scaledAmount} ${item.supply.unit}`;
+        tooltipContent += `- ${calculation}\n`;
+      });
     }
 
-    return tooltipContent;
+    return tooltipContent.trim();
   };
 
   return (
