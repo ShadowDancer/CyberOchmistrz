@@ -180,5 +180,18 @@ describe('cruiseRecipeData', () => {
 
       expect(localStorageMock.setItem).not.toHaveBeenCalled();
     });
+
+    it('should remove an unknown recipe (recipeData is undefined)', () => {
+      const cruise = createCruiseWithRecipes('test-cruise-1', 'Test Cruise', 3, {
+        1: [{ recipeId: 'unknown-recipe', recipeData: undefined }]
+      });
+      setupCruises([cruise]);
+
+      removeRecipeFromCruiseDay('test-cruise-1', 1, 'unknown-recipe', 0);
+
+      const storedCruises = getStoredCruises();
+      const updatedCruise = storedCruises[0];
+      expect(updatedCruise.days[0].recipes).toHaveLength(0);
+    });
   });
 });

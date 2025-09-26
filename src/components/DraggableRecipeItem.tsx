@@ -92,22 +92,22 @@ export default function DraggableRecipeItem({
             </svg>
           </div>
         </div>
-        {recipeData && (
-          <div className="flex justify-end gap-2 mt-1">
+        <div className="flex justify-end gap-2 mt-1">
+          {recipeData && (
             <button
               onClick={() => onEditIngredients(dayNumber, recipe, index)}
               className="text-blue-600 hover:text-blue-800 text-xs md:text-sm px-2 py-1 border border-blue-600 rounded"
             >
               Edytuj składniki
             </button>
-            <button
-              onClick={() => onRemoveRecipe(dayNumber, recipe, index)}
-              className="text-red-600 hover:text-red-800 text-xs md:text-sm px-2 py-1 border border-red-600 rounded"
-            >
-              Usuń
-            </button>
-          </div>
-        )}
+          )}
+          <button
+            onClick={() => onRemoveRecipe(dayNumber, recipe, index)}
+            className="text-red-600 hover:text-red-800 text-xs md:text-sm px-2 py-1 border border-red-600 rounded"
+          >
+            Usuń
+          </button>
+        </div>
       </div>
     </li>
   );
