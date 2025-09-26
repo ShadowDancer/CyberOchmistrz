@@ -64,13 +64,13 @@ export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedR
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="sticky top-0 bg-white pt-2 pb-3 z-10">
+    <div className="h-full flex flex-col p-4 dark:bg-gray-800">
+      <div className="sticky top-0 dark:bg-gray-800 pt-2 pb-3 z-10">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">Lista Przepisów</h2>
-          <button 
+          <button
             onClick={toggleFilters}
-            className="md:hidden text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded"
+            className="md:hidden text-sm btn-secondary px-2 py-1"
           >
             {showFilters ? 'Ukryj filtry' : 'Pokaż filtry'}
           </button>
@@ -98,7 +98,7 @@ export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedR
               onClick={() => handleDietFilterChange('all')}
               className={`btn-filter ${
                 filterDiet === 'all'
-                  ? 'bg-green-600 text-white'
+                  ? 'btn-filter-active-green'
                   : 'btn-filter-inactive'
               }`}
             >
@@ -108,7 +108,7 @@ export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedR
               onClick={() => handleDietFilterChange('vegetarian')}
               className={`btn-filter ${
                 filterDiet === 'vegetarian'
-                  ? 'bg-green-600 text-white'
+                  ? 'btn-filter-active-green'
                   : 'btn-filter-inactive'
               }`}
             >
@@ -118,7 +118,7 @@ export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedR
               onClick={() => handleDietFilterChange('vegan')}
               className={`btn-filter ${
                 filterDiet === 'vegan'
-                  ? 'bg-green-600 text-white'
+                  ? 'btn-filter-active-green'
                   : 'btn-filter-inactive'
               }`}
             >
@@ -128,10 +128,10 @@ export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedR
         </div>
       </div>
       
-      <div className="overflow-y-auto flex-grow mt-3">
+      <div className="overflow-y-auto flex-grow dark:bg-gray-800">
         {filteredRecipies.length === 0 ? (
-          <div className="text-center text-muted-light py-8">
-            Brak przepisów spełniających kryteria
+          <div className="empty-state">
+            <p className="empty-state-text">Brak przepisów spełniających kryteria</p>
           </div>
         ) : (
           <ul className="space-y-2">

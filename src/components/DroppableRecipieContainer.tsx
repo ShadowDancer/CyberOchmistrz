@@ -39,11 +39,11 @@ export default function DroppableRecipieContainer({
     <div
       ref={setNodeRef}
       className={`min-h-[100px] p-2 rounded-lg ${
-        isDragging ? 'border-2 border-gray-300 border-dashed' : ''
+        isDragging ? 'border-2 border-gray-300 border-dashed dark:border-gray-600' : ''
       }`}
     >
       {recipes.length === 0 ? (
-        <div className={`flex items-center justify-center h-20 text-gray-400 text-sm border-2 border-dashed rounded-lg border-gray-200`}>
+        <div className={`flex items-center justify-center h-20 text-muted-light text-sm border-2 border-dashed rounded-lg border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800`}>
           Przeciągnij przepis tutaj
         </div>
       ) : (

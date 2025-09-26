@@ -37,9 +37,9 @@ export default function RecipesPage() {
     <main className="container mx-auto px-4 py-8 relative flex flex-col h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">Książka Kucharska</h1>
-        <Link 
-          href="/przepisy/nowy" 
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-md font-medium flex items-center text-sm md:text-base"
+        <Link
+          href="/przepisy/nowy"
+          className="btn-primary flex items-center"
         >
           Nowy przepis
         </Link>
@@ -48,18 +48,18 @@ export default function RecipesPage() {
       {/* Mobile View Controls */}
       <div className="md:hidden flex mb-4">
         <div className="flex justify-between w-full">
-          <button 
+          <button
             onClick={() => setMobileView('list')}
             className={`flex-1 py-2 text-center font-medium border-b-2 ${
-              mobileView === 'list' ? 'border-blue-500 text-blue-600' : 'border-gray-200 text-gray-500'
+              mobileView === 'list' ? 'btn-mobile-tab-active' : 'btn-mobile-tab-inactive'
             }`}
           >
             Lista przepisów
           </button>
-          <button 
+          <button
             onClick={() => setMobileView('detail')}
             className={`flex-1 py-2 text-center font-medium border-b-2 ${
-              mobileView === 'detail' ? 'border-blue-500 text-blue-600' : 'border-gray-200 text-gray-500'
+              mobileView === 'detail' ? 'btn-mobile-tab-active' : 'btn-mobile-tab-inactive'
             } ${!selectedDish ? 'opacity-50' : ''}`}
             disabled={!selectedDish}
           >
@@ -70,12 +70,12 @@ export default function RecipesPage() {
       
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 flex-grow overflow-hidden">
         {/* Recipe List - Hidden on mobile when in detail view */}
-        <div className={`w-full md:w-1/3 border rounded-lg p-4 bg-white shadow-sm flex-grow md:flex-grow-0 overflow-hidden ${
+        <div className={`w-full md:w-1/3 border rounded-lg bg-white dark:bg-gray-800 shadow-sm flex-grow md:flex-grow-0 overflow-hidden ${
           mobileView === 'detail' ? 'hidden md:block' : ''
         }`}>
-          <RecipeList 
+          <RecipeList
             onSelectRecipie={handleSelectDish}
-            selectedRecipieId={selectedDish?.id || null} 
+            selectedRecipieId={selectedDish?.id || null}
           />
         </div>
         
@@ -84,10 +84,10 @@ export default function RecipesPage() {
           mobileView === 'list' ? 'hidden md:block' : ''
         }`}>
           {mobileView === 'detail' && (
-            <div className="md:hidden p-2 bg-gray-50 border-b">
-              <button 
+            <div className="md:hidden border-b empty-state">
+              <button
                 onClick={handleBackToList}
-                className="flex items-center text-blue-600 font-medium text-sm"
+                className="flex items-center text-link font-medium text-sm bg-transparent"
               >
                 ← Wróć do listy
               </button>
@@ -98,4 +98,4 @@ export default function RecipesPage() {
       </div>
     </main>
   );
-} 
+}

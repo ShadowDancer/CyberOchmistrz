@@ -297,29 +297,23 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
     >
       <div className="flex flex-col md:grid md:grid-cols-3 h-full">
       {/* Mobile navigation controls */}
-      <div className="flex justify-center gap-2 py-2 md:hidden border-b mb-2">
-        <button 
+      <div className="flex justify-center gap-2 py-2 md:hidden border-b dark:border-gray-600 mb-2">
+        <button
           onClick={() => setMobileView('days')}
-          className={`px-3 py-1 text-sm rounded-full ${
-            mobileView === 'days' ? 'bg-blue-600 text-white' : 'bg-gray-200'
-          }`}
+          className={`btn-filter ${mobileView === 'days' ? 'btn-filter-active' : 'btn-filter-inactive'}`}
         >
           Dni
         </button>
-        <button 
+        <button
           onClick={() => setMobileView('details')}
-          className={`px-3 py-1 text-sm rounded-full ${
-            mobileView === 'details' ? 'bg-blue-600 text-white' : 'bg-gray-200'
-          } ${!selectedDay ? 'opacity-50' : ''}`}
+          className={`btn-filter ${mobileView === 'details' ? 'btn-filter-active' : 'btn-filter-inactive'} ${!selectedDay ? 'opacity-50' : ''}`}
           disabled={!selectedDay}
         >
           Szczegóły dnia
         </button>
-        <button 
+        <button
           onClick={() => setMobileView('recipes')}
-          className={`px-3 py-1 text-sm rounded-full ${
-            mobileView === 'recipes' ? 'bg-blue-600 text-white' : 'bg-gray-200'
-          } ${!selectedDay ? 'opacity-50' : ''}`}
+          className={`btn-filter ${mobileView === 'recipes' ? 'btn-filter-active' : 'btn-filter-inactive'} ${!selectedDay ? 'opacity-50' : ''}`}
           disabled={!selectedDay}
         >
           Przepisy
@@ -331,21 +325,19 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
         mobileView !== 'days' ? 'hidden md:block' : ''
       }`}>
         <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4">Dni rejsu</h2>
-        <div className={`min-h-[100px] p-2 rounded-lg transition-colors ${
-          !!activeId ? 'border-2 border-gray-300 border-dashed' : ''
+        <div className={`space-y-4 max-h-[70vh] overflow-y-auto ${
+          !!activeId ? 'border-2 border-gray-300 border-dashed dark:border-gray-600 rounded-lg p-2' : ''
         }`}>
-          <div className="space-y-2">
-            {cruise.days.map(day => (
-              <DroppableDayItem
-                key={day.dayNumber}
-                dayNumber={day.dayNumber}
-                recipes={day.recipes}
-                isSelected={selectedDay === day.dayNumber}
-                isOver={overId === `day-list-${day.dayNumber}`}
-                onClick={() => handleDaySelect(day.dayNumber)}
-              />
-            ))}
-          </div>
+          {cruise.days.map(day => (
+            <DroppableDayItem
+              key={day.dayNumber}
+              dayNumber={day.dayNumber}
+              recipes={day.recipes}
+              isSelected={selectedDay === day.dayNumber}
+              isOver={overId === `day-list-${day.dayNumber}`}
+              onClick={() => handleDaySelect(day.dayNumber)}
+            />
+          ))}
         </div>
       </div>
       
@@ -357,9 +349,9 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
           <>
             <div className="flex items-center justify-between mb-3 md:mb-4">
               <h2 className="text-lg md:text-xl font-bold">Dzień {selectedDay}</h2>
-              <button 
+              <button
                 onClick={switchToRecipesView}
-                className="text-sm bg-blue-600 text-white px-2 py-1 rounded md:hidden"
+                className="btn-primary btn-small md:hidden"
               >
                 Dodaj przepis
               </button>
@@ -374,8 +366,8 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
                 isDragging={!!activeId}
               />
               {selectedDayData.recipes.length === 0 && (
-                <p className="text-gray-500 italic text-sm md:text-base text-center mt-4">
-                  <button 
+                <p className="text-muted-light italic text-sm md:text-base text-center mt-4">
+                  <button
                     onClick={switchToRecipesView}
                     className="text-blue-600 underline md:hidden"
                   >
@@ -386,9 +378,9 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500">
+          <div className="flex flex-col items-center justify-center h-full text-muted-light">
             <p className="text-sm md:text-base">
-              {mobileView === 'details' ? 
+              {mobileView === 'details' ?
                 <button onClick={backToDays} className="text-blue-600">Wybierz dzień z listy</button> :
                 'Wybierz dzień z listy po lewej stronie'
               }
@@ -418,9 +410,9 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
             selectedRecipieId={selectedRecipie}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500">
+          <div className="flex flex-col items-center justify-center h-full text-muted-light">
             <p className="text-sm md:text-base">
-              {mobileView === 'recipes' ? 
+              {mobileView === 'recipes' ?
                 <button onClick={backToDays} className="text-blue-600">Najpierw wybierz dzień</button> :
                 'Wybierz dzień, aby dodać przepisy'
               }
@@ -446,14 +438,14 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
       {/* Drag overlay */}
       <DragOverlay style={{ zIndex: 1000, opacity: 0.5 }}>
         {activeRecipe ? (
-          <div className="p-2 md:p-3 border rounded-lg bg-blue-50 border-blue-500">
+          <div className="p-2 md:p-3 border rounded-lg bg-blue-50 border-blue-500 dark:bg-blue-900 dark:border-blue-400">
             <div className="flex items-center">
               <div className="flex-1">
                 <span className="font-medium text-sm md:text-base">
                   {activeRecipe.recipe.recipeData ? activeRecipe.recipe.recipeData.name : `Przepis #${activeRecipe.recipe.originalRecipeId}`}
                 </span>
                 {activeRecipe.recipe.recipeData && (
-                  <p className="text-xs md:text-sm text-gray-600 mt-1">
+                  <p className="text-xs md:text-sm text-muted mt-1">
                     {activeRecipe.recipe.recipeData.mealType.join(', ')}
                   </p>
                 )}

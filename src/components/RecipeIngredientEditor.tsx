@@ -61,12 +61,12 @@ export default function RecipeIngredientEditor({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="container-white rounded-lg p-4 w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">Edytuj składniki - {recipe.name}</h2>
-          <button 
+          <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-muted hover:text-muted-dark"
           >
             &times;
           </button>
@@ -75,16 +75,16 @@ export default function RecipeIngredientEditor({
         <div className="mb-4">
           <h3 className="font-medium mb-2">Obecne składniki</h3>
           {ingredients.length === 0 ? (
-            <p className="text-gray-500 italic">Brak składników</p>
+            <p className="text-muted italic">Brak składników</p>
           ) : (
             <ul className="space-y-2">
               {ingredients.map((ingredient, index) => (
-                <li key={index} className="border rounded p-2">
+                <li key={index} className="list-item-border">
                   <div className="flex justify-between mb-1">
                     <span className="font-medium">{ingredient.name}</span>
-                    <button 
+                    <button
                       onClick={() => handleRemoveIngredient(index)}
-                      className="text-red-600 text-sm"
+                      className="text-red-600 dark:text-red-400 text-sm"
                     >
                       Usuń
                     </button>
@@ -96,12 +96,12 @@ export default function RecipeIngredientEditor({
                       step="0.1"
                       value={ingredient.amount}
                       onChange={(e) => handleAmountChange(index, e.target.value)}
-                      className="w-20 px-2 py-1 border rounded"
+                      className="input-simple w-20"
                     />
                     <span>{ingredient.unit}</span>
                     <button
                       onClick={() => handleSaveAmount(index)}
-                      className="ml-auto text-sm bg-blue-600 text-white px-2 py-1 rounded"
+                      className="btn-primary ml-auto text-sm px-2 py-1"
                     >
                       Zapisz
                     </button>
@@ -112,13 +112,13 @@ export default function RecipeIngredientEditor({
           )}
         </div>
         
-        <div className="border-t pt-4 mt-4">
+        <div className="border-t dark:border-gray-600 pt-4 mt-4">
           <h3 className="font-medium mb-2">Dodaj nowy składnik</h3>
           <div className="flex flex-col gap-2">
             <select
               value={newIngredient.id}
               onChange={(e) => setNewIngredient({ ...newIngredient, id: e.target.value })}
-              className="w-full px-3 py-2 border rounded"
+              className="input-simple"
             >
               <option value="">Wybierz składnik</option>
               {allIngredients.map((ing) => (
@@ -134,12 +134,12 @@ export default function RecipeIngredientEditor({
                 step="0.1"
                 value={newIngredient.amount}
                 onChange={(e) => setNewIngredient({ ...newIngredient, amount: Number(e.target.value) })}
-                className="w-20 px-2 py-1 border rounded"
+                className="input-simple w-20"
                 placeholder="Ilość"
               />
               <span>
-                {newIngredient.id ? 
-                  allIngredients.find(ing => ing.id === newIngredient.id)?.unit || '' : 
+                {newIngredient.id ?
+                  allIngredients.find(ing => ing.id === newIngredient.id)?.unit || '' :
                   ''
                 }
               </span>
@@ -148,20 +148,20 @@ export default function RecipeIngredientEditor({
               onClick={handleAddNewIngredient}
               disabled={!newIngredient.id || newIngredient.amount <= 0}
               className={`px-3 py-2 rounded text-white ${
-                !newIngredient.id || newIngredient.amount <= 0 ? 
-                'bg-gray-400 cursor-not-allowed' : 
-                'bg-green-600 hover:bg-green-700'
+                !newIngredient.id || newIngredient.amount <= 0 ?
+                'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' :
+                'btn-add'
               }`}
             >
               Dodaj składnik
             </button>
           </div>
         </div>
-        
-        <div className="flex justify-end mt-4 pt-4 border-t">
+
+        <div className="flex justify-end mt-4 pt-4 border-t dark:border-gray-600">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="btn-primary"
           >
             Zamknij
           </button>
@@ -169,4 +169,4 @@ export default function RecipeIngredientEditor({
       </div>
     </div>
   );
-} 
+}

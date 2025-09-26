@@ -33,24 +33,24 @@ export default function DroppableDayItem({
     <div
       ref={setNodeRef}
       onClick={onClick}
-      className={`p-2 md:p-3 border rounded-lg cursor-pointer transition-colors ${
+      className={`p-2 md:p-3 border rounded-lg cursor-pointer transition-colors dark:border-gray-600 ${
         isSelected
-          ? 'border-blue-500 bg-blue-50'
+          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900'
           : isOver
-          ? 'border-blue-300 bg-blue-25'
-          : 'hover:bg-gray-50'
+          ? 'border-blue-300'
+          : ''
       }`}
     >
       <div className="flex justify-between items-center">
         <h3 className="font-medium text-sm md:text-base">Dzień {dayNumber}</h3>
-        <span className="text-xs md:text-sm text-gray-500">
+        <span className="text-xs md:text-sm text-muted-light">
           {dayRecipes} {dayRecipes === 1 ? 'przepis' :
             dayRecipes > 1 && dayRecipes < 5 ? 'przepisy' : 'przepisów'}
         </span>
       </div>
 
       {dayRecipes > 0 && (
-        <ul className="mt-2 text-xs md:text-sm text-gray-600">
+        <ul className="mt-2 text-xs md:text-sm text-muted">
           {recipes.slice(0, 2).map((recipe, index) => {
             // First try to use the stored recipe data if available
             const recipeData = recipe.recipeData || getRecipeById(recipe.originalRecipeId);

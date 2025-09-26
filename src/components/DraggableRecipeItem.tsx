@@ -52,11 +52,11 @@ export default function DraggableRecipeItem({
   const recipeData = recipe.recipeData || getRecipeById(recipe.originalRecipeId);
 
   return (
-    <li 
+    <li
       ref={setNodeRef}
       style={style}
-      className={`p-2 md:p-3 border rounded-lg ${
-        isDragging || isSortableDragging ? 'border-blue-500 bg-blue-50' : ''
+      className={`p-2 md:p-3 border rounded-lg dark:border-gray-600 ${
+        isDragging || isSortableDragging ? 'border-blue-500' : ''
       }`}
     >
       <div className="flex flex-col gap-2">
@@ -66,7 +66,7 @@ export default function DraggableRecipeItem({
               {recipeData ? recipeData.name : `Przepis #${recipe.originalRecipeId}`}
             </span>
             {recipeData && (
-              <p className="text-xs md:text-sm text-gray-600 mt-1">
+              <p className="text-xs md:text-sm text-muted mt-1">
                 {recipeData.mealType.join(', ')}
               </p>
             )}
@@ -75,7 +75,7 @@ export default function DraggableRecipeItem({
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600 ml-2 touch-none select-none"
+            className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400 ml-2 touch-none select-none"
             title="Przeciągnij, aby zmienić kolejność"
             style={{ touchAction: 'none' }}
           >
@@ -96,14 +96,14 @@ export default function DraggableRecipeItem({
           {recipeData && (
             <button
               onClick={() => onEditIngredients(dayNumber, recipe, index)}
-              className="text-blue-600 hover:text-blue-800 text-xs md:text-sm px-2 py-1 border border-blue-600 rounded"
+              className="btn-primary px-2 py-1 text-xs md:text-sm"
             >
               Edytuj składniki
             </button>
           )}
           <button
             onClick={() => onRemoveRecipe(dayNumber, recipe, index)}
-            className="text-red-600 hover:text-red-800 text-xs md:text-sm px-2 py-1 border border-red-600 rounded"
+            className="btn-remove px-2 py-1 text-xs md:text-sm"
           >
             Usuń
           </button>

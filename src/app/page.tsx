@@ -21,13 +21,13 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-center justify-center w-full sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2">
           <Link
-            className="rounded-full shadow-sm hover:shadow transition-all flex items-center justify-center bg-blue-600 text-white gap-2 hover:bg-blue-700 font-medium text-sm md:text-base h-12 px-5 w-full"
+            className="btn-hero-primary"
             href="/przepisy"
           >
             Książka kucharska
           </Link>
           <Link
-            className="rounded-full shadow-sm hover:shadow transition-all flex items-center justify-center bg-green-600 text-white gap-2 hover:bg-green-700 font-medium text-sm md:text-base h-12 px-5 w-full"
+            className="btn-hero-secondary"
             href="/rejsy"
           >
             Rejsy
@@ -36,7 +36,7 @@ export default function Home() {
       </main>
       <footer className="row-start-3 w-full py-4 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-3">
         <a
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mx-auto sm:mx-0 sm:ml-6"
+          className="flex items-center gap-2 text-muted hover:text-gray-900 transition-colors mx-auto sm:mx-0 sm:ml-6"
           href="https://github.com/ShadowDancer/CyberOchmistrz"
           target="_blank"
           rel="noopener noreferrer"
@@ -51,7 +51,7 @@ export default function Home() {
           </div>
           <span className="text-sm font-medium">GitHub</span>
         </a>
-        <p className="text-sm text-gray-500 mx-auto sm:mx-0 sm:mr-6">
+        <p className="text-sm text-muted-light mx-auto sm:mx-0 sm:mr-6">
           © 2025 Przemysław Onak
         </p>
       </footer>

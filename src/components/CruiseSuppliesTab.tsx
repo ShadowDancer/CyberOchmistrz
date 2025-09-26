@@ -233,7 +233,7 @@ export default function CruiseSuppliesTab({
                               >
                                 -
                               </button>
-                              <span className="px-2 py-0.5 bg-gray-100 border">
+                              <span className="px-2 py-0.5 bg-gray-100 border dark:bg-gray-700 dark:border-gray-600">
                                 {amount} {supply.unit}
                               </span>
                               <button
