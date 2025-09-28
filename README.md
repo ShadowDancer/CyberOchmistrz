@@ -8,10 +8,19 @@ https://shadowdancer.github.io/CyberOchmistrz/
 
 ## Uruchomienie lokalne
 
-```
-npm install
-npm run dev
-```
+1. Zainstaluj zależności
+    ```bash
+    npm install
+    ```
+1. Uruchom serwer developerski (z live reloadedm)
+    ```bash
+    npm run dev 
+    ```
+1. Uruchom linery
+    ```bash
+    npm run build
+    ```
+
 
 ## Problemy i TODO
 - Przeciąganie między dniami nie działa
