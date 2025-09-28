@@ -28,11 +28,6 @@ export default function RecipesPage() {
     }
   };
 
-  // Back button for mobile view
-  const handleBackToList = () => {
-    setMobileView('list');
-  };
-
   return (
     <main className="container mx-auto px-4 py-8 relative flex flex-col h-screen">
       <div className="flex justify-between items-center mb-6">
@@ -83,16 +78,6 @@ export default function RecipesPage() {
         <div className={`w-full md:w-2/3 border rounded-lg bg-white shadow-sm flex-grow md:flex-grow-0 overflow-hidden ${
           mobileView === 'list' ? 'hidden md:block' : ''
         }`}>
-          {mobileView === 'detail' && (
-            <div className="md:hidden border-b empty-state">
-              <button
-                onClick={handleBackToList}
-                className="flex items-center text-link font-medium text-sm bg-transparent"
-              >
-                ← Wróć do listy
-              </button>
-            </div>
-          )}
           <RecipeDetail dish={selectedDish} />
         </div>
       </div>
