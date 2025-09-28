@@ -10,15 +10,21 @@ interface ShoppingListTabProps {
 
 export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
   const [aggregatedList, setAggregatedList] = useState<AggregatedShoppingList>({});
-  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const groupedItems = aggregateShoppingList(cruise);
     setAggregatedList(groupedItems);
   }, [cruise]);
 
-  const toggleTooltip = (itemId: string) => {
-    setActiveTooltip(activeTooltip === itemId ? null : itemId);
+  const toggleAccordion = (itemId: string) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(itemId)) {
+      newExpanded.delete(itemId);
+    } else {
+      newExpanded.add(itemId);
+    }
+    setExpandedItems(newExpanded);
   };
 
   const generateCalculationTooltip = (item: AggregatedItem) => {
@@ -70,33 +76,40 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
             <div key={category} className="shopping-category">
               <h3 className="section-header">{category}</h3>
               <ul className="space-y-2">
-                {aggregatedList[category].map(item => (
-                  <li key={item.supply.id} className="shopping-item">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{item.supply.name}</span>
-                      <div className="relative">
-                        <span
-                          className="shopping-item-amount"
-                          onClick={() => toggleTooltip(item.supply.id)}
+                {aggregatedList[category].map(item => {
+                  const isExpanded = expandedItems.has(item.supply.id);
+                  return (
+                    <li key={item.supply.id} className="shopping-item">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{item.supply.name}</span>
+                        <button
+                          className="shopping-item-amount flex items-center gap-1"
+                          onClick={() => toggleAccordion(item.supply.id)}
                         >
                           {item.amount} {item.supply.unit}
-                        </span>
-                        <div className={`tooltip ${activeTooltip === item.supply.id ? 'tooltip-visible' : 'tooltip-hidden'}`}
-                        >
-                          {generateCalculationTooltip(item)}
-                          <div className="tooltip-arrow">
-                            <svg x="0px" y="0px" viewBox="0 0 255 255">
-                              <polygon className="fill-current" points="0,0 127.5,127.5 255,0"></polygon>
-                            </svg>
+                          <svg
+                            className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      </div>
+                      {item.supply.description && (
+                        <span className="shopping-item-description">{item.supply.description}</span>
+                      )}
+                      {isExpanded && (
+                        <div className="accordion-content mt-2 p-3 bg-gray-50 rounded-md dark:bg-gray-800">
+                          <div className="text-sm whitespace-pre-wrap">
+                            {generateCalculationTooltip(item)}
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    {item.supply.description && (
-                      <span className="shopping-item-description">{item.supply.description}</span>
-                    )}
-                  </li>
-                ))}
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -106,7 +119,7 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
         <h3 className="subsection-header">Wskazówki</h3>
         <p className="text-sm text-muted-dark">
           Ta lista zawiera wszystkie produkty zebrane z planu posiłków (skalowane do liczby załogantów)
-          oraz dodatkowych zakupów. Najedź/stuknij na ilość produktu, aby zobaczyć szczegóły obliczeń. Możesz wydrukować tę stronę lub zapisać ją jako PDF.
+          oraz dodatkowych zakupów. Kliknij na ilość produktu, aby rozwinąć szczegóły obliczeń. Możesz wydrukować tę stronę lub zapisać ją jako PDF.
         </p>
       </div>
     </div>

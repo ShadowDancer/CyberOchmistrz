@@ -300,6 +300,10 @@ body {
     @apply text-sm text-gray-500 italic mt-1 dark:text-gray-300;
   }
 
+  .accordion-content {
+    @apply text-sm text-gray-600 dark:text-gray-400;
+  }
+
   /* Form Specific */
   .form-section {
     @apply space-y-4;
