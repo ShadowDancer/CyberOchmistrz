@@ -46,10 +46,10 @@ describe('supplyData functions', () => {
   describe('groupSuppliesByCategory', () => {
     it('should group supplies by their category', () => {
       const supplies = [
-        { id: '1', name: 'Jabłko', category: 'owoce', isIngredient: true },
-        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true },
-        { id: '3', name: 'Chleb', category: 'pieczywo', isIngredient: false },
-        { id: '4', name: 'Mleko', category: 'nabiał', isIngredient: true }
+        { id: '1', name: 'Jabłko', category: 'owoce', isIngredient: true, unit: 'sztuki' },
+        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true, unit: 'sztuki' },
+        { id: '3', name: 'Chleb', category: 'pieczywo', isIngredient: false, unit: 'sztuki' },
+        { id: '4', name: 'Mleko', category: 'nabiał', isIngredient: true, unit: 'sztuki' }
       ];
 
       const grouped = groupSuppliesByCategory(supplies);
@@ -70,15 +70,15 @@ describe('supplyData functions', () => {
       expect(nabialGroup!.supplies).toHaveLength(1);
 
       expect(owoceGroup!.supplies).toEqual([
-        { id: '1', name: 'Jabłko', category: 'owoce', isIngredient: true },
-        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true }
+        { id: '1', name: 'Jabłko', category: 'owoce', isIngredient: true, unit: 'sztuki' },
+        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true, unit: 'sztuki' },
       ]);
     });
 
     it('should use "inne" category for supplies without category', () => {
       const supplies = [
-        { id: '1', name: 'Jabłko', isIngredient: true },
-        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true }
+        { id: '1', name: 'Jabłko', isIngredient: true, unit: 'sztuki' },
+        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true, unit: 'sztuki' }
       ];
 
       const grouped = groupSuppliesByCategory(supplies);
@@ -102,7 +102,7 @@ describe('supplyData functions', () => {
 
     it('should handle supplies with undefined category', () => {
       const supplies = [
-        { id: '1', name: 'Jabłko', category: undefined, isIngredient: true }
+        { id: '1', name: 'Jabłko', category: undefined, isIngredient: true, unit: 'sztuki' }
       ];
 
       const grouped = groupSuppliesByCategory(supplies);
@@ -117,9 +117,9 @@ describe('supplyData functions', () => {
 
     it('should sort categories alphabetically', () => {
       const supplies = [
-        { id: '1', name: 'Mleko', category: 'nabiał', isIngredient: true },
-        { id: '2', name: 'Jabłko', category: 'owoce', isIngredient: true },
-        { id: '3', name: 'Chleb', category: 'pieczywo', isIngredient: false }
+        { id: '1', name: 'Mleko', category: 'nabiał', isIngredient: true, unit: 'sztuki' },
+        { id: '2', name: 'Jabłko', category: 'owoce', isIngredient: true, unit: 'sztuki' },
+        { id: '3', name: 'Chleb', category: 'pieczywo', isIngredient: false, unit: 'sztuki' }
       ];
 
       const grouped = groupSuppliesByCategory(supplies);

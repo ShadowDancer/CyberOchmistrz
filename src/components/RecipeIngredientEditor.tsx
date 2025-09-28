@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Recipie } from '../types';
 import { getRecipieIngredients } from '../model/recipieData';
 import { getIngredients } from '../model/supplyData';
+import { declineUnit } from '../utils/polishDeclension';
 
 interface RecipeIngredientEditorProps {
   recipe: Recipie;
@@ -98,7 +99,7 @@ export default function RecipeIngredientEditor({
                       onChange={(e) => handleAmountChange(index, e.target.value)}
                       className="input-simple w-20"
                     />
-                    <span>{ingredient.unit}</span>
+                    <span>{declineUnit(ingredient.unit, ingredient.amount)}</span>
                     <button
                       onClick={() => handleSaveAmount(index)}
                       className="btn-primary ml-auto text-sm px-2 py-1"
@@ -139,7 +140,7 @@ export default function RecipeIngredientEditor({
               />
               <span>
                 {newIngredient.id ?
-                  allIngredients.find(ing => ing.id === newIngredient.id)?.unit || '' :
+                  declineUnit(allIngredients.find(ing => ing.id === newIngredient.id)?.unit || '', newIngredient.amount) :
                   ''
                 }
               </span>

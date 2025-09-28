@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Cruise, AggregatedShoppingList, AggregatedItem, RecipeAmountSource, AdditionalSupplyAmountSource } from '../types';
 import { aggregateShoppingList } from '../model/cruiseData';
+import { declineUnit } from '../utils/polishDeclension';
 
 interface ShoppingListTabProps {
   cruise: Cruise;
@@ -37,7 +38,7 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
       recipeSources.forEach(source => {
         if (source.recipeName && source.dayNumber !== undefined) {
           const scaledAmount = source.amount * cruise.crew;
-          tooltipContent += `- ${source.recipeName} (dzień ${source.dayNumber}): ${source.amount} ${item.supply.unit} × ${cruise.crew} załogantów = ${scaledAmount} ${item.supply.unit}\n`;
+          tooltipContent += `- ${source.recipeName} (dzień ${source.dayNumber}): ${source.amount} ${declineUnit(item.supply.unit, source.amount)} × ${cruise.crew} ${declineUnit('załogant', cruise.crew)} = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}\n`;
         }
       });
     }
@@ -51,10 +52,10 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
         const crewMultiplier = source.isPerPerson ? cruise.crew : 1;
         const dayMultiplier = source.isPerDay ? cruise.length : 1;
         const scaledAmount = source.amount * crewMultiplier * dayMultiplier;
-        let calculation = `${source.amount} ${item.supply.unit}`;
-        if (source.isPerPerson) calculation += ` × ${cruise.crew} załogantów`;
+        let calculation = `${source.amount} ${declineUnit(item.supply.unit, source.amount)}`;
+        if (source.isPerPerson) calculation += ` × ${cruise.crew} ${declineUnit('załogant', cruise.crew)}`;
         if (source.isPerDay) calculation += ` × ${cruise.length} dni`;
-        calculation += ` = ${scaledAmount} ${item.supply.unit}`;
+        calculation += ` = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}`;
         tooltipContent += `- ${calculation}\n`;
       });
     }
@@ -86,7 +87,7 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
                           className="shopping-item-amount flex items-center gap-1"
                           onClick={() => toggleAccordion(item.supply.id)}
                         >
-                          {item.amount} {item.supply.unit}
+                          {item.amount} {declineUnit(item.supply.unit, item.amount)}
                           <svg
                             className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                             fill="none"

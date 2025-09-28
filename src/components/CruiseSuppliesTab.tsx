@@ -13,6 +13,7 @@ import {
   AdditionalSupplyCategoryGroup
 } from '../model/cruiseData';
 import { getSuppliesByType, groupSuppliesByCategory, CategoryGroup } from '../model/supplyData';
+import { declineUnit } from '../utils/polishDeclension';
 
 interface CruiseSuppliesTabProps {
   cruise: Cruise;
@@ -85,10 +86,12 @@ export default function CruiseSuppliesTab({
 
     if (hasAdditionalSupply(cruise.id, supplyId, newIsPerPerson, newIsPerDay)) {
       const existingAmount = getAdditionalSupplyAmount(cruise.id, supplyId, newIsPerPerson, newIsPerDay);
-      const confirmed = window.confirm(
-        `Zmiana flag spowoduje połączenie z istniejącym wpisem (${existingAmount} szt.). Czy chcesz kontynuować?`
-      );
-      if (!confirmed) return;
+      if (existingAmount !== null) {
+        const confirmed = window.confirm(
+          `Zmiana flag spowoduje połączenie z istniejącym wpisem (${existingAmount} ${declineUnit('sztuki', existingAmount)}). Czy chcesz kontynuować?`
+        );
+        if (!confirmed) return;
+      }
     }
 
     removeAdditionalSupplyFromCruise(cruise.id, supplyId, oldIsPerPerson, oldIsPerDay);
@@ -234,7 +237,7 @@ export default function CruiseSuppliesTab({
                                 -
                               </button>
                               <span className="px-2 py-0.5 bg-gray-100 border dark:bg-gray-700 dark:border-gray-600">
-                                {amount} {supply.unit}
+                                {amount} {declineUnit(supply.unit, amount)}
                               </span>
                               <button
                                 onClick={() => handleUpdateAmount(supply.id, amount + 1, isPerPerson, isPerDay)}

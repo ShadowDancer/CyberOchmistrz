@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Recipie, MealType, IngredientAmount } from '@/types';
 import { getIngredients, getRecipies } from '@/model/recipieData';
+import { declineUnit } from '../utils/polishDeclension';
 
 interface NewRecipeFormProps {
   recipe?: Recipie;
@@ -286,7 +287,7 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                     />
                     {ingredient.id && (
                       <span className="ml-2">
-                        {allIngredients.find(ing => ing.id === ingredient.id)?.unit}
+                        {declineUnit(allIngredients.find(ing => ing.id === ingredient.id)?.unit || '', ingredient.amount)}
                       </span>
                     )}
                   </div>

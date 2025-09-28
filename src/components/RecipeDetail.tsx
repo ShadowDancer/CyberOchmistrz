@@ -4,6 +4,7 @@ import { Recipie } from '@/types';
 import { getRecipieIngredients, isRecipieVegetarian, isRecipieVegan } from '@/model/recipieData';
 import Link from 'next/link';
 import StarRating from './StarRating';
+import { declineUnit } from '../utils/polishDeclension';
 
 interface RecipeDetailProps {
   dish: Recipie | null;
@@ -53,7 +54,7 @@ function Ingredient({
             <span className="ml-2 badge-vegetarian-small">Veg</span>
           )}
         </div>
-        <span className="text-muted text-sm">{ingredient.amount} {ingredient.unit}</span>
+        <span className="text-muted text-sm">{ingredient.amount} {declineUnit(ingredient.unit, ingredient.amount)}</span>
       </div>
       {ingredient.description && (
         <p className="text-xs text-muted-light italic mt-1">{ingredient.description}</p>
