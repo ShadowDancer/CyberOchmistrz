@@ -21,6 +21,11 @@ jobs:
         run: |
           sed -i "s|basePath: '.*'$|basePath: '/CyberOchmistrz'|g" next.config.ts |
           cat next.config.ts
+      - name: Update manifest.webmanifest with basePath
+        run: |
+          sed -i 's|"start_url": "/|"start_url": "/CyberOchmistrz/|g' public/manifest.webmanifest
+          sed -i 's|"src": "./|"src": "/CyberOchmistrz/|g' public/manifest.webmanifest
+          cat public/manifest.webmanifest
       - name: Build
         run: npm run build
       - name: Add .nojekyll file
