@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Cyber Ochmistrz",
   description: "Aplikacja pomagająca w przygotowaniu zaopatrzenia na rejsach.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
