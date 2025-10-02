@@ -528,3 +528,37 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
 
   return groupedItems;
 }
+
+export function generateShoppingListCSV(aggregatedList: AggregatedShoppingList): string {
+  const headers = ['Kategoria', 'Nazwa produktu', 'Ilość', 'Jednostka', 'Opis'];
+  const rows: string[] = [];
+
+  rows.push(headers.join(','));
+
+  const sortedCategories = Object.keys(aggregatedList).sort();
+
+  sortedCategories.forEach(category => {
+    const items = aggregatedList[category];
+
+    items.forEach(item => {
+      const row = [
+        escapeCSVValue(category),
+        escapeCSVValue(item.supply.name),
+        item.amount.toString(),
+        escapeCSVValue(item.supply.unit),
+        escapeCSVValue(item.supply.description || '')
+      ];
+      rows.push(row.join(','));
+    });
+  });
+
+  return rows.join('\n');
+}
+
+function escapeCSVValue(value: string): string {
+  // If value contains comma, quote, or newline, wrap in quotes and escape internal quotes
+  if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
+    return '"' + value.replace(/"/g, '""') + '"';
+  }
+  return value;
+}

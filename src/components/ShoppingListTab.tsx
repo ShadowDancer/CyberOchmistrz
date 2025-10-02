@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Cruise, AggregatedShoppingList, AggregatedItem, RecipeAmountSource, AdditionalSupplyAmountSource } from '../types';
-import { aggregateShoppingList } from '../model/cruiseData';
+import { aggregateShoppingList, generateShoppingListCSV } from '../model/cruiseData';
 import { declineUnit } from '../utils/polishDeclension';
 
 interface ShoppingListTabProps {
@@ -26,6 +26,24 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
       newExpanded.add(itemId);
     }
     setExpandedItems(newExpanded);
+  };
+
+  const downloadCSV = () => {
+    const csvContent = generateShoppingListCSV(aggregatedList);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `lista-zakupow-${cruise.name}-${timestamp}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const generateCalculationTooltip = (item: AggregatedItem) => {
@@ -55,7 +73,9 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
         let calculation = `${source.amount} ${declineUnit(item.supply.unit, source.amount)}`;
         if (source.isPerPerson) calculation += ` × ${cruise.crew} ${declineUnit('załogant', cruise.crew)}`;
         if (source.isPerDay) calculation += ` × ${cruise.length} dni`;
-        calculation += ` = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}`;
+        if (source.isPerPerson || source.isPerDay){
+          calculation += ` = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}`;
+        }
         tooltipContent += `- ${calculation}\n`;
       });
     }
@@ -65,7 +85,20 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
 
   return (
     <div className="content-padding">
-      <h2 className="heading-secondary">Lista zakupów</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="heading-secondary">Lista zakupów</h2>
+        {Object.keys(aggregatedList).length > 0 && (
+          <button
+            onClick={downloadCSV}
+            className="btn-secondary flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Pobierz CSV
+          </button>
+        )}
+      </div>
 
       {Object.keys(aggregatedList).length === 0 ? (
         <p className="text-muted italic py-4">
