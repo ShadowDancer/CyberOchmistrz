@@ -98,6 +98,7 @@ export interface Cruise {
   crew: number;
   days: CruiseDay[];
   additionalSupplies?: CruiseSupply[];
+  startDate?: string; // YYYY-MM-DD format
 }
 
 export interface CategoryGroup {
@@ -121,11 +122,12 @@ export interface CruiseFormData {
   name: string;
   length: number;
   crew: number;
+  startDate?: string;
 }
 
 export interface CruiseFormErrors {
   name: string;
   length: string;
   crew: string;
+  startDate: string;
 }
-

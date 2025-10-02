@@ -10,6 +10,7 @@ interface DroppableDayItemProps {
   isSelected: boolean;
   isOver: boolean;
   onClick: () => void;
+  startDate?: string;
 }
 
 export default function DroppableDayItem({
@@ -17,7 +18,8 @@ export default function DroppableDayItem({
   recipes,
   isSelected,
   isOver,
-  onClick
+  onClick,
+  startDate
 }: DroppableDayItemProps) {
   const { setNodeRef } = useDroppable({
     id: `day-list-${dayNumber}`,
@@ -28,6 +30,19 @@ export default function DroppableDayItem({
   });
 
   const dayRecipes = recipes.length;
+
+  const getDateInfo = () => {
+    if (!startDate) return null;
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + dayNumber - 1); // dayNumber starts from 1
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const weekdayNames = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+    const weekday = weekdayNames[date.getDay()];
+    return `${day}.${month} ${weekday}`;
+  };
+
+  const dateInfo = getDateInfo();
 
   return (
     <div
@@ -42,7 +57,12 @@ export default function DroppableDayItem({
       }`}
     >
       <div className="flex justify-between items-center">
-        <h3 className="font-medium text-sm md:text-base">Dzień {dayNumber}</h3>
+        <div>
+          <h3 className="font-medium text-sm md:text-base">Dzień {dayNumber}</h3>
+          {dateInfo && (
+            <p className="text-xs text-muted-light mt-1">{dateInfo}</p>
+          )}
+        </div>
         <span className="text-xs md:text-sm text-muted-light">
           {dayRecipes} {dayRecipes === 1 ? 'przepis' :
             dayRecipes > 1 && dayRecipes < 5 ? 'przepisy' : 'przepisów'}

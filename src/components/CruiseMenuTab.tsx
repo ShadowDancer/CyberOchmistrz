@@ -336,6 +336,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
               isSelected={selectedDay === day.dayNumber}
               isOver={overId === `day-list-${day.dayNumber}`}
               onClick={() => handleDaySelect(day.dayNumber)}
+              startDate={cruise.startDate}
             />
           ))}
         </div>

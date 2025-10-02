@@ -62,6 +62,11 @@ export default function CruiseList() {
                 <div>
                   <span className="font-medium">Zmodyfikowano:</span> {formatDate(cruise.dateModified)}
                 </div>
+                {cruise.startDate && (
+                  <div>
+                    <span className="font-medium">Rozpoczęcie:</span> {formatDate(cruise.startDate)}
+                  </div>
+                )}
                 <div>
                   <span className="font-medium">Długość:</span> {cruise.length} dni
                 </div>

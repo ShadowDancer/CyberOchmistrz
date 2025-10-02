@@ -42,6 +42,12 @@ export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
         <div className="info-card">
           <h2 className="info-card-title">Parametry rejsu</h2>
           <div className="info-details">
+            {cruise.startDate && (
+              <div className="info-detail-row">
+                <span className="info-detail-label">Data rozpoczęcia:</span>
+                <span>{formatDate(cruise.startDate)}</span>
+              </div>
+            )}
             <div className="info-detail-row">
               <span className="info-detail-label">Długość rejsu:</span>
               <span>{cruise.length} dni</span>

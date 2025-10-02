@@ -50,15 +50,15 @@ export function deleteCruise(id: string): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cruises));
 }
 
-export function createNewCruise(name: string, length: number, crew: number): Cruise {
+export function createNewCruise(name: string, length: number, crew: number, startDate?: string): Cruise {
   const now = new Date().toISOString();
-  
+
   // Create an array of days with empty recipe arrays
   const days = Array.from({ length }, (_, i) => ({
     dayNumber: i + 1,
     recipes: []
   }));
-  
+
   return {
     id: Date.now().toString(),
     name,
@@ -66,7 +66,8 @@ export function createNewCruise(name: string, length: number, crew: number): Cru
     dateModified: now,
     length,
     crew,
-    days
+    days,
+    startDate
   };
 }
 
@@ -341,12 +342,13 @@ export function willLengthReductionRemoveRecipes(cruiseId: string, newLength: nu
   return false;
 }
 
-export function updateCruiseDetails(cruiseId: string, name: string, length: number, crew: number): void {
+export function updateCruiseDetails(cruiseId: string, name: string, length: number, crew: number, startDate?: string): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
 
   cruise.name = name;
   cruise.crew = crew;
+  cruise.startDate = startDate;
 
   if (length > cruise.length) {
     // Add new empty days
@@ -368,7 +370,8 @@ export function validateCruiseForm(formData: CruiseFormData): CruiseFormErrors {
   const errors: CruiseFormErrors = {
     name: '',
     length: '',
-    crew: ''
+    crew: '',
+    startDate: ''
   };
 
   if (!formData.name.trim()) {
@@ -385,6 +388,14 @@ export function validateCruiseForm(formData: CruiseFormData): CruiseFormErrors {
     errors.crew = 'Liczba załogantów musi być większa niż 0';
   } else if (formData.crew >= 100) {
     errors.crew = 'Liczba załogantów nie może być większa niż 99 osób';
+  }
+
+  // startDate validation: optional, but if provided must be valid date
+  if (formData.startDate && formData.startDate.trim() !== '') {
+    const date = new Date(formData.startDate);
+    if (isNaN(date.getTime())) {
+      errors.startDate = 'Nieprawidłowa data rozpoczęcia';
+    }
   }
 
   return errors;

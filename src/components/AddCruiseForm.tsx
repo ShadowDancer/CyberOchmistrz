@@ -9,12 +9,14 @@ export default function AddCruiseForm() {
   const [formData, setFormData] = useState({
     name: '',
     length: 1,
-    crew: 1
+    crew: 1,
+    startDate: ''
   });
   const [errors, setErrors] = useState({
     name: '',
     length: '',
-    crew: ''
+    crew: '',
+    startDate: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,21 +40,24 @@ export default function AddCruiseForm() {
     const newErrors = {
       name: '',
       length: '',
-      crew: ''
+      crew: '',
+      startDate: ''
     };
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'Nazwa rejsu jest wymagana';
     }
-    
+
     if (formData.length < 1) {
       newErrors.length = 'Długość rejsu musi być większa niż 0';
     }
-    
+
     if (formData.crew < 1) {
       newErrors.crew = 'Liczba załogantów musi być większa niż 0';
     }
-    
+
+    // startDate is optional
+
     setErrors(newErrors);
     return !Object.values(newErrors).some(error => error !== '');
   };
@@ -67,7 +72,8 @@ export default function AddCruiseForm() {
     const newCruise = createNewCruise(
       formData.name,
       formData.length,
-      formData.crew
+      formData.crew,
+      formData.startDate || undefined
     );
     
     saveCruise(newCruise);
@@ -130,6 +136,23 @@ export default function AddCruiseForm() {
             }`}
           />
           {errors.crew && <p className="error-text">{errors.crew}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="startDate" className="form-label">
+            Data rozpoczęcia (opcjonalne)
+          </label>
+          <input
+            type="date"
+            id="startDate"
+            name="startDate"
+            value={formData.startDate}
+            onChange={handleChange}
+            className={`input-field ${
+              errors.startDate ? 'input-field-error' : 'input-field-valid'
+            }`}
+          />
+          {errors.startDate && <p className="error-text">{errors.startDate}</p>}
         </div>
 
         <div className="flex gap-4 pt-4">

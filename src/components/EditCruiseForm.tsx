@@ -19,12 +19,14 @@ export default function EditCruiseForm({cruise}: EditCruiseFormProps) {
     const [formData, setFormData] = useState<CruiseFormData>({
         name: cruise.name,
         length: cruise.length,
-        crew: cruise.crew
+        crew: cruise.crew,
+        startDate: cruise.startDate || ''
     });
     const [errors, setErrors] = useState<CruiseFormErrors>({
         name: '',
         length: '',
-        crew: ''
+        crew: '',
+        startDate: ''
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +67,7 @@ export default function EditCruiseForm({cruise}: EditCruiseFormProps) {
             }
         }
 
-        updateCruiseDetails(cruise.id, formData.name, formData.length, formData.crew);
+        updateCruiseDetails(cruise.id, formData.name, formData.length, formData.crew, formData.startDate || undefined);
         router.push(`/rejsy?id=${cruise.id}`);
     };
 
@@ -125,6 +127,23 @@ export default function EditCruiseForm({cruise}: EditCruiseFormProps) {
                         }`}
                     />
                     {errors.crew && <p className="error-text">{errors.crew}</p>}
+                </div>
+
+                <div>
+                    <label htmlFor="startDate" className="form-label">
+                        Data rozpoczęcia (opcjonalne)
+                    </label>
+                    <input
+                        type="date"
+                        id="startDate"
+                        name="startDate"
+                        value={formData.startDate}
+                        onChange={handleChange}
+                        className={`input-field ${
+                            errors.startDate ? 'input-field-error' : 'input-field-valid'
+                        }`}
+                    />
+                    {errors.startDate && <p className="error-text">{errors.startDate}</p>}
                 </div>
 
                 <div className="flex gap-4 pt-4">
