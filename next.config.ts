@@ -10,8 +10,7 @@ const nextConfig: NextConfig = withPWA({
   output: 'export',
   images: { unoptimized: true },
   /* base path is replced in CI */
-  basePath: '',
-  turbopack: {}
+  basePath: ''
 });
 
 module.exports = nextConfig;
