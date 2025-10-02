@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise } from '../types';
+import { Cruise, AdditionalSupplyCategoryGroup } from '../types';
 import {
   addAdditionalSupplyToCruise,
   updateAdditionalSupplyAmount,
@@ -9,10 +9,10 @@ import {
   getCruiseById,
   hasAdditionalSupply,
   getAdditionalSupplyAmount,
-  groupAdditionalSuppliesByCategory,
-  AdditionalSupplyCategoryGroup
+  groupAdditionalSuppliesByCategory
 } from '../model/cruiseData';
-import { getSuppliesByType, groupSuppliesByCategory, CategoryGroup } from '../model/supplyData';
+import { getSuppliesByType, groupSuppliesByCategory } from '../model/supplyData';
+import { CategoryGroup } from '../types';
 import { declineUnit } from '../utils/polishDeclension';
 
 interface CruiseSuppliesTabProps {

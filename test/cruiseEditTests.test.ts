@@ -1,0 +1,79 @@
+import { createNewCruise, updateCruiseDetails, willLengthReductionRemoveRecipes, addRecipeToCruiseDay, saveCruise } from '../src/model/cruiseData';
+import { clearCruises } from './cruiseTestHarness';
+
+describe('cruise edit functionality', () => {
+  beforeEach(() => {
+    // Clear all mocks and storage before each test
+    jest.clearAllMocks();
+    clearCruises();
+  });
+
+  describe('updateCruiseDetails', () => {
+    it('should update cruise name, length, and crew', () => {
+      const cruise = createNewCruise('Test Cruise', 5, 4);
+      saveCruise(cruise);
+      updateCruiseDetails(cruise.id, 'Updated Cruise', 7, 6);
+
+      // Import getCruiseById here to avoid circular dependency
+      const { getCruiseById } = require('../src/model/cruiseData');
+      const updatedCruise = getCruiseById(cruise.id);
+
+      expect(updatedCruise?.name).toBe('Updated Cruise');
+      expect(updatedCruise?.length).toBe(7);
+      expect(updatedCruise?.crew).toBe(6);
+      expect(updatedCruise?.days).toHaveLength(7);
+    });
+
+    it('should add days when length increases', () => {
+      const cruise = createNewCruise('Test Cruise', 3, 4);
+      saveCruise(cruise);
+      updateCruiseDetails(cruise.id, 'Test Cruise', 5, 4);
+
+      const { getCruiseById } = require('../src/model/cruiseData');
+      const updatedCruise = getCruiseById(cruise.id);
+
+      expect(updatedCruise?.days).toHaveLength(5);
+      expect(updatedCruise?.days[3].dayNumber).toBe(4);
+      expect(updatedCruise?.days[4].dayNumber).toBe(5);
+      expect(updatedCruise?.days[4].recipes).toEqual([]);
+    });
+
+    it('should remove days when length decreases', () => {
+      const cruise = createNewCruise('Test Cruise', 5, 4);
+      saveCruise(cruise);
+      updateCruiseDetails(cruise.id, 'Test Cruise', 3, 4);
+
+      const { getCruiseById } = require('../src/model/cruiseData');
+      const updatedCruise = getCruiseById(cruise.id);
+
+      expect(updatedCruise?.days).toHaveLength(3);
+      expect(updatedCruise?.days[2].dayNumber).toBe(3);
+    });
+  });
+
+  describe('willLengthReductionRemoveRecipes', () => {
+    it('should return false when length is not reduced', () => {
+      const cruise = createNewCruise('Test Cruise', 5, 4);
+      saveCruise(cruise);
+      const result = willLengthReductionRemoveRecipes(cruise.id, 5);
+      expect(result).toBe(false);
+    });
+
+    it('should return false when no recipes on days being removed', () => {
+      const cruise = createNewCruise('Test Cruise', 5, 4);
+      saveCruise(cruise);
+      const result = willLengthReductionRemoveRecipes(cruise.id, 3);
+      expect(result).toBe(false);
+    });
+
+    it('should return true when recipes exist on days being removed', () => {
+      const cruise = createNewCruise('Test Cruise', 5, 4);
+      saveCruise(cruise);
+      addRecipeToCruiseDay(cruise.id, 4, 'recipe1');
+      addRecipeToCruiseDay(cruise.id, 5, 'recipe2');
+
+      const result = willLengthReductionRemoveRecipes(cruise.id, 3);
+      expect(result).toBe(true);
+    });
+  });
+});

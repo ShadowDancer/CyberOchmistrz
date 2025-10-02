@@ -54,7 +54,13 @@ export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
         </div>
       </div>
 
-      <div className="mt-4 md:mt-6 flex justify-end">
+      <div className="mt-4 md:mt-6 flex justify-end gap-3">
+        <button
+          onClick={() => router.push(`/rejsy/edytuj?id=${cruise.id}`)}
+          className="btn-small btn-secondary"
+        >
+          Edytuj rejs
+        </button>
         <button
           onClick={handleDelete}
           className="btn-small btn-remove"

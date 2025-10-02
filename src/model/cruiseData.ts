@@ -1,4 +1,14 @@
-import {Cruise, Recipie, AggregatedShoppingList, AggregatedItem, AmountSource, Supply, RecipeAmountSource, AdditionalSupplyAmountSource} from '../types';
+import {
+  Cruise,
+  Recipie,
+  AggregatedShoppingList,
+  AggregatedItem,
+  AmountSource,
+  Supply,
+  RecipeAmountSource,
+  AdditionalSupplyAmountSource,
+  AdditionalSupplyCategoryGroup, AdditionalSupplyItem, CruiseFormData, CruiseFormErrors
+} from '../types';
 import { getSupplyById } from './supplyData';
 
 const STORAGE_KEY = 'cyber-ochmistrz-cruises';
@@ -160,19 +170,6 @@ export function getAdditionalSupplyAmount(cruiseId: string, supplyId: string, is
 
   return item ? item.amount : null;
 }
-
-export interface AdditionalSupplyItem {
-  supply: Supply;
-  amount: number;
-  isPerPerson: boolean;
-  isPerDay: boolean;
-}
-
-export interface AdditionalSupplyCategoryGroup {
-  category: string;
-  supplies: AdditionalSupplyItem[];
-}
-
 export function groupAdditionalSuppliesByCategory(cruiseId: string): AdditionalSupplyCategoryGroup[] {
   const cruise = getCruiseById(cruiseId);
   if (!cruise || !cruise.additionalSupplies) return [];
@@ -330,7 +327,73 @@ export function reorderRecipesInCruiseDay(
   saveCruise(cruise);
 }
 
-// Function to move a recipe from one day to another
+export function willLengthReductionRemoveRecipes(cruiseId: string, newLength: number): boolean {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise || newLength >= cruise.length) return false;
+
+  // Check if any days being removed (from newLength+1 to current length) have recipes
+  for (let dayNum = newLength + 1; dayNum <= cruise.length; dayNum++) {
+    const day = cruise.days.find(d => d.dayNumber === dayNum);
+    if (day && day.recipes.length > 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function updateCruiseDetails(cruiseId: string, name: string, length: number, crew: number): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+
+  cruise.name = name;
+  cruise.crew = crew;
+
+  if (length > cruise.length) {
+    // Add new empty days
+    for (let i = cruise.length + 1; i <= length; i++) {
+      cruise.days.push({
+        dayNumber: i,
+        recipes: []
+      });
+    }
+  } else if (length < cruise.length) {
+    // Remove days from the end
+    cruise.days = cruise.days.filter(day => day.dayNumber <= length);
+  }
+
+  cruise.length = length;
+  saveCruise(cruise);
+}
+export function validateCruiseForm(formData: CruiseFormData): CruiseFormErrors {
+  const errors: CruiseFormErrors = {
+    name: '',
+    length: '',
+    crew: ''
+  };
+
+  if (!formData.name.trim()) {
+    errors.name = 'Nazwa rejsu jest wymagana';
+  }
+
+  if (formData.length < 1) {
+    errors.length = 'Długość rejsu musi być większa niż 0';
+  } else if (formData.length >= 100) {
+    errors.length = 'Długość rejsu nie może być większa niż 99 dni';
+  }
+
+  if (formData.crew < 1) {
+    errors.crew = 'Liczba załogantów musi być większa niż 0';
+  } else if (formData.crew >= 100) {
+    errors.crew = 'Liczba załogantów nie może być większa niż 99 osób';
+  }
+
+  return errors;
+}
+
+export function isCruiseFormValid(errors: CruiseFormErrors): boolean {
+  return !Object.values(errors).some(error => error !== '');
+}
+
 export function moveRecipeBetweenCruiseDays(
   cruiseId: string,
   fromDayNumber: number,
@@ -361,7 +424,6 @@ export function moveRecipeBetweenCruiseDays(
   saveCruise(cruise);
 }
 
-// Function to aggregate shopping list for a cruise
 export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
   // Map to hold all items with their total amounts and sources
   const itemsMap: Map<string, { supply: Supply, amount: number, sources: AmountSource[] }> = new Map();

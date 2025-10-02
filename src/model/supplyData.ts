@@ -1,6 +1,6 @@
 'use client';
 
-import { Supply, Ingredient } from '@/types';
+import {Supply, Ingredient, CategoryGroup} from '@/types';
 import suppliesData from '../data/supplies.json';
 
 function castData(): Supply[] {
@@ -32,10 +32,6 @@ export function getSuppliesByType(showIngredients: boolean): Supply[] {
   return showIngredients ? getIngredients() : getNonIngredients();
 }
 
-export interface CategoryGroup {
-  category: string;
-  supplies: Supply[];
-}
 
 export function groupSuppliesByCategory(supplies: Supply[]): CategoryGroup[] {
   const grouped: {[key: string]: Supply[]} = {};

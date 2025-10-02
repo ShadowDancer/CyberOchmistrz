@@ -99,3 +99,33 @@ export interface Cruise {
   days: CruiseDay[];
   additionalSupplies?: CruiseSupply[];
 }
+
+export interface CategoryGroup {
+  category: string;
+  supplies: Supply[];
+}
+
+export interface AdditionalSupplyItem {
+  supply: Supply;
+  amount: number;
+  isPerPerson: boolean;
+  isPerDay: boolean;
+}
+
+export interface AdditionalSupplyCategoryGroup {
+  category: string;
+  supplies: AdditionalSupplyItem[];
+}
+
+export interface CruiseFormData {
+  name: string;
+  length: number;
+  crew: number;
+}
+
+export interface CruiseFormErrors {
+  name: string;
+  length: string;
+  crew: string;
+}
+
