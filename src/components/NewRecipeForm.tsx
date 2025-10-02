@@ -20,6 +20,8 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
   const [recipeId, setRecipeId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [developedBy, setDevelopedBy] = useState<string>('');
+  const [modifiedBy, setModifiedBy] = useState<string[]>([]);
+  const [newModifier, setNewModifier] = useState<string>('');
 
   const allIngredients = getIngredients();
 
@@ -34,6 +36,8 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
       setInstructions(recipe.instructions.length > 0 ? recipe.instructions : ['']);
       setRecipeId(recipe.id);
       setDevelopedBy(recipe.developedBy || '');
+      setModifiedBy(recipe.modifiedBy || []);
+      setNewModifier('');
     }
   }, [recipe]);
 
@@ -155,6 +159,12 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
       }
     }
 
+    // Handle modifiedBy: append newModifier if provided
+    let finalModifiedBy: string[] | undefined = modifiedBy;
+    if (newModifier.trim()) {
+      finalModifiedBy = [...(modifiedBy || []), newModifier.trim()];
+    }
+
     const recipie: Recipie = {
       id: finalId,
       name: recipeName.trim(),
@@ -163,7 +173,8 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
       difficulty: difficulty,
       ingredients: filteredIngredients as IngredientAmount[],
       instructions: filteredInstructions,
-      developedBy: developedBy.trim()
+      developedBy: developedBy.trim() || undefined,
+      modifiedBy: finalModifiedBy
     };
 
     const jsonString = JSON.stringify(recipie, null, 2);
@@ -376,6 +387,26 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
               placeholder="Imię i nazwisko lub pseudonim"
             />
           </div>
+
+          {recipe && modifiedBy.length > 0 && (
+            <div className="mt-2">
+              <label className="form-label">Poprzednie modyfikacje</label>
+              <p className="text-sm text-muted-dark">{modifiedBy.join(', ')}</p>
+            </div>
+          )}
+
+          {recipe && (
+            <div className="mt-4">
+            <label className="form-label">Zmodyfikował</label>
+              <input
+                type="text"
+                value={newModifier}
+                onChange={(e) => setNewModifier(e.target.value)}
+                className="input-simple"
+                placeholder="Imię i nazwisko nowej osoby modyfikującej"
+              />
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}

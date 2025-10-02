@@ -34,6 +34,7 @@ export interface Recipie {
   difficulty: number; // 1-5 stars
   instructions: string[]; // array of preparation steps
   developedBy?: string; // Author of the recipe
+  modifiedBy?: string[]; // Array of people who modified the recipe
 }
 
 export interface CruiseSupply {

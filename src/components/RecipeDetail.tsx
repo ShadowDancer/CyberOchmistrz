@@ -146,12 +146,20 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
         )}
         
         {/* Author Information */}
-        {recipie.developedBy && (
+        {(recipie.developedBy || (recipie.modifiedBy && recipie.modifiedBy.length > 0)) && (
           <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
-            <p className="text-sm text-muted italic flex items-center">
-              <span className="font-medium mr-2">Opracował/a:</span>
-              {recipie.developedBy}
-            </p>
+            {recipie.developedBy && (
+              <p className="text-sm text-muted italic flex items-center">
+                <span className="font-medium mr-2">Opracował/a:</span>
+                {recipie.developedBy}
+              </p>
+            )}
+            {recipie.modifiedBy && recipie.modifiedBy.length > 0 && (
+              <p className="text-sm text-muted italic flex items-center mt-1">
+                <span className="font-medium mr-2">Zmodyfikował/a:</span>
+                {recipie.modifiedBy.join(', ')}
+              </p>
+            )}
           </div>
         )}
       </div>
