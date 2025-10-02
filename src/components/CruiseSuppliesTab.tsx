@@ -246,26 +246,25 @@ export default function CruiseSuppliesTab({
                                 +
                               </button>
                             </div>
-                            <div className="flex items-center gap-1 text-xs">
-                              <label className="flex items-center">
-                                <input
-                                  type="checkbox"
-                                  checked={isPerPerson}
-                                  onChange={(e) => handleUpdateFlags(supply.id, isPerPerson, isPerDay, e.target.checked, isPerDay, amount)}
-                                  className="h-3 w-3 text-link focus:ring-blue-500 border-gray-300 rounded"
-                                />
-                                <span className="ml-1">na osobę</span>
-                              </label>
-                              <label className="flex items-center">
-                                <input
-                                  type="checkbox"
-                                  checked={isPerDay}
-                                  onChange={(e) => handleUpdateFlags(supply.id, isPerPerson, isPerDay, isPerPerson, e.target.checked, amount)}
-                                  className="h-3 w-3 text-link focus:ring-blue-500 border-gray-300 rounded"
-                                />
-                                <span className="ml-1">na dzień</span>
-                              </label>
-                            </div>
+                            <select
+                              value={
+                                !isPerPerson && !isPerDay ? 'none' :
+                                isPerPerson && !isPerDay ? 'perPerson' :
+                                !isPerPerson && isPerDay ? 'perDay' : 'both'
+                              }
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                const newIsPerPerson = value === 'perPerson' || value === 'both';
+                                const newIsPerDay = value === 'perDay' || value === 'both';
+                                handleUpdateFlags(supply.id, isPerPerson, isPerDay, newIsPerPerson, newIsPerDay, amount);
+                              }}
+                              className="select-small"
+                            >
+                              <option value="none">-</option>
+                              <option value="perPerson">Na osobę</option>
+                              <option value="perDay">Na dzień</option>
+                              <option value="both">Na osobę na dzień</option>
+                            </select>
                             <button
                               onClick={() => handleRemoveSupply(supply.id, isPerPerson, isPerDay)}
                               className="btn-remove btn-small"
