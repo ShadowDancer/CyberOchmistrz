@@ -61,7 +61,7 @@ export default function DroppableDayItem({
             );
           })}
           {dayRecipes > 2 && (
-            <li className="text-blue-600">
+            <li className="text-link">
               + {dayRecipes - 2} więcej...
             </li>
           )}

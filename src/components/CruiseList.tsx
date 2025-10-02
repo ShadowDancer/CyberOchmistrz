@@ -35,11 +35,11 @@ export default function CruiseList() {
       </div>
 
       {cruises.length === 0 ? (
-        <div className="text-center py-6 md:py-8 bg-gray-50 rounded-lg">
+        <div className="text-center empty-state">
           <p className="text-muted">Brak zapisanych rejsów</p>
           <Link
             href="/rejsy/dodaj"
-            className="text-blue-600 mt-2 inline-block hover:underline"
+            className="text-link mt-2 inline-block hover:underline"
           >
             Dodaj pierwszy rejs
           </Link>

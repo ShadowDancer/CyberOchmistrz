@@ -75,7 +75,7 @@ export default function DraggableRecipeItem({
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400 ml-2 touch-none select-none"
+            className="cursor-grab active:cursor-grabbing p-1 text-muted hover:text-gray-600 dark:text-gray-500 dark:hover:text-muted ml-2 touch-none select-none"
             title="Przeciągnij, aby zmienić kolejność"
             style={{ touchAction: 'none' }}
           >

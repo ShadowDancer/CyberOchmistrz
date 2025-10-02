@@ -85,7 +85,7 @@ export default function RecipeIngredientEditor({
                     <span className="font-medium">{ingredient.name}</span>
                     <button
                       onClick={() => handleRemoveIngredient(index)}
-                      className="text-red-600 dark:text-red-400 text-sm"
+                      className="error-text text-sm"
                     >
                       Usuń
                     </button>

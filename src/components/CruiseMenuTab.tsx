@@ -369,7 +369,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
                 <p className="text-muted-light italic text-sm md:text-base text-center mt-4">
                   <button
                     onClick={switchToRecipesView}
-                    className="text-blue-600 underline md:hidden"
+                    className="text-link underline md:hidden"
                   >
                     Dodaj przepis
                   </button>
@@ -381,7 +381,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
           <div className="flex flex-col items-center justify-center h-full text-muted-light">
             <p className="text-sm md:text-base">
               {mobileView === 'details' ?
-                <button onClick={backToDays} className="text-blue-600">Wybierz dzień z listy</button> :
+                <button onClick={backToDays} className="text-link">Wybierz dzień z listy</button> :
                 'Wybierz dzień z listy po lewej stronie'
               }
             </p>
@@ -397,7 +397,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
           <div className="mb-3 md:hidden">
             <button
               onClick={backToDetails}
-              className="text-blue-600 flex items-center text-sm"
+              className="text-link flex items-center text-sm"
             >
               ← Wróć do szczegółów dnia {selectedDay}
             </button>
@@ -413,7 +413,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
           <div className="flex flex-col items-center justify-center h-full text-muted-light">
             <p className="text-sm md:text-base">
               {mobileView === 'recipes' ?
-                <button onClick={backToDays} className="text-blue-600">Najpierw wybierz dzień</button> :
+                <button onClick={backToDays} className="text-link">Najpierw wybierz dzień</button> :
                 'Wybierz dzień, aby dodać przepisy'
               }
             </p>

@@ -43,10 +43,10 @@ export default function RootLayout({
                 </Link>
               </div>
               <div className="flex gap-6">
-                <Link href="/przepisy" className="hover:text-blue-600">
+                <Link href="/przepisy" className="text-link">
                   Przepisy
                 </Link>
-                <Link href="/rejsy" className="hover:text-blue-600">
+                <Link href="/rejsy" className="text-link">
                   Rejsy
                 </Link>
               </div>

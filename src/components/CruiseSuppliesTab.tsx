@@ -135,7 +135,7 @@ export default function CruiseSuppliesTab({
                   type="checkbox"
                   checked={showIngredients}
                   onChange={toggleShowIngredients}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-link focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="show-ingredients" className="ml-2 block text-sm text-gray-900">
                   Pokaż składniki
@@ -252,7 +252,7 @@ export default function CruiseSuppliesTab({
                                   type="checkbox"
                                   checked={isPerPerson}
                                   onChange={(e) => handleUpdateFlags(supply.id, isPerPerson, isPerDay, e.target.checked, isPerDay, amount)}
-                                  className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                  className="h-3 w-3 text-link focus:ring-blue-500 border-gray-300 rounded"
                                 />
                                 <span className="ml-1">na osobę</span>
                               </label>
@@ -261,7 +261,7 @@ export default function CruiseSuppliesTab({
                                   type="checkbox"
                                   checked={isPerDay}
                                   onChange={(e) => handleUpdateFlags(supply.id, isPerPerson, isPerDay, isPerPerson, e.target.checked, amount)}
-                                  className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                  className="h-3 w-3 text-link focus:ring-blue-500 border-gray-300 rounded"
                                 />
                                 <span className="ml-1">na dzień</span>
                               </label>
