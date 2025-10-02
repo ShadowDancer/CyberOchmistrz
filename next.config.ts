@@ -9,7 +9,7 @@ const withPWA = require('next-pwa')({
 const nextConfig: NextConfig = withPWA({
   output: 'export',
   images: { unoptimized: true },
-  /* base path is replced in CI */
+  /* base path is replaced in CI */
   basePath: ''
 });
 
