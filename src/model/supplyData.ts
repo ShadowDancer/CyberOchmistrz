@@ -1,6 +1,6 @@
 'use client';
 
-import {Supply, Ingredient, CategoryGroup} from '@/types';
+import {Supply, Ingredient, CategoryGroup, SupplyValidationErrors} from '@/types';
 import suppliesData from '../data/supplies.json';
 
 function castData(): Supply[] {
@@ -51,4 +51,71 @@ export function groupSuppliesByCategory(supplies: Supply[]): CategoryGroup[] {
       category,
       supplies: grouped[category]
     }));
+}
+
+export function validateSupplyData(supply: Partial<Supply & { isVegetarian?: boolean; isVegan?: boolean }>): SupplyValidationErrors {
+  const errors: SupplyValidationErrors = {
+    name: '',
+    unit: '',
+    category: '',
+    isVegetarian: '',
+    isVegan: '',
+    general: ''
+  };
+
+  // Required field validations
+  if (!supply.name || supply.name.trim() === '') {
+    errors.name = 'Nazwa produktu jest wymagana';
+  }
+
+  if (!supply.unit || supply.unit.trim() === '') {
+    errors.unit = 'Jednostka jest wymagana';
+  }
+
+  if (!supply.category || supply.category.trim() === '') {
+    errors.category = 'Kategoria jest wymagana';
+  }
+
+  // Ingredient-specific validations
+  if (supply.isIngredient) {
+    const validIngredientCategories = [
+      'nabiał', 'mięso', 'warzywa', 'owoce', 'pieczywo', 'zboża',
+      'przyprawy', 'tłuszcze', 'napoje', 'środki czystości', 'inne'
+    ];
+
+    if (supply.category && !validIngredientCategories.includes(supply.category)) {
+      errors.category = 'Nieprawidłowa kategoria dla składnika';
+    }
+
+    // isVegetarian and isVegan should be boolean values for ingredients
+    if (typeof supply.isVegetarian !== 'boolean') {
+      errors.isVegetarian = 'Wymagana wartość logiczna dla wegetariańskiego';
+    }
+
+    if (typeof supply.isVegan !== 'boolean') {
+      errors.isVegan = 'Wymagana wartość logiczna dla wegańskiego';
+    }
+  }
+
+  return errors;
+}
+
+export function isSupplyDataValid(errors: SupplyValidationErrors): boolean {
+  return !Object.values(errors).some(error => error !== '');
+}
+
+export function validateNewSupply(supply: Partial<Supply & { isVegetarian?: boolean; isVegan?: boolean }>): SupplyValidationErrors {
+  const errors = validateSupplyData(supply);
+
+  // Check for duplicate names
+  if (supply.name && supply.name.trim() !== '') {
+    const existingSupply = getAllSupplies().find(s =>
+      s.name.toLowerCase() === supply.name!.toLowerCase().trim()
+    );
+    if (existingSupply) {
+      errors.name = `Produkt o nazwie "${supply.name.trim()}" już istnieje`;
+    }
+  }
+
+  return errors;
 }

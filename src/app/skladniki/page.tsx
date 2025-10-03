@@ -18,38 +18,46 @@ export default function SuppliesPage() {
 
   // Filter supplies based on current filters
   const filteredSupplies = useMemo(() => {
-    return suppliesData.filter((supply: Supply) => {
-      // Text search filter
-      if (searchText && !supply.name.toLowerCase().includes(searchText.toLowerCase())) {
-        return false;
-      }
+    return suppliesData
+      .filter((supply: Supply) => {
+        // Text search filter
+        if (searchText && !supply.name.toLowerCase().includes(searchText.toLowerCase())) {
+          return false;
+        }
 
-      // Category filter
-      if (selectedCategory !== 'all' && supply.category !== selectedCategory) {
-        return false;
-      }
+        // Category filter
+        if (selectedCategory !== 'all' && supply.category !== selectedCategory) {
+          return false;
+        }
 
-      // Dietary filter - only apply to ingredients
-      if (dietFilter === 'vegetarian' && supply.isIngredient && (supply as Ingredient).isVegetarian === false) {
-        return false;
-      }
-      if (dietFilter === 'vegan' && supply.isIngredient && (supply as Ingredient).isVegan === false) {
-        return false;
-      }
+        // Dietary filter - only apply to ingredients
+        if (dietFilter === 'vegetarian' && supply.isIngredient && (supply as Ingredient).isVegetarian === false) {
+          return false;
+        }
+        if (dietFilter === 'vegan' && supply.isIngredient && (supply as Ingredient).isVegan === false) {
+          return false;
+        }
 
-      // Ingredient type filter
-      if (showIngredientsOnly && !supply.isIngredient) {
-        return false;
-      }
+        // Ingredient type filter
+        if (showIngredientsOnly && !supply.isIngredient) {
+          return false;
+        }
 
-      return true;
-    });
+        return true;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name, 'pl'));
   }, [searchText, selectedCategory, dietFilter, showIngredientsOnly]);
 
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">Składniki</h1>
+        <a
+          href="/skladniki/dodaj"
+          className="btn-primary"
+        >
+          Dodaj nowy produkt
+        </a>
       </div>
 
       {/* Filters Section */}

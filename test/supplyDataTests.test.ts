@@ -1,4 +1,5 @@
-import { getAllSupplies, getIngredients, getNonIngredients, groupSuppliesByCategory, CategoryGroup } from '../src/model/supplyData';
+import { getAllSupplies, getIngredients, getNonIngredients, groupSuppliesByCategory } from '../src/model/supplyData';
+import { CategoryGroup, SupplyValidationErrors } from '../src/types';
 
 // Tests which validate correctness of supplies in data file
 
@@ -77,7 +78,7 @@ describe('supplyData functions', () => {
 
     it('should use "inne" category for supplies without category', () => {
       const supplies = [
-        { id: '1', name: 'Jabłko', isIngredient: true, unit: 'sztuki' },
+        { id: '1', name: 'Jabłko', category: '', isIngredient: true, unit: 'sztuki' },
         { id: '2', name: 'Banan', category: 'owoce', isIngredient: true, unit: 'sztuki' }
       ];
 
@@ -100,9 +101,9 @@ describe('supplyData functions', () => {
       expect(grouped).toEqual([]);
     });
 
-    it('should handle supplies with undefined category', () => {
+    it('should handle supplies with empty category', () => {
       const supplies = [
-        { id: '1', name: 'Jabłko', category: undefined, isIngredient: true, unit: 'sztuki' }
+        { id: '1', name: 'Jabłko', category: '', isIngredient: true, unit: 'sztuki' }
       ];
 
       const grouped = groupSuppliesByCategory(supplies);
@@ -141,3 +142,189 @@ describe('supplies data sorting', () => {
   });
 });
 */
+
+import { validateSupplyData, isSupplyDataValid, validateNewSupply } from '../src/model/supplyData';
+
+describe('Supply Validation', () => {
+  describe('validateSupplyData', () => {
+    it('should validate a valid supply', () => {
+      const supply = {
+        name: 'Test Product',
+        unit: 'sztuki',
+        category: 'inne',
+        isIngredient: false
+      };
+
+      const errors = validateSupplyData(supply);
+      expect(errors.name).toBe('');
+      expect(errors.unit).toBe('');
+      expect(errors.category).toBe('');
+      expect(errors.isVegetarian).toBe('');
+      expect(errors.isVegan).toBe('');
+      expect(errors.general).toBe('');
+    });
+
+    it('should validate a valid ingredient', () => {
+      const supply = {
+        name: 'Test Ingredient',
+        unit: 'kg',
+        category: 'warzywa',
+        isIngredient: true,
+        isVegetarian: true,
+        isVegan: true
+      };
+
+      const errors = validateSupplyData(supply);
+      expect(errors.name).toBe('');
+      expect(errors.unit).toBe('');
+      expect(errors.category).toBe('');
+      expect(errors.isVegetarian).toBe('');
+      expect(errors.isVegan).toBe('');
+      expect(errors.general).toBe('');
+    });
+
+    it('should require name', () => {
+      const supply = {
+        unit: 'sztuki',
+        category: 'inne',
+        isIngredient: false
+      };
+
+      const errors = validateSupplyData(supply);
+      expect(errors.name).toBe('Nazwa produktu jest wymagana');
+    });
+
+    it('should require unit', () => {
+      const supply = {
+        name: 'Test Product',
+        category: 'inne',
+        isIngredient: false
+      };
+
+      const errors = validateSupplyData(supply);
+      expect(errors.unit).toBe('Jednostka jest wymagana');
+    });
+
+    it('should require category', () => {
+      const supply = {
+        name: 'Test Product',
+        unit: 'sztuki',
+        isIngredient: false
+      };
+
+      const errors = validateSupplyData(supply);
+      expect(errors.category).toBe('Kategoria jest wymagana');
+    });
+
+    it('should validate ingredient category', () => {
+      const supply = {
+        name: 'Test Ingredient',
+        unit: 'kg',
+        category: 'invalid_category',
+        isIngredient: true,
+        isVegetarian: true,
+        isVegan: true
+      };
+
+      const errors = validateSupplyData(supply);
+      expect(errors.category).toBe('Nieprawidłowa kategoria dla składnika');
+    });
+
+    it('should require isVegetarian boolean for ingredients', () => {
+      const supply = {
+        name: 'Test Ingredient',
+        unit: 'kg',
+        category: 'warzywa',
+        isIngredient: true,
+        isVegan: true
+      };
+
+      const errors = validateSupplyData(supply);
+      expect(errors.isVegetarian).toBe('Wymagana wartość logiczna dla wegetariańskiego');
+    });
+
+    it('should require isVegan boolean for ingredients', () => {
+      const supply = {
+        name: 'Test Ingredient',
+        unit: 'kg',
+        category: 'warzywa',
+        isIngredient: true,
+        isVegetarian: true
+      };
+
+      const errors = validateSupplyData(supply);
+      expect(errors.isVegan).toBe('Wymagana wartość logiczna dla wegańskiego');
+    });
+  });
+
+  describe('isSupplyDataValid', () => {
+    it('should return true for valid data', () => {
+      const errors: SupplyValidationErrors = {
+        name: '',
+        unit: '',
+        category: '',
+        isVegetarian: '',
+        isVegan: '',
+        general: ''
+      };
+
+      expect(isSupplyDataValid(errors)).toBe(true);
+    });
+
+    it('should return false when there are errors', () => {
+      const errors: SupplyValidationErrors = {
+        name: 'Error',
+        unit: '',
+        category: '',
+        isVegetarian: '',
+        isVegan: '',
+        general: ''
+      };
+
+      expect(isSupplyDataValid(errors)).toBe(false);
+    });
+  });
+
+  describe('validateNewSupply', () => {
+    it('should validate a new unique supply', () => {
+      const supply = {
+        name: 'Unique Test Product',
+        unit: 'sztuki',
+        category: 'inne',
+        isIngredient: false
+      };
+
+      const errors = validateNewSupply(supply);
+      expect(errors.name).toBe('');
+      expect(errors.unit).toBe('');
+      expect(errors.category).toBe('');
+    });
+
+    it('should detect duplicate names', () => {
+      // Get an existing supply name
+      const existingSupply = getAllSupplies()[0];
+      const supply = {
+        name: existingSupply.name,
+        unit: 'sztuki',
+        category: 'inne',
+        isIngredient: false
+      };
+
+      const errors = validateNewSupply(supply);
+      expect(errors.name).toBe(`Produkt o nazwie "${existingSupply.name}" już istnieje`);
+    });
+
+    it('should be case insensitive for duplicate names', () => {
+      const existingSupply = getAllSupplies()[0];
+      const supply = {
+        name: existingSupply.name.toUpperCase(),
+        unit: 'sztuki',
+        category: 'inne',
+        isIngredient: false
+      };
+
+      const errors = validateNewSupply(supply);
+      expect(errors.name).toBe(`Produkt o nazwie "${existingSupply.name.toUpperCase()}" już istnieje`);
+    });
+  });
+});
