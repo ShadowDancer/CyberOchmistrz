@@ -1,6 +1,6 @@
 {
   "name": "Cyber Ochmistrz",
-  "short_name": "CyberOchmistrz",
+  "short_name": "Cyber Ochmistrz",
   "description": "Aplikacja do zarządzania zaopatrzeniem na rejsach",
   "start_url": "/",
   "display": "standalone",
