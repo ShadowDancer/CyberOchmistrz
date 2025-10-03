@@ -1,11 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Recipie } from '../types';
-import { getRecipieIngredients } from '../model/recipieData';
 import { getIngredients } from '../model/supplyData';
-import { declineUnit } from '../utils/polishDeclension';
-import IngredientAmountEditor from './IngredientAmountEditor';
+import IngredientListEditor from './IngredientListEditor';
 
 interface RecipeIngredientEditorProps {
   recipe: Recipie;
@@ -26,40 +23,7 @@ export default function RecipeIngredientEditor({
   onIngredientRemove,
   onClose
 }: RecipeIngredientEditorProps) {
-  // Get full ingredient details from the recipe
-  const enrichedIngredients = getRecipieIngredients(recipe.ingredients);
-  const [ingredients, setIngredients] = useState(enrichedIngredients);
-  const [newIngredient, setNewIngredient] = useState<{ id: string, amount: number }>({ id: '', amount: 0 });
   const allIngredients = getIngredients();
-
-  // Refresh ingredients whenever recipe changes
-  useEffect(() => {
-    setIngredients(getRecipieIngredients(recipe.ingredients));
-  }, [recipe.ingredients]);
-
-  const handleAmountChange = (index: number, value: number) => {
-    const updatedIngredients = [...ingredients];
-    updatedIngredients[index] = {
-      ...updatedIngredients[index],
-      amount: value
-    };
-    setIngredients(updatedIngredients);
-  };
-
-  const handleSaveAmount = (index: number) => {
-    onIngredientUpdate(dayNumber, recipeIndex, index, ingredients[index].amount);
-  };
-
-  const handleRemoveIngredient = (index: number) => {
-    onIngredientRemove(dayNumber, recipeIndex, index);
-  };
-
-  const handleAddNewIngredient = () => {
-    if (newIngredient.id && newIngredient.amount > 0) {
-      onIngredientAdd(dayNumber, recipeIndex, newIngredient.id, newIngredient.amount);
-      setNewIngredient({ id: '', amount: 0 });
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -74,81 +38,13 @@ export default function RecipeIngredientEditor({
           </button>
         </div>
         
-        <div className="mb-4">
-          <h3 className="font-medium mb-2">Obecne składniki</h3>
-          {ingredients.length === 0 ? (
-            <p className="text-muted italic">Brak składników</p>
-          ) : (
-            <ul className="space-y-2">
-              {ingredients.map((ingredient, index) => (
-                <li key={index} className="list-item-border">
-                  <div className="flex justify-between mb-1">
-                    <span className="font-medium">{ingredient.name}</span>
-                    <button
-                      onClick={() => handleRemoveIngredient(index)}
-                      className="error-text text-sm"
-                    >
-                      Usuń
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <IngredientAmountEditor
-                      value={ingredient.amount}
-                      onChange={(value) => handleAmountChange(index, value)}
-                      supply={ingredient}
-                    />
-                    <button
-                      onClick={() => handleSaveAmount(index)}
-                      className="btn-primary ml-auto text-sm px-2 py-1"
-                    >
-                      Zapisz
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        
-        <div className="border-t dark:border-gray-600 pt-4 mt-4">
-          <h3 className="font-medium mb-2">Dodaj nowy składnik</h3>
-          <div className="flex flex-col gap-2">
-            <select
-              value={newIngredient.id}
-              onChange={(e) => setNewIngredient({ ...newIngredient, id: e.target.value })}
-              className="input-simple"
-            >
-              <option value="">Wybierz składnik</option>
-              {allIngredients.map((ing) => (
-                <option key={ing.id} value={ing.id}>
-                  {ing.name} ({ing.unit})
-                </option>
-              ))}
-            </select>
-            <div className="flex items-center gap-2">
-              {newIngredient.id ? (
-                <IngredientAmountEditor
-                  value={newIngredient.amount}
-                  onChange={(value) => setNewIngredient({ ...newIngredient, amount: value })}
-                  supply={allIngredients.find(ing => ing.id === newIngredient.id)!}
-                />
-              ) : (
-                <div className="text-muted-light italic">Wybierz składnik aby edytować ilość</div>
-              )}
-            </div>
-            <button
-              onClick={handleAddNewIngredient}
-              disabled={!newIngredient.id || newIngredient.amount <= 0}
-              className={`px-3 py-2 rounded text-white ${
-                !newIngredient.id || newIngredient.amount <= 0 ?
-                'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' :
-                'btn-add'
-              }`}
-            >
-              Dodaj składnik
-            </button>
-          </div>
-        </div>
+        <IngredientListEditor
+          ingredients={recipe.ingredients}
+          allIngredients={allIngredients}
+          onIngredientAmountChange={(index, amount) => onIngredientUpdate(dayNumber, recipeIndex, index, amount)}
+          onRemoveIngredient={(index) => onIngredientRemove(dayNumber, recipeIndex, index)}
+          onAddIngredient={(id, amount) => onIngredientAdd(dayNumber, recipeIndex, id, amount)}
+        />
 
         <div className="flex justify-end mt-4 pt-4 border-t dark:border-gray-600">
           <button

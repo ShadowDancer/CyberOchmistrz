@@ -407,7 +407,7 @@ body {
   }
 
   .list-item-interactive {
-    @apply cursor-pointer transition-colors;
+    @apply cursor-pointer transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700 focus:outline-none;
   }
 
   .list-item-selected {
@@ -420,6 +420,11 @@ body {
 
   .list-item-dragging {
     @apply border-blue-500;
+  }
+
+  /* Dropdown Components */
+  .dropdown-container {
+    @apply absolute z-10 w-full mt-1 bg-white rounded-lg shadow-sm dark:bg-gray-800 border border-gray-300 dark:border-gray-600 max-h-60 overflow-y-auto;
   }
 
   /* Utility Classes */

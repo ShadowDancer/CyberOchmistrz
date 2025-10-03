@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Recipie, MealType, IngredientAmount } from '@/types';
 import { getIngredients, getRecipies } from '@/model/recipieData';
-import { declineUnit } from '../utils/polishDeclension';
-import IngredientAmountEditor from './IngredientAmountEditor';
+import IngredientListEditor from './IngredientListEditor';
 
 interface NewRecipeFormProps {
   recipe?: Recipie;
@@ -48,16 +47,6 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
     } else {
       setSelectedMealTypes([...selectedMealTypes, type]);
     }
-  };
-
-  const addIngredient = () => {
-    setIngredients([...ingredients, { id: '', amount: 0 }]);
-  };
-
-  const updateIngredientId = (index: number, value: string) => {
-    const updatedIngredients = [...ingredients];
-    updatedIngredients[index].id = value;
-    setIngredients(updatedIngredients);
   };
 
   const updateIngredientAmount = (index: number, value: number) => {
@@ -265,73 +254,16 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
           </div>
         </div>
 
-        {/* Ingredients Section */}
-        <div>
-          <h2 className="heading-secondary">Składniki</h2>
-          {ingredients.map((ingredient, index) => (
-            <div key={index} className="mb-2 flex flex-col gap-2">
-              <div className="flex items-start gap-2">
-                <div className="w-3/5">
-                  <label className="form-label">Składnik</label>
-                  <select
-                    value={ingredient.id}
-                    onChange={(e) => updateIngredientId(index, e.target.value)}
-                    className="input-simple"
-                  >
-                    <option value="">Wybierz składnik</option>
-                    {allIngredients.map((ing) => (
-                      <option key={ing.id} value={ing.id}>
-                        {ing.name} ({ing.unit})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="w-1/4">
-                  <label className="form-label">Ilość</label>
-                  {ingredient.id ? (
-                    <IngredientAmountEditor
-                      value={ingredient.amount}
-                      onChange={(value) => updateIngredientAmount(index, value)}
-                      supply={allIngredients.find(ing => ing.id === ingredient.id)!}
-                    />
-                  ) : (
-                    <div className="text-muted-light italic">Wybierz składnik</div>
-                  )}
-                </div>
-                <div className="flex gap-2 self-end">
-                  {ingredients.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeIngredient(index)}
-                      className="btn-small btn-remove"
-                    >
-                      -
-                    </button>
-                  )}
-                </div>
-              </div>
-              {ingredient.id && (() => {
-                const selectedIngredient = allIngredients.find(ing => ing.id === ingredient.id);
-                return selectedIngredient?.description ? (
-                  <div className="pl-1">
-                    <p className="text-xs text-muted-light italic">
-                      {selectedIngredient.description}
-                    </p>
-                  </div>
-                ) : null;
-              })()}
-            </div>
-          ))}
-          <div className="mt-2 flex justify-end">
-            <button
-              type="button"
-              onClick={addIngredient}
-              className="btn-small btn-add"
-            >
-              +
-            </button>
-          </div>
-        </div>
+        <IngredientListEditor
+          ingredients={ingredients}
+          allIngredients={allIngredients}
+          onIngredientAmountChange={updateIngredientAmount}
+          onRemoveIngredient={removeIngredient}
+          onAddIngredient={(id, amount) => {
+            const newIngredient = { id, amount };
+            setIngredients([...ingredients, newIngredient]);
+          }}
+        />
 
         {/* Instructions Section */}
         <div>
