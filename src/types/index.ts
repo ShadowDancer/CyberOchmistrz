@@ -5,6 +5,7 @@ export interface Supply {
   description?: string;
   isIngredient: boolean;
   category: string;
+  defaultAmount?: number;
 }
 
 export interface Ingredient extends Supply {

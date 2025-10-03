@@ -50,6 +50,9 @@ export default function RootLayout({
                 <Link href="/rejsy" className="text-link">
                   Rejsy
                 </Link>
+                <Link href="/skladniki" className="text-link">
+                  Składniki
+                </Link>
               </div>
             </div>
           </div>
