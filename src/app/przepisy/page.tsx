@@ -33,7 +33,7 @@ export default function RecipesPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">Książka Kucharska</h1>
         <Link
-          href="/przepisy/nowy"
+          href="/przepisy/dodaj"
           className="btn-primary flex items-center"
         >
           Nowy przepis
