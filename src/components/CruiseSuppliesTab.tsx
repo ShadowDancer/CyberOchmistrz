@@ -14,6 +14,7 @@ import {
 import { getSuppliesByType, groupSuppliesByCategory } from '../model/supplyData';
 import { CategoryGroup } from '../types';
 import { declineUnit } from '../utils/polishDeclension';
+import IngredientAmountEditor from './IngredientAmountEditor';
 
 interface CruiseSuppliesTabProps {
   cruise: Cruise;
@@ -229,23 +230,11 @@ export default function CruiseSuppliesTab({
                         <div className="flex justify-between items-center">
                           <span className="font-medium">{supply.name}</span>
                           <div className="flex items-center gap-2">
-                            <div className="flex items-center text-xs">
-                              <button
-                                onClick={() => handleUpdateAmount(supply.id, Math.max(1, amount - 1), isPerPerson, isPerDay)}
-                                className="btn-secondary px-1.5 py-0.5 rounded-l-md rounded-r-none text-xs"
-                              >
-                                -
-                              </button>
-                              <span className="px-2 py-0.5 bg-gray-100 border dark:bg-gray-700 dark:border-gray-600">
-                                {amount} {declineUnit(supply.unit, amount)}
-                              </span>
-                              <button
-                                onClick={() => handleUpdateAmount(supply.id, amount + 1, isPerPerson, isPerDay)}
-                                className="btn-secondary px-1.5 py-0.5 rounded-r-md rounded-l-none text-xs"
-                              >
-                                +
-                              </button>
-                            </div>
+                            <IngredientAmountEditor
+                              value={amount}
+                              onChange={(value) => handleUpdateAmount(supply.id, value, isPerPerson, isPerDay)}
+                              supply={supply}
+                            />
                             <select
                               value={
                                 !isPerPerson && !isPerDay ? 'none' :

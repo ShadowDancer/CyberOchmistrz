@@ -5,6 +5,7 @@ import { Recipie } from '../types';
 import { getRecipieIngredients } from '../model/recipieData';
 import { getIngredients } from '../model/supplyData';
 import { declineUnit } from '../utils/polishDeclension';
+import IngredientAmountEditor from './IngredientAmountEditor';
 
 interface RecipeIngredientEditorProps {
   recipe: Recipie;
@@ -36,11 +37,11 @@ export default function RecipeIngredientEditor({
     setIngredients(getRecipieIngredients(recipe.ingredients));
   }, [recipe.ingredients]);
 
-  const handleAmountChange = (index: number, value: string) => {
+  const handleAmountChange = (index: number, value: number) => {
     const updatedIngredients = [...ingredients];
     updatedIngredients[index] = {
       ...updatedIngredients[index],
-      amount: Number(value)
+      amount: value
     };
     setIngredients(updatedIngredients);
   };
@@ -91,15 +92,11 @@ export default function RecipeIngredientEditor({
                     </button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.1"
+                    <IngredientAmountEditor
                       value={ingredient.amount}
-                      onChange={(e) => handleAmountChange(index, e.target.value)}
-                      className="input-simple w-20"
+                      onChange={(value) => handleAmountChange(index, value)}
+                      supply={ingredient}
                     />
-                    <span>{declineUnit(ingredient.unit, ingredient.amount)}</span>
                     <button
                       onClick={() => handleSaveAmount(index)}
                       className="btn-primary ml-auto text-sm px-2 py-1"
@@ -129,21 +126,15 @@ export default function RecipeIngredientEditor({
               ))}
             </select>
             <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="0"
-                step="0.1"
-                value={newIngredient.amount}
-                onChange={(e) => setNewIngredient({ ...newIngredient, amount: Number(e.target.value) })}
-                className="input-simple w-20"
-                placeholder="Ilość"
-              />
-              <span>
-                {newIngredient.id ?
-                  declineUnit(allIngredients.find(ing => ing.id === newIngredient.id)?.unit || '', newIngredient.amount) :
-                  ''
-                }
-              </span>
+              {newIngredient.id ? (
+                <IngredientAmountEditor
+                  value={newIngredient.amount}
+                  onChange={(value) => setNewIngredient({ ...newIngredient, amount: value })}
+                  supply={allIngredients.find(ing => ing.id === newIngredient.id)!}
+                />
+              ) : (
+                <div className="text-muted-light italic">Wybierz składnik aby edytować ilość</div>
+              )}
             </div>
             <button
               onClick={handleAddNewIngredient}

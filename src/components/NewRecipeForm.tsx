@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Recipie, MealType, IngredientAmount } from '@/types';
 import { getIngredients, getRecipies } from '@/model/recipieData';
 import { declineUnit } from '../utils/polishDeclension';
+import IngredientAmountEditor from './IngredientAmountEditor';
 
 interface NewRecipeFormProps {
   recipe?: Recipie;
@@ -59,9 +60,9 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
     setIngredients(updatedIngredients);
   };
 
-  const updateIngredientAmount = (index: number, value: string) => {
+  const updateIngredientAmount = (index: number, value: number) => {
     const updatedIngredients = [...ingredients];
-    updatedIngredients[index].amount = Number(value);
+    updatedIngredients[index].amount = value;
     setIngredients(updatedIngredients);
   };
 
@@ -287,21 +288,15 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
                 </div>
                 <div className="w-1/4">
                   <label className="form-label">Ilość</label>
-                  <div className="flex items-center">
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.1"
+                  {ingredient.id ? (
+                    <IngredientAmountEditor
                       value={ingredient.amount}
-                      onChange={(e) => updateIngredientAmount(index, e.target.value)}
-                      className="input-simple"
+                      onChange={(value) => updateIngredientAmount(index, value)}
+                      supply={allIngredients.find(ing => ing.id === ingredient.id)!}
                     />
-                    {ingredient.id && (
-                      <span className="ml-2">
-                        {declineUnit(allIngredients.find(ing => ing.id === ingredient.id)?.unit || '', ingredient.amount)}
-                      </span>
-                    )}
-                  </div>
+                  ) : (
+                    <div className="text-muted-light italic">Wybierz składnik</div>
+                  )}
                 </div>
                 <div className="flex gap-2 self-end">
                   {ingredients.length > 1 && (
