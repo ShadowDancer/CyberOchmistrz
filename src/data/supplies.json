@@ -179,7 +179,7 @@
   },
   {
     "id": "serek_kanapkowy",
-    "name": "Serek kanapkowy (Hochland itd.)",
+    "name": "Serek kanapkowy, twarogowy do smarowania kanapek",
     "unit": "gramy",
     "category": "inne",
     "isVegetarian": true,
@@ -1006,7 +1006,7 @@
   {
     "id": "mydło",
     "name": "Mydło",
-    "description": "Mydło do mycia rąk, po sztuce do kingstona",
+    "description": "Mydło do mycia rąk, najlepiej w płynie, po sztuce do kingstona",
     "unit": "sztuki",
     "category": "środki czystości",
     "isIngredient": false
