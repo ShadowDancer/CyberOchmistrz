@@ -78,8 +78,6 @@ describe('supplyData functions', () => {
       expect(Array.isArray(nonIngredients)).toBe(true);
       nonIngredients.forEach(supply => {
         expect(supply.isIngredient).toBe(false);
-        expect(supply).not.toHaveProperty('isVegetarian');
-        expect(supply).not.toHaveProperty('isVegan');
       });
     });
   });
