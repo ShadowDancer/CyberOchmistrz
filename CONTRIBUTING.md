@@ -39,31 +39,35 @@ Static data (recipes, supplies) ships in JSON. Cruises persisted in `localStorag
 
 ```
 CyberOchmistrz/
-├── .github/workflows/     # CI (test+build on PR) and CD (deploy to gh-pages on master push)
-├── .vscode/               # Debug launch configs for Next.js
-├── public/                # PWA manifest, static SVGs
+├── .cursorignore              # Excludes build artifacts from Cursor indexing
+├── .github/workflows/         # CI (test+build on PR) and CD (deploy to gh-pages on master push)
+├── .vscode/                   # Debug launch configs for Next.js
+├── public/                    # PWA manifest, static SVGs
 ├── src/
-│   ├── app/               # Next.js App Router (routes, layouts, pages)
-│   │   ├── layout.tsx     # Root layout: nav bar with links to 3 sections
-│   │   ├── page.tsx       # Landing page with hero + links
-│   │   ├── przepisy/      # /przepisy — recipe list, add, edit
-│   │   ├── rejsy/         # /rejsy — cruise list/detail, add, edit
-│   │   └── skladniki/     # /skladniki — supplies catalog, add
-│   ├── components/        # All React components (see below)
-│   ├── data/              # Static JSON catalogs
-│   │   ├── recipies.json  # ~20 recipes with ingredients, instructions
-│   │   └── supplies.json  # ~100 supplies with units, categories, veg flags
-│   ├── model/             # Domain logic (no UI)
-│   │   ├── cruiseData.ts  # Cruise CRUD, recipe assignment, shopping aggregation, CSV export
-│   │   ├── recipieData.ts # Recipe loading, ingredient resolution, veg checks
-│   │   └── supplyData.ts  # Supply loading, filtering, validation
-│   ├── types/             # TypeScript interfaces and enums
-│   │   └── index.ts       # Supply, Ingredient, Recipie, Cruise, shopping list types
+│   ├── app/                   # Next.js App Router (routes, layouts, pages)
+│   │   ├── layout.tsx         # Root layout: nav bar with links to 3 sections
+│   │   ├── page.tsx           # Landing page with hero + links
+│   │   ├── przepisy/          # /przepisy — recipe list, add, edit
+│   │   ├── rejsy/             # /rejsy — cruise list/detail, add, edit
+│   │   └── skladniki/         # /skladniki — supplies catalog, add
+│   ├── components/            # All React components (see below)
+│   │   └── AGENTS.md          # Component conventions for AI agents
+│   ├── data/                  # Static JSON catalogs
+│   │   ├── recipies.json      # ~20 recipes with ingredients, instructions
+│   │   └── supplies.json      # ~100 supplies with units, categories, veg flags
+│   ├── model/                 # Domain logic (no UI)
+│   │   ├── AGENTS.md          # Model layer rules for AI agents
+│   │   ├── cruiseData.ts      # Cruise CRUD, recipe assignment, shopping aggregation, CSV export
+│   │   ├── recipieData.ts     # Recipe loading, ingredient resolution, veg checks
+│   │   └── supplyData.ts      # Supply loading, filtering, validation
+│   ├── types/                 # TypeScript interfaces and enums
+│   │   └── index.ts           # Supply, Ingredient, Recipie, Cruise, shopping list types
 │   └── utils/
 │       └── polishDeclension.ts  # Polish grammatical number for units
-├── test/                  # Jest test suite (~15 test files)
+├── test/                      # Jest test suite (~15 test files)
+│   └── AGENTS.md              # Test conventions for AI agents
 ├── package.json
-├── next.config.ts         # Static export + PWA config
+├── next.config.ts             # Static export + PWA config
 ├── jest.config.js
 └── tsconfig.json
 ```
