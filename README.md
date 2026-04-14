@@ -72,17 +72,6 @@ CyberOchmistrz/
 └── tsconfig.json
 ```
 
-### `src/components/` breakdown
-
-| Component group | Files                                                                      | Purpose                      |
-| --------------- | -------------------------------------------------------------------------- | ---------------------------- |
-| Cruise workflow | `AddCruiseForm`, `EditCruiseForm`, `CruiseList`, `CruiseDetail`            | CRUD for cruises             |
-| Cruise tabs     | `CruiseInfoTab`, `CruiseMenuTab`, `CruiseSuppliesTab`, `ShoppingListTab`   | Tabbed cruise detail view    |
-| Drag-and-drop   | `DraggableRecipeItem`, `DroppableDayItem`, `DroppableRecipieContainer`     | Meal planning via dnd-kit    |
-| Recipe workflow | `RecipeList`, `RecipeDetail`, `NewRecipeForm`, `StarRating`                | Recipe browsing and creation |
-| Editors         | `IngredientListEditor`, `IngredientAmountEditor`, `RecipeIngredientEditor` | Inline ingredient editing    |
-| Supplies        | `AddSupplyForm`                                                            | Add new supply to catalog    |
-
 ---
 
 ## Libraries
