@@ -1,3 +1,7 @@
+## Caveman
+
+If skill 'caveman' is available, always use it in full mode - command is /caveman full
+
 ## Lazy context loading
 
 Read README.md to learn about code structure and data flow.

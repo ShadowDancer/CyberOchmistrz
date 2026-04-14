@@ -1,5 +1,5 @@
 import { aggregateShoppingList } from '../src/model/cruiseData';
-import { Cruise, Recipie, AggregatedShoppingList, RecipeAmountSource, AdditionalSupplyAmountSource } from '../src/types';
+import { Cruise, CruiseDay, CruiseSupply, Recipie, IngredientAmount, AggregatedShoppingList, AmountSource, RecipeAmountSource, AdditionalSupplyAmountSource } from '../src/types';
 
 // Mock the supplies data
 jest.mock('../src/data/supplies.json', () => [
@@ -104,226 +104,172 @@ jest.mock('../src/data/supplies.json', () => [
     unit: 'sztuki',
     category: 'środki czystości',
     isIngredient: false
+  },
+  {
+    id: 'no_cat_ingredient',
+    name: 'Mystery Ingredient',
+    unit: 'gramy',
+    isIngredient: true
+  },
+  {
+    id: 'no_cat_supply',
+    name: 'Mystery Supply',
+    unit: 'sztuki',
+    isIngredient: false
   }
 ]);
 
 describe('aggregateShoppingList', () => {
+  const item = (id: string, amount: number, unit: string | null, sources?: AmountSource[]) =>
+    expect.objectContaining({
+      supply: expect.objectContaining({ id, ...(unit && { unit }) }),
+      amount,
+      ...(sources && { sources }),
+    });
+
+  const recipeSource = (p: { perPerson: number; recipe: string; day: number }) =>
+    new RecipeAmountSource(p.perPerson, p.recipe, p.day);
+
+  const additionalSupplySource = (p: { base: number; perPerson: boolean; perDay: boolean }) =>
+    new AdditionalSupplyAmountSource(p.base, p.perPerson, p.perDay);
+
+  const makeRecipe = (name: string, ingredients: IngredientAmount[]): Recipie => ({
+    id: name,
+    name,
+    ingredients,
+    description: '',
+    mealType: [],
+    difficulty: 1,
+    instructions: [],
+  });
+
+  const makeCruise = (p: { length: number; crew: number; days: CruiseDay[]; additionalSupplies?: CruiseSupply[] }): Cruise => ({
+    id: 'test-cruise',
+    name: 'Test Cruise',
+    dateCreated: '2023-01-01T00:00:00.000Z',
+    dateModified: '2023-01-01T00:00:00.000Z',
+    ...p,
+  });
+
   it('should return empty list for cruise with no recipes or additional supplies', () => {
-    const cruise: Cruise = {
-      id: 'test-cruise',
-      name: 'Test Cruise',
-      dateCreated: '2023-01-01T00:00:00.000Z',
-      dateModified: '2023-01-01T00:00:00.000Z',
+    const result = aggregateShoppingList(makeCruise({
       length: 3,
       crew: 2,
       days: [
         { dayNumber: 1, recipes: [] },
         { dayNumber: 2, recipes: [] },
-        { dayNumber: 3, recipes: [] }
-      ]
-    };
-
-    const result = aggregateShoppingList(cruise);
+        { dayNumber: 3, recipes: [] },
+      ],
+    }));
 
     expect(result).toEqual({});
   });
 
   it('should aggregate ingredients from recipes scaled by crew size', () => {
-    const recipe: Recipie = {
-      id: 'jajecznica',
-      name: 'Jajecznica',
-      ingredients: [
-        { id: 'jajka', amount: 3 },
-        { id: 'sol', amount: 1 },
-        { id: 'pieprz', amount: 1 },
-        { id: 'chleb', amount: 0.15 },
-        { id: 'maslo', amount: 2 }
-      ],
-      description: 'Pyszna. Na jachcie może być konieczność robienia na 2 tury.',
-      mealType: ['śniadanie', 'kolacja'],
-      difficulty: 3,
-      instructions: ['Każdy umie zrobić jajecznicę.'],
-      developedBy: 'Przemysław Onak'
-    };
+    const jajecznica = makeRecipe('Jajecznica', [
+      { id: 'jajka', amount: 3 },
+      { id: 'sol', amount: 1 },
+      { id: 'pieprz', amount: 1 },
+      { id: 'chleb', amount: 0.15 },
+      { id: 'maslo', amount: 2 },
+    ]);
 
-    const cruise: Cruise = {
-      id: 'test-cruise',
-      name: 'Test Cruise',
-      dateCreated: '2023-01-01T00:00:00.000Z',
-      dateModified: '2023-01-01T00:00:00.000Z',
+    const result = aggregateShoppingList(makeCruise({
       length: 1,
       crew: 4,
-      days: [
-        { dayNumber: 1, recipes: [{ originalRecipeId: 'jajecznica', recipeData: recipe }] }
-      ]
-    };
+      days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'Jajecznica', recipeData: jajecznica }] }],
+    }));
 
-    const result = aggregateShoppingList(cruise);
-
-    expect(result).toHaveProperty('nabiał');
-    expect(result).toHaveProperty('przyprawy');
-    expect(result).toHaveProperty('pieczywo');
-
-    const eggsItem = result['nabiał'].find(item => item.supply.id === 'jajka');
-    expect(eggsItem).toBeDefined();
-    expect(eggsItem!.amount).toBe(12);
-    expect(eggsItem!.sources).toHaveLength(1);
-    expect(eggsItem!.sources[0]).toEqual(new RecipeAmountSource(3, 'Jajecznica', 1));
-
-    const butterItem = result['nabiał'].find(item => item.supply.id === 'maslo');
-    expect(butterItem!.amount).toBe(8);
-
-    const saltItem = result['przyprawy'].find(item => item.supply.id === 'sol');
-    expect(saltItem!.amount).toBe(4);
-
-    const breadItem = result['pieczywo'].find(item => item.supply.id === 'chleb');
-    expect(breadItem!.amount).toBe(0.6);
+    expect(result).toEqual(expect.objectContaining({
+      'nabiał': expect.arrayContaining([
+        item('jajka', 12, 'sztuki', [recipeSource({ perPerson: 3, recipe: 'Jajecznica', day: 1 })]),
+        item('maslo', 8, 'gramy'),
+      ]),
+      'przyprawy': expect.arrayContaining([item('sol', 4, 'gramy')]),
+      'pieczywo': expect.arrayContaining([item('chleb', 0.6, 'sztuki')]),
+    }));
   });
 
   it('should aggregate additional supplies', () => {
-    const cruise: Cruise = {
-      id: 'test-cruise',
-      name: 'Test Cruise',
-      dateCreated: '2023-01-01T00:00:00.000Z',
-      dateModified: '2023-01-01T00:00:00.000Z',
+    const result = aggregateShoppingList(makeCruise({
       length: 1,
       crew: 2,
       days: [{ dayNumber: 1, recipes: [] }],
       additionalSupplies: [
         { id: 'woda_butelkowana', amount: 6, isPerPerson: false, isPerDay: false },
         { id: 'papier_toaletowy', amount: 4, isPerPerson: false, isPerDay: false },
-        { id: 'mydło', amount: 2, isPerPerson: false, isPerDay: false }
-      ]
-    };
+        { id: 'mydło', amount: 2, isPerPerson: false, isPerDay: false },
+      ],
+    }));
 
-    const result = aggregateShoppingList(cruise);
-
-    expect(result).toHaveProperty('napoje');
-    expect(result).toHaveProperty('środki czystości');
-
-    const waterItem = result['napoje'][0];
-    expect(waterItem.supply.name).toBe('Woda butelkowana');
-    expect(waterItem.amount).toBe(6);
-    expect(waterItem.sources).toHaveLength(1);
-    expect(waterItem.sources[0]).toEqual(new AdditionalSupplyAmountSource(6, false, false));
-
-    const toiletPaperItem = result['środki czystości'].find(item => item.supply.id === 'papier_toaletowy');
-    expect(toiletPaperItem!.amount).toBe(4);
-
-    const soapItem = result['środki czystości'].find(item => item.supply.id === 'mydło');
-    expect(soapItem!.amount).toBe(2);
+    expect(result).toEqual(expect.objectContaining({
+      'napoje': expect.arrayContaining([
+        item('woda_butelkowana', 6, 'sztuki', [additionalSupplySource({ base: 6, perPerson: false, perDay: false })]),
+      ]),
+      'środki czystości': expect.arrayContaining([
+        item('papier_toaletowy', 4, 'rolki'),
+        item('mydło', 2, 'sztuki'),
+      ]),
+    }));
   });
 
   it('should combine ingredients from recipes and additional supplies', () => {
-    const recipe: Recipie = {
-      id: 'pesto-z-tuczykiem',
-      name: 'Pesto z tuńczykiem',
-      ingredients: [
-        { id: 'tunczyk_w_sosie_wlasnym', amount: 75 },
-        { id: 'makaron_penne', amount: 90 },
-        { id: 'pesto', amount: 40 }
-      ],
-      description: 'Szybkie i dobre, łatwo zrobić nawet na fali.',
-      mealType: ['obiad'],
-      difficulty: 2,
-      instructions: ['Gotujemy i cedzimy makaron', 'Dodajemy tuńczyka i pesto, mieszamy'],
-      developedBy: 'Przemysław Onak'
-    };
+    const pesto = makeRecipe('Pesto z tuńczykiem', [
+      { id: 'tunczyk_w_sosie_wlasnym', amount: 75 },
+      { id: 'makaron_penne', amount: 90 },
+      { id: 'pesto', amount: 40 },
+    ]);
 
-    const cruise: Cruise = {
-      id: 'test-cruise',
-      name: 'Test Cruise',
-      dateCreated: '2023-01-01T00:00:00.000Z',
-      dateModified: '2023-01-01T00:00:00.000Z',
+    const result = aggregateShoppingList(makeCruise({
       length: 1,
       crew: 3,
-      days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'pesto-z-tuczykiem', recipeData: recipe }] }],
-      additionalSupplies: [{ id: 'woda_butelkowana', amount: 9, isPerPerson: false, isPerDay: false }]
-    };
+      days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'Pesto z tuńczykiem', recipeData: pesto }] }],
+      additionalSupplies: [{ id: 'woda_butelkowana', amount: 9, isPerPerson: false, isPerDay: false }],
+    }));
 
-    const result = aggregateShoppingList(cruise);
-
-    expect(result).toHaveProperty('ryby');
-    expect(result).toHaveProperty('zboża');
-    expect(result).toHaveProperty('inne');
-    expect(result).toHaveProperty('napoje');
-
-    const tunaItem = result['ryby'][0];
-    expect(tunaItem.amount).toBe(225); // 75 * 3
-
-    const pastaItem = result['zboża'][0];
-    expect(pastaItem.amount).toBe(270); // 90 * 3
-
-    const pestoItem = result['inne'][0];
-    expect(pestoItem.amount).toBe(120); // 40 * 3
-
-    const waterItem = result['napoje'][0];
-    expect(waterItem.amount).toBe(9);
+    expect(result).toEqual(expect.objectContaining({
+      'ryby': expect.arrayContaining([item('tunczyk_w_sosie_wlasnym', 225, 'gramy')]),
+      'zboża': expect.arrayContaining([item('makaron_penne', 270, 'gramy')]),
+      'inne': expect.arrayContaining([item('pesto', 120, 'gramy')]),
+      'napoje': expect.arrayContaining([item('woda_butelkowana', 9, 'sztuki')]),
+    }));
   });
 
   it('should accumulate amounts for same supply from multiple sources', () => {
-    const recipe1: Recipie = {
-      id: 'jajecznica',
-      name: 'Jajecznica',
-      ingredients: [{ id: 'jajka', amount: 3 }],
-      description: 'Test',
-      mealType: [],
-      difficulty: 1,
-      instructions: [],
-      developedBy: 'Test'
-    };
+    const jajecznica = makeRecipe('Jajecznica', [{ id: 'jajka', amount: 3 }]);
+    const pesto = makeRecipe('Pesto z tuńczykiem i parmezanem', [{ id: 'jajka', amount: 2 }]);
 
-    const recipe2: Recipie = {
-      id: 'pesto-z-tuczykiem-i-parmezanem',
-      name: 'Pesto z tuńczykiem i parmezanem',
-    ingredients: [{ id: 'jajka', amount: 2 }],
-      description: 'Test',
-      mealType: [],
-      difficulty: 1,
-      instructions: [],
-      developedBy: 'Test'
-    };
-
-    const cruise: Cruise = {
-      id: 'test-cruise',
-      name: 'Test Cruise',
-      dateCreated: '2023-01-01T00:00:00.000Z',
-      dateModified: '2023-01-01T00:00:00.000Z',
+    const result = aggregateShoppingList(makeCruise({
       length: 2,
       crew: 2,
       days: [
-        { dayNumber: 1, recipes: [{ originalRecipeId: 'jajecznica', recipeData: recipe1 }] },
-        { dayNumber: 2, recipes: [{ originalRecipeId: 'pesto-z-tuczykiem-i-parmezanem', recipeData: recipe2 }] }
+        { dayNumber: 1, recipes: [{ originalRecipeId: 'Jajecznica', recipeData: jajecznica }] },
+        { dayNumber: 2, recipes: [{ originalRecipeId: 'Pesto z tuńczykiem i parmezanem', recipeData: pesto }] },
       ],
-      additionalSupplies: [{ id: 'jajka', amount: 6, isPerPerson: false, isPerDay: false }]
-    };
+      additionalSupplies: [{ id: 'jajka', amount: 6, isPerPerson: false, isPerDay: false }],
+    }));
 
-    const result = aggregateShoppingList(cruise);
-
-    const eggsItem = result['nabiał'][0];
-    expect(eggsItem.amount).toBe(16); // (3 + 2) * 2 + 6 = 6 + 4 + 6
-    expect(eggsItem.sources).toHaveLength(3);
-    expect(eggsItem.sources[0]).toEqual(new RecipeAmountSource(3, 'Jajecznica', 1));
-    expect(eggsItem.sources[1]).toEqual(new RecipeAmountSource(2, 'Pesto z tuńczykiem i parmezanem', 2));
-    expect(eggsItem.sources[2]).toEqual(new AdditionalSupplyAmountSource(6, false, false));
+    expect(result).toEqual(expect.objectContaining({
+      'nabiał': expect.arrayContaining([
+        item('jajka', 16, 'sztuki', [
+          recipeSource({ perPerson: 3, recipe: 'Jajecznica', day: 1 }),
+          recipeSource({ perPerson: 2, recipe: 'Pesto z tuńczykiem i parmezanem', day: 2 }),
+          additionalSupplySource({ base: 6, perPerson: false, perDay: false }),
+        ]),
+      ]),
+    }));
   });
 
   it('should sort items alphabetically within categories', () => {
-    const cruise: Cruise = {
-      id: 'test-cruise',
-      name: 'Test Cruise',
-      dateCreated: '2023-01-01T00:00:00.000Z',
-      dateModified: '2023-01-01T00:00:00.000Z',
+    const result = aggregateShoppingList(makeCruise({
       length: 1,
       crew: 1,
       days: [{ dayNumber: 1, recipes: [] }],
       additionalSupplies: [
         { id: 'papier_toaletowy', amount: 1, isPerPerson: false, isPerDay: false },
-        { id: 'mydło', amount: 1, isPerPerson: false, isPerDay: false }
-      ]
-    };
-
-    const result = aggregateShoppingList(cruise);
+        { id: 'mydło', amount: 1, isPerPerson: false, isPerDay: false },
+      ],
+    }));
 
     expect(result['środki czystości']).toHaveLength(2);
     expect(result['środki czystości'][0].supply.name).toBe('Mydło'); // M before P
@@ -331,80 +277,179 @@ describe('aggregateShoppingList', () => {
   });
 
   it('should handle missing supplies gracefully', () => {
-    const recipe: Recipie = {
-      id: 'recipe-1',
-      name: 'Test Recipe',
-      ingredients: [{ id: 'missing-ing', amount: 1 }],
-      description: 'Test',
-      mealType: [],
-      difficulty: 1,
-      instructions: [],
-      developedBy: 'Test'
-    };
+    const testRecipe = makeRecipe('Test Recipe', [{ id: 'missing-ing', amount: 1 }]);
 
-    const cruise: Cruise = {
-      id: 'test-cruise',
-      name: 'Test Cruise',
-      dateCreated: '2023-01-01T00:00:00.000Z',
-      dateModified: '2023-01-01T00:00:00.000Z',
+    const result = aggregateShoppingList(makeCruise({
       length: 1,
       crew: 2,
-      days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'recipe-1', recipeData: recipe }] }],
-      additionalSupplies: [{ id: 'missing-supply', amount: 3, isPerPerson: false, isPerDay: false }]
-    };
+      days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'Test Recipe', recipeData: testRecipe }] }],
+      additionalSupplies: [{ id: 'missing-supply', amount: 3, isPerPerson: false, isPerDay: false }],
+    }));
 
-    const result = aggregateShoppingList(cruise);
-
-    expect(result).toHaveProperty('Nieprawidłowe produkty');
-    expect(result['Nieprawidłowe produkty']).toHaveLength(2);
-
-    const invalidIngredient = result['Nieprawidłowe produkty'].find(item => item.supply.id === 'missing-ing');
-    expect(invalidIngredient).toBeDefined();
-    expect(invalidIngredient!.supply.name).toBe('Nieprawidłowy produkt: missing-ing');
-    expect(invalidIngredient!.amount).toBe(2); // 1 * 2 crew
-
-    const invalidSupply = result['Nieprawidłowe produkty'].find(item => item.supply.id === 'missing-supply');
-    expect(invalidSupply).toBeDefined();
-    expect(invalidSupply!.supply.name).toBe('Nieprawidłowy produkt: missing-supply');
-    expect(invalidSupply!.amount).toBe(3);
+    expect(result).toEqual(expect.objectContaining({
+      'Nieprawidłowe produkty': expect.arrayContaining([
+        item('missing-ing', 2, null),
+        item('missing-supply', 3, null),
+      ]),
+    }));
   });
 
   it('should handle multiple additional supplies with different flags', () => {
-    const cruise: Cruise = {
-      id: 'test-cruise',
-      name: 'Test Cruise',
-      dateCreated: '2023-01-01T00:00:00.000Z',
-      dateModified: '2023-01-01T00:00:00.000Z',
-      length: 5, // 5 days
-      crew: 3, // 3 crew
+    const result = aggregateShoppingList(makeCruise({
+      length: 5,
+      crew: 3,
       days: [{ dayNumber: 1, recipes: [] }],
       additionalSupplies: [
-        { id: 'woda_butelkowana', amount: 2, isPerPerson: false, isPerDay: false }, // Fixed: 2
-        { id: 'woda_butelkowana', amount: 1, isPerPerson: true, isPerDay: false },  // Per person: 1 * 3 = 3
-        { id: 'woda_butelkowana', amount: 1, isPerPerson: false, isPerDay: true },  // Per day: 1 * 5 = 5
-        { id: 'woda_butelkowana', amount: 1, isPerPerson: true, isPerDay: true },   // Per person per day: 1 * 3 * 5 = 15
-        { id: 'papier_toaletowy', amount: 2, isPerPerson: true, isPerDay: false }   // Per person: 2 * 3 = 6
-      ]
-    };
+        { id: 'woda_butelkowana', amount: 2, isPerPerson: false, isPerDay: false },
+        { id: 'woda_butelkowana', amount: 1, isPerPerson: true, isPerDay: false },
+        { id: 'woda_butelkowana', amount: 1, isPerPerson: false, isPerDay: true },
+        { id: 'woda_butelkowana', amount: 1, isPerPerson: true, isPerDay: true },
+        { id: 'papier_toaletowy', amount: 2, isPerPerson: true, isPerDay: false },
+      ],
+    }));
 
-    const result = aggregateShoppingList(cruise);
+    expect(result).toEqual(expect.objectContaining({
+      'napoje': expect.arrayContaining([
+        item('woda_butelkowana', 25, 'sztuki', [
+          additionalSupplySource({ base: 2, perPerson: false, perDay: false }),
+          additionalSupplySource({ base: 1, perPerson: true, perDay: false }),
+          additionalSupplySource({ base: 1, perPerson: false, perDay: true }),
+          additionalSupplySource({ base: 1, perPerson: true, perDay: true }),
+        ]),
+      ]),
+      'środki czystości': expect.arrayContaining([
+        item('papier_toaletowy', 6, 'rolki', [
+          additionalSupplySource({ base: 2, perPerson: true, perDay: false }),
+        ]),
+      ]),
+    }));
+  });
 
-    expect(result).toHaveProperty('napoje');
-    expect(result).toHaveProperty('środki czystości');
+  it('should skip recipes without recipeData', () => {
+    const jajecznica = makeRecipe('Jajecznica', [{ id: 'jajka', amount: 3 }]);
 
-    const waterItem = result['napoje'][0];
-    expect(waterItem.supply.name).toBe('Woda butelkowana');
-    expect(waterItem.amount).toBe(25); // 2 + 3 + 5 + 15
-    expect(waterItem.sources).toHaveLength(4);
-    expect(waterItem.sources[0]).toEqual(new AdditionalSupplyAmountSource(2, false, false));
-    expect(waterItem.sources[1]).toEqual(new AdditionalSupplyAmountSource(1, true, false));
-    expect(waterItem.sources[2]).toEqual(new AdditionalSupplyAmountSource(1, false, true));
-    expect(waterItem.sources[3]).toEqual(new AdditionalSupplyAmountSource(1, true, true));
+    const result = aggregateShoppingList(makeCruise({
+      length: 2,
+      crew: 2,
+      days: [
+        { dayNumber: 1, recipes: [{ originalRecipeId: 'Jajecznica', recipeData: jajecznica }] },
+        { dayNumber: 2, recipes: [{ originalRecipeId: 'Ghost', recipeData: undefined }] },
+      ],
+    }));
 
-    const toiletPaperItem = result['środki czystości'][0];
-    expect(toiletPaperItem.supply.name).toBe('Papier toaletowy');
-    expect(toiletPaperItem.amount).toBe(6); // 2 * 3
-    expect(toiletPaperItem.sources).toHaveLength(1);
-    expect(toiletPaperItem.sources[0]).toEqual(new AdditionalSupplyAmountSource(2, true, false));
+    expect(result).toEqual(expect.objectContaining({
+      'nabiał': expect.arrayContaining([item('jajka', 6, 'sztuki')]),
+    }));
+    expect(Object.values(result).flat()).toHaveLength(1);
+  });
+
+  it('should accumulate same recipe across multiple days', () => {
+    const jajecznica = makeRecipe('Jajecznica', [{ id: 'jajka', amount: 3 }]);
+
+    const result = aggregateShoppingList(makeCruise({
+      length: 3,
+      crew: 2,
+      days: [
+        { dayNumber: 1, recipes: [{ originalRecipeId: 'Jajecznica', recipeData: jajecznica }] },
+        { dayNumber: 2, recipes: [] },
+        { dayNumber: 3, recipes: [{ originalRecipeId: 'Jajecznica', recipeData: jajecznica }] },
+      ],
+    }));
+
+    expect(result).toEqual(expect.objectContaining({
+      'nabiał': expect.arrayContaining([
+        item('jajka', 12, 'sztuki', [
+          recipeSource({ perPerson: 3, recipe: 'Jajecznica', day: 1 }),
+          recipeSource({ perPerson: 3, recipe: 'Jajecznica', day: 3 }),
+        ]),
+      ]),
+    }));
+  });
+
+  it('should accumulate shared ingredients from multiple recipes on same day', () => {
+    const jajecznica = makeRecipe('Jajecznica', [
+      { id: 'sol', amount: 2 },
+      { id: 'jajka', amount: 3 },
+    ]);
+    const kanapki = makeRecipe('Kanapki', [
+      { id: 'sol', amount: 1 },
+      { id: 'chleb', amount: 2 },
+    ]);
+
+    const result = aggregateShoppingList(makeCruise({
+      length: 1,
+      crew: 4,
+      days: [{
+        dayNumber: 1,
+        recipes: [
+          { originalRecipeId: 'Jajecznica', recipeData: jajecznica },
+          { originalRecipeId: 'Kanapki', recipeData: kanapki },
+        ],
+      }],
+    }));
+
+    expect(result).toEqual(expect.objectContaining({
+      'przyprawy': expect.arrayContaining([
+        item('sol', 12, 'gramy', [
+          recipeSource({ perPerson: 2, recipe: 'Jajecznica', day: 1 }),
+          recipeSource({ perPerson: 1, recipe: 'Kanapki', day: 1 }),
+        ]),
+      ]),
+    }));
+  });
+
+  it('should use category fallback for supplies without category', () => {
+    const mysteryRecipe = makeRecipe('Mystery', [{ id: 'no_cat_ingredient', amount: 5 }]);
+
+    const result = aggregateShoppingList(makeCruise({
+      length: 1,
+      crew: 1,
+      days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'Mystery', recipeData: mysteryRecipe }] }],
+      additionalSupplies: [{ id: 'no_cat_supply', amount: 3, isPerPerson: false, isPerDay: false }],
+    }));
+
+    expect(result['inne']).toEqual(expect.arrayContaining([
+      item('no_cat_ingredient', 5, 'gramy'),
+    ]));
+    expect(result['Pozostałe produkty']).toEqual(expect.arrayContaining([
+      item('no_cat_supply', 3, 'sztuki'),
+    ]));
+  });
+
+  it('should use cruise.length for perDay scaling, not days array length', () => {
+    const result = aggregateShoppingList(makeCruise({
+      length: 5,
+      crew: 2,
+      days: [{ dayNumber: 1, recipes: [] }],
+      additionalSupplies: [
+        { id: 'woda_butelkowana', amount: 2, isPerPerson: false, isPerDay: true },
+      ],
+    }));
+
+    expect(result).toEqual(expect.objectContaining({
+      'napoje': expect.arrayContaining([
+        item('woda_butelkowana', 10, 'sztuki', [
+          additionalSupplySource({ base: 2, perPerson: false, perDay: true }),
+        ]),
+      ]),
+    }));
+  });
+
+  it('should include zero-amount ingredients in the list (current behavior)', () => {
+    const recipe = makeRecipe('Empty Eggs', [{ id: 'jajka', amount: 0 }]);
+
+    const result = aggregateShoppingList(makeCruise({
+      length: 1,
+      crew: 3,
+      days: [{ dayNumber: 1, recipes: [{ originalRecipeId: 'Empty Eggs', recipeData: recipe }] }],
+    }));
+
+    expect(result).toEqual(expect.objectContaining({
+      'nabiał': expect.arrayContaining([
+        item('jajka', 0, 'sztuki', [
+          recipeSource({ perPerson: 0, recipe: 'Empty Eggs', day: 1 }),
+        ]),
+      ]),
+    }));
   });
 });
