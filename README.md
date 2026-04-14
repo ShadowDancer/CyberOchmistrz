@@ -93,54 +93,6 @@ CyberOchmistrz/
 
 ---
 
-## Data Flow
-
-```mermaid
-flowchart TD
-    subgraph staticData [Static JSON on disk]
-        recipiesJSON["recipies.json"]
-        suppliesJSON["supplies.json"]
-    end
-
-    subgraph modelLayer [Model Layer]
-        recipieData["recipieData.ts"]
-        supplyData["supplyData.ts"]
-        cruiseData["cruiseData.ts"]
-    end
-
-    subgraph storage [Browser Storage]
-        localStorage["localStorage"]
-    end
-
-    subgraph ui [UI Components]
-        recipeUI["Recipe pages"]
-        cruiseUI["Cruise pages"]
-        supplyUI["Supply pages"]
-        shoppingList["ShoppingListTab"]
-    end
-
-    recipiesJSON --> recipieData
-    suppliesJSON --> supplyData
-    suppliesJSON --> recipieData
-    recipieData --> recipeUI
-    supplyData --> supplyUI
-    supplyData --> cruiseData
-
-    localStorage -->|read| cruiseData
-    cruiseData -->|write| localStorage
-    cruiseData --> cruiseUI
-    cruiseData -->|aggregateShoppingList| shoppingList
-    recipieData -->|recipe data for assignment| cruiseData
-```
-
-Key points:
-
-- Recipes and supplies are **read-only at runtime** — imported from JSON, new ones generate downloadable JSON for manual merge
-- Cruises are fully mutable via `localStorage` key `cyber-ochmistrz-cruises`
-- Shopping list aggregation happens in `src/model/cruiseData.ts` via `aggregateShoppingList()` — multiplies recipe ingredient amounts by crew count, adds additional supplies with per-person/per-day scaling
-
----
-
 ## State Management
 
 No state library (Redux, Zustand, etc.). Pattern:
