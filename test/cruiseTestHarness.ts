@@ -44,5 +44,39 @@ export const getStoredCruises = (): Cruise[] => {
   return lastCall ? JSON.parse(lastCall[1]) : [];
 };
 
-// Import Cruise type for type safety
-import { Cruise } from '../src/types';
+import { Cruise, Recipie, MealType, IngredientAmount } from '../src/types';
+import { createNewCruise } from '../src/model/cruiseData';
+
+export const createTestRecipe = (id: string, name: string, ingredients?: IngredientAmount[]): Recipie => ({
+  id,
+  name,
+  ingredients: ingredients ?? [{ id: 'test-ingredient', amount: 100 }],
+  description: 'Test recipe description',
+  mealType: [MealType.DINNER],
+  difficulty: 2,
+  instructions: ['Step 1', 'Step 2'],
+  developedBy: 'Test Chef'
+});
+
+export const createCruiseWithRecipes = (
+  id: string,
+  name: string,
+  length: number,
+  recipesByDay: { [dayNumber: number]: { recipeId: string; recipeData?: Recipie }[] },
+  crew = 2
+): Cruise => {
+  const cruise = createNewCruise(name, length, crew);
+  cruise.id = id;
+
+  Object.entries(recipesByDay).forEach(([dayNum, recipes]) => {
+    const dayIndex = cruise.days.findIndex(d => d.dayNumber === parseInt(dayNum));
+    if (dayIndex >= 0) {
+      cruise.days[dayIndex].recipes = recipes.map(r => ({
+        originalRecipeId: r.recipeId,
+        recipeData: r.recipeData
+      }));
+    }
+  });
+
+  return cruise;
+};

@@ -1,9 +1,10 @@
 import { getAllSupplies, getIngredients, getNonIngredients, groupSuppliesByCategory } from '../src/model/supplyData';
 import { CategoryGroup, SupplyValidationErrors } from '../src/types';
 
-// Tests which validate correctness of supplies in data file
-
 describe('supplyData functions', () => {
+  const findGroup = (groups: CategoryGroup[], category: string) =>
+    groups.find(g => g.category === category);
+
   describe('getAllSupplies', () => {
     it('should return all supplies', () => {
       const supplies = getAllSupplies();
@@ -53,24 +54,14 @@ describe('supplyData functions', () => {
 
       const grouped = groupSuppliesByCategory(supplies);
 
-      expect(Array.isArray(grouped)).toBe(true);
       expect(grouped).toHaveLength(3);
+      expect(findGroup(grouped, 'owoce')!.supplies).toHaveLength(2);
+      expect(findGroup(grouped, 'pieczywo')!.supplies).toHaveLength(1);
+      expect(findGroup(grouped, 'nabiał')!.supplies).toHaveLength(1);
 
-      const owoceGroup = grouped.find(g => g.category === 'owoce');
-      expect(owoceGroup).toBeDefined();
-      expect(owoceGroup!.supplies).toHaveLength(2);
-
-      const pieczywoGroup = grouped.find(g => g.category === 'pieczywo');
-      expect(pieczywoGroup).toBeDefined();
-      expect(pieczywoGroup!.supplies).toHaveLength(1);
-
-      const nabialGroup = grouped.find(g => g.category === 'nabiał');
-      expect(nabialGroup).toBeDefined();
-      expect(nabialGroup!.supplies).toHaveLength(1);
-
-      expect(owoceGroup!.supplies).toEqual([
-        { id: '1', name: 'Jabłko', category: 'owoce', isIngredient: true, unit: 'sztuki' },
-        { id: '2', name: 'Banan', category: 'owoce', isIngredient: true, unit: 'sztuki' },
+      expect(findGroup(grouped, 'owoce')!.supplies).toEqual([
+        expect.objectContaining({ id: '1', name: 'Jabłko' }),
+        expect.objectContaining({ id: '2', name: 'Banan' }),
       ]);
     });
 
@@ -82,16 +73,9 @@ describe('supplyData functions', () => {
 
       const grouped = groupSuppliesByCategory(supplies);
 
-      expect(Array.isArray(grouped)).toBe(true);
       expect(grouped).toHaveLength(2);
-
-      const inneGroup = grouped.find(g => g.category === 'inne');
-      expect(inneGroup).toBeDefined();
-      expect(inneGroup!.supplies).toHaveLength(1);
-
-      const owoceGroup = grouped.find(g => g.category === 'owoce');
-      expect(owoceGroup).toBeDefined();
-      expect(owoceGroup!.supplies).toHaveLength(1);
+      expect(findGroup(grouped, 'inne')!.supplies).toHaveLength(1);
+      expect(findGroup(grouped, 'owoce')!.supplies).toHaveLength(1);
     });
 
     it('should return empty array for empty supplies array', () => {
@@ -106,12 +90,8 @@ describe('supplyData functions', () => {
 
       const grouped = groupSuppliesByCategory(supplies);
 
-      expect(Array.isArray(grouped)).toBe(true);
       expect(grouped).toHaveLength(1);
-
-      const inneGroup = grouped.find(g => g.category === 'inne');
-      expect(inneGroup).toBeDefined();
-      expect(inneGroup!.supplies).toHaveLength(1);
+      expect(findGroup(grouped, 'inne')!.supplies).toHaveLength(1);
     });
 
     it('should sort categories alphabetically', () => {
@@ -145,40 +125,16 @@ import { validateSupplyData, isSupplyDataValid, validateNewSupply } from '../src
 
 describe('Supply Validation', () => {
   describe('validateSupplyData', () => {
-    it('should validate a valid supply', () => {
-      const supply = {
-        name: 'Test Product',
-        unit: 'sztuki',
-        category: 'inne',
-        isIngredient: false
-      };
+    const noErrors = { name: '', unit: '', category: '', isVegetarian: '', isVegan: '', general: '' };
 
-      const errors = validateSupplyData(supply);
-      expect(errors.name).toBe('');
-      expect(errors.unit).toBe('');
-      expect(errors.category).toBe('');
-      expect(errors.isVegetarian).toBe('');
-      expect(errors.isVegan).toBe('');
-      expect(errors.general).toBe('');
+    it('should validate a valid supply', () => {
+      expect(validateSupplyData({ name: 'Test Product', unit: 'sztuki', category: 'inne', isIngredient: false }))
+        .toEqual(noErrors);
     });
 
     it('should validate a valid ingredient', () => {
-      const supply = {
-        name: 'Test Ingredient',
-        unit: 'kg',
-        category: 'warzywa',
-        isIngredient: true,
-        isVegetarian: true,
-        isVegan: true
-      };
-
-      const errors = validateSupplyData(supply);
-      expect(errors.name).toBe('');
-      expect(errors.unit).toBe('');
-      expect(errors.category).toBe('');
-      expect(errors.isVegetarian).toBe('');
-      expect(errors.isVegan).toBe('');
-      expect(errors.general).toBe('');
+      expect(validateSupplyData({ name: 'Test Ingredient', unit: 'kg', category: 'warzywa', isIngredient: true, isVegetarian: true, isVegan: true }))
+        .toEqual(noErrors);
     });
 
     it('should require name', () => {

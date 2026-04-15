@@ -1,4 +1,3 @@
-// Mock the JSON data
 jest.mock('../src/data/recipies.json', () => [
   {
     id: 'omelet-zombie',
@@ -8,7 +7,7 @@ jest.mock('../src/data/recipies.json', () => [
       { id: 'ser', amount: 200 }
     ],
     description: 'Straszne śniadanie, które obudzi umarłych',
-        mealType: ['sniadanie'],
+    mealType: ['sniadanie'],
     difficulty: 3,
     instructions: ['Krok 1', 'Krok 2'],
     developedBy: 'Szalony Kucharz'
@@ -65,9 +64,20 @@ jest.mock('../src/data/supplies.json', () => [
 ]);
 
 import { getRecipies, getRecipeById, getIngredients, getIngredientById, getRecipieIngredients, isRecipieVegetarian, isRecipieVegan } from '../src/model/recipieData';
-import { Recipie, Ingredient, IngredientAmount, MealType } from '../src/types';
+import { Recipie, IngredientAmount, MealType } from '../src/types';
 
 describe('recipieData', () => {
+  const makeRecipe = (overrides?: Partial<Recipie>): Recipie => ({
+    id: 'test-recipe',
+    name: 'Test Recipe',
+    ingredients: [],
+    description: '',
+    mealType: [MealType.DINNER],
+    difficulty: 1,
+    instructions: [],
+    ...overrides,
+  });
+
   describe('getRecipies', () => {
     it('should return all recipes', () => {
       const recipes = getRecipies();
@@ -80,14 +90,11 @@ describe('recipieData', () => {
   describe('getRecipeById', () => {
     it('should return the recipe with the given id', () => {
       const recipe = getRecipeById('omelet-zombie');
-      expect(recipe).toBeDefined();
-      expect(recipe?.id).toBe('omelet-zombie');
-      expect(recipe?.name).toBe('Omelet z mózgu zombie');
+      expect(recipe).toEqual(expect.objectContaining({ id: 'omelet-zombie', name: 'Omelet z mózgu zombie' }));
     });
 
     it('should return undefined if recipe not found', () => {
-      const recipe = getRecipeById('nonexistent');
-      expect(recipe).toBeUndefined();
+      expect(getRecipeById('nonexistent')).toBeUndefined();
     });
   });
 
@@ -102,14 +109,11 @@ describe('recipieData', () => {
   describe('getIngredientById', () => {
     it('should return the ingredient with the given id', () => {
       const ingredient = getIngredientById('czosnek');
-      expect(ingredient).toBeDefined();
-      expect(ingredient?.id).toBe('czosnek');
-      expect(ingredient?.name).toBe('czosnek');
+      expect(ingredient).toEqual(expect.objectContaining({ id: 'czosnek', name: 'czosnek' }));
     });
 
     it('should return undefined if ingredient not found', () => {
-      const ingredient = getIngredientById('nonexistent');
-      expect(ingredient).toBeUndefined();
+      expect(getIngredientById('nonexistent')).toBeUndefined();
     });
   });
 
@@ -120,120 +124,49 @@ describe('recipieData', () => {
         { id: 'ser', amount: 200 }
       ];
       const result = getRecipieIngredients(ingredientAmounts);
+
       expect(result).toHaveLength(2);
-      expect(result[0].id).toBe('czosnek');
-      expect(result[0].amount).toBe(100);
-      expect(result[0].name).toBe('czosnek');
-      expect(result[1].id).toBe('ser');
-      expect(result[1].amount).toBe(200);
-      expect(result[1].name).toBe('ser');
+      expect(result[0]).toEqual(expect.objectContaining({ id: 'czosnek', amount: 100, name: 'czosnek' }));
+      expect(result[1]).toEqual(expect.objectContaining({ id: 'ser', amount: 200, name: 'ser' }));
     });
 
     it('should handle unknown ingredients gracefully', () => {
-      const ingredientAmounts: IngredientAmount[] = [
-        { id: 'unknown', amount: 50 }
-      ];
-      const result = getRecipieIngredients(ingredientAmounts);
+      const result = getRecipieIngredients([{ id: 'unknown', amount: 50 }]);
+
       expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('unknown');
-      expect(result[0].amount).toBe(50);
-      expect(result[0].name).toBe('Unknown (unknown)');
+      expect(result[0]).toEqual(expect.objectContaining({ id: 'unknown', amount: 50, name: 'Unknown (unknown)' }));
     });
   });
 
   describe('isRecipieVegetarian', () => {
     it('should return true if all ingredients are vegetarian', () => {
-      const recipe: Recipie = {
-        id: 'veg-omelet',
-        name: 'Wegetariański omlet z czosnkiem',
-        ingredients: [
-          { id: 'czosnek', amount: 100 } // vegetarian and vegan
-        ],
-        description: 'Śniadanie dla wegetarian',
-        mealType: [MealType.BREAKFAST],
-        difficulty: 1,
-        instructions: ['Mieszaj']
-      };
-      expect(isRecipieVegetarian(recipe)).toBe(true);
+      expect(isRecipieVegetarian(makeRecipe({ ingredients: [{ id: 'czosnek', amount: 100 }] }))).toBe(true);
     });
 
     it('should return false if any ingredient is not vegetarian', () => {
-      const recipe: Recipie = {
-        id: 'meat-bigos',
-        name: 'Mięsny bigos z podstępną kiełbasą',
-        ingredients: [
-          { id: 'czosnek', amount: 100 }, // vegetarian
-          { id: 'kiełbasa-podstępna', amount: 200 } // not vegetarian
-        ],
-        description: 'Tradycyjny polski bigos',
-        mealType: [MealType.DINNER],
-        difficulty: 2,
-        instructions: ['Gotuj']
-      };
-      expect(isRecipieVegetarian(recipe)).toBe(false);
+      expect(isRecipieVegetarian(makeRecipe({
+        ingredients: [{ id: 'czosnek', amount: 100 }, { id: 'kiełbasa-podstępna', amount: 200 }],
+      }))).toBe(false);
     });
 
     it('should return true if ingredient not found (unknown ingredients are ignored)', () => {
-      const recipe: Recipie = {
-        id: '3',
-        name: 'Tajemniczy gulasz',
-        ingredients: [
-          { id: 'unknown', amount: 100 }
-        ],
-        description: 'Nieznany przepis',
-        mealType: [MealType.SUPPER],
-        difficulty: 3,
-        instructions: ['Przygotuj']
-      };
-      expect(isRecipieVegetarian(recipe)).toBe(true);
+      expect(isRecipieVegetarian(makeRecipe({ ingredients: [{ id: 'unknown', amount: 100 }] }))).toBe(true);
     });
   });
 
   describe('isRecipieVegan', () => {
     it('should return true if all ingredients are vegan', () => {
-      const recipe: Recipie = {
-        id: 'vegan-smoothie',
-        name: 'Wegański koktajl z czosnkiem',
-        ingredients: [
-          { id: 'czosnek', amount: 100 } // vegan
-        ],
-        description: 'Zdrowy koktajl',
-        mealType: [MealType.BREAKFAST],
-        difficulty: 1,
-        instructions: ['Blenduj']
-      };
-      expect(isRecipieVegan(recipe)).toBe(true);
+      expect(isRecipieVegan(makeRecipe({ ingredients: [{ id: 'czosnek', amount: 100 }] }))).toBe(true);
     });
 
     it('should return false if any ingredient is not vegan', () => {
-      const recipe: Recipie = {
-        id: 'non-vegan-dessert',
-        name: 'Nie wegański deser z serem',
-        ingredients: [
-          { id: 'czosnek', amount: 100 }, // vegan
-          { id: 'ser', amount: 200 } // not vegan
-        ],
-        description: 'Deser z nabiałem',
-        mealType: [MealType.DINNER],
-        difficulty: 2,
-        instructions: ['Smaż']
-      };
-      expect(isRecipieVegan(recipe)).toBe(false);
+      expect(isRecipieVegan(makeRecipe({
+        ingredients: [{ id: 'czosnek', amount: 100 }, { id: 'ser', amount: 200 }],
+      }))).toBe(false);
     });
 
     it('should return true if ingredient not found (unknown ingredients are ignored)', () => {
-      const recipe: Recipie = {
-        id: '3',
-        name: 'Tajemniczy sos',
-        ingredients: [
-          { id: 'unknown', amount: 100 }
-        ],
-        description: 'Tajemniczy przepis',
-        mealType: [MealType.SUPPER],
-        difficulty: 3,
-        instructions: ['Przygotuj']
-      };
-      expect(isRecipieVegan(recipe)).toBe(true);
+      expect(isRecipieVegan(makeRecipe({ ingredients: [{ id: 'unknown', amount: 100 }] }))).toBe(true);
     });
   });
 });
