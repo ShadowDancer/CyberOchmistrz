@@ -3,11 +3,65 @@
 import { getRecipies, isRecipieVegetarian, isRecipieVegan } from '@/model/recipieData';
 import { Recipie, MealType } from '@/types';
 import { useState } from 'react';
+import { useDraggable } from '@dnd-kit/core';
 import StarRating from './StarRating';
 
 interface RecipeListProps {
   onSelectRecipie: (recipie: Recipie) => void;
   selectedRecipieId: string | null;
+  isDraggable?: boolean;
+}
+
+interface RecipeListItemProps {
+  recipie: Recipie;
+  isSelected: boolean;
+  isVegetarian: boolean;
+  isVegan: boolean;
+  isDraggable: boolean;
+  onSelect: () => void;
+}
+
+function RecipeListItem({ recipie, isSelected, isVegetarian, isVegan, isDraggable, onSelect }: RecipeListItemProps) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `catalog-${recipie.id}`,
+    data: {
+      type: 'catalog-recipe',
+      recipeId: recipie.id,
+    },
+    disabled: !isDraggable,
+  });
+
+  return (
+    <li
+      ref={isDraggable ? setNodeRef : undefined}
+      {...(isDraggable ? attributes : {})}
+      {...(isDraggable ? listeners : {})}
+      style={isDraggable ? { touchAction: 'none', opacity: isDragging ? 0.5 : 1 } : undefined}
+      className={`list-item ${isSelected ? 'list-item-selected' : ''} ${
+        isDraggable ? 'cursor-grab active:cursor-grabbing select-none' : ''
+      }`}
+      onClick={isDraggable ? undefined : onSelect}
+    >
+      <div className="recipe-item">
+        <div className="recipe-name">
+          <div className="recipe-name-text">{recipie.name}</div>
+          {(isVegetarian || isVegan) && (
+            <DietBadge isVegetarian={isVegetarian} isVegan={isVegan} />
+          )}
+        </div>
+        <div className="recipe-rating">
+          <div className="flex items-center gap-1 mb-1">
+            <span className="hidden sm:inline">Trudność:</span>
+            <StarRating score={recipie.difficulty} size="small" />
+          </div>
+        </div>
+      </div>
+      <p className="recipe-description">{recipie.description}</p>
+      <div className="recipe-types">
+        <p className="recipe-types-text">{recipie.mealType.join(', ')}</p>
+      </div>
+    </li>
+  );
 }
 
 function DietBadge({ isVegetarian, isVegan }: { isVegetarian: boolean; isVegan: boolean }) {
@@ -22,7 +76,7 @@ function DietBadge({ isVegetarian, isVegan }: { isVegetarian: boolean; isVegan: 
   return null;
 }
 
-export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedRecipieId: selectedRecipieId }: RecipeListProps) {
+export default function RecipeList({ onSelectRecipie, selectedRecipieId, isDraggable = false }: RecipeListProps) {
   const allRecipies = getRecipies();
   const [filteredRecipies, setFilteredRecipies] = useState<Recipie[]>(allRecipies);
   const [filterType, setFilterType] = useState<string>('wszystkie');
@@ -140,32 +194,15 @@ export default function RecipeList({ onSelectRecipie: onSelectRecipie, selectedR
               const isVegan = isRecipieVegan(recipie);
 
               return (
-                <li
+                <RecipeListItem
                   key={recipie.id}
-                  className={`list-item ${
-                    selectedRecipieId === recipie.id ? 'list-item-selected' : ''
-                  }`}
-                  onClick={() => onSelectRecipie(recipie)}
-                >
-                  <div className="recipe-item">
-                    <div className="recipe-name">
-                      <div className="recipe-name-text">{recipie.name}</div>
-                      {(isVegetarian || isVegan) && (
-                        <DietBadge isVegetarian={isVegetarian} isVegan={isVegan} />
-                      )}
-                    </div>
-                    <div className="recipe-rating">
-                      <div className="flex items-center gap-1 mb-1">
-                        <span className="hidden sm:inline">Trudność:</span>
-                        <StarRating score={recipie.difficulty} size="small" />
-                      </div>
-                    </div>
-                  </div>
-                  <p className="recipe-description">{recipie.description}</p>
-                  <div className="recipe-types">
-                    <p className="recipe-types-text">{recipie.mealType.join(', ')}</p>
-                  </div>
-                </li>
+                  recipie={recipie}
+                  isSelected={selectedRecipieId === recipie.id}
+                  isVegetarian={isVegetarian}
+                  isVegan={isVegan}
+                  isDraggable={isDraggable}
+                  onSelect={() => onSelectRecipie(recipie)}
+                />
               );
             })}
           </ul>

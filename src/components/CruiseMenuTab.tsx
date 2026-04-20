@@ -18,12 +18,15 @@ import RecipeList from './RecipeList';
 import RecipeIngredientEditor from './RecipeIngredientEditor';
 import DroppableRecipieContainer from './DroppableRecipieContainer';
 import {
+  CollisionDetection,
   DndContext,
   DragEndEvent,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
   closestCenter,
+  pointerWithin,
+  rectIntersection,
   PointerSensor,
   TouchSensor,
   useSensor,
@@ -60,6 +63,19 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
       },
     })
   );
+
+  // For catalog drags we want "drop anywhere inside the middle column" behavior,
+  // so prefer pointer-based collision (with a rect-intersection fallback).
+  // Reorder/move-between-days drags keep closestCenter so sortable slots feel right.
+  const collisionDetection: CollisionDetection = (args) => {
+    const activeType = args.active?.data.current?.type;
+    if (activeType === 'catalog-recipe') {
+      const pointerCollisions = pointerWithin(args);
+      if (pointerCollisions.length > 0) return pointerCollisions;
+      return rectIntersection(args);
+    }
+    return closestCenter(args);
+  };
 
   useEffect(() => {
     if (selectedDay === null && cruise.days.length > 0) {
@@ -214,7 +230,30 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
     
     const activeData = active.data.current;
     const overId = over.id as string;
-    
+
+    if (activeData.type === 'catalog-recipe') {
+      if (selectedDay === null) return;
+
+      // Accept either the day container itself, or any sortable recipe card
+      // that already lives in the currently selected day. This covers the
+      // common case where the pointer lands on an existing recipe rather than
+      // the surrounding container.
+      const overData = over.data.current;
+      const isSelectedDayContainer = overId === `day-container-${selectedDay}`;
+      const isSelectedDayCard =
+        overData?.type === 'recipe' && overData?.dayNumber === selectedDay;
+      if (!isSelectedDayContainer && !isSelectedDayCard) return;
+
+      const recipeId: string = activeData.recipeId;
+      const fullRecipe = getRecipeById(recipeId);
+      if (!fullRecipe) return;
+
+      const recipeSnapshot = JSON.parse(JSON.stringify(fullRecipe));
+      addRecipeToCruiseDay(cruise.id, selectedDay, recipeId, recipeSnapshot);
+      onCruiseChange();
+      return;
+    }
+
     // Parse active item data
     const sourceDayNumber = activeData.dayNumber;
     const sourceIndex = activeData.index;
@@ -255,6 +294,17 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
   // Get the active recipe for drag overlay
   const getActiveRecipe = () => {
     if (!activeId) return null;
+
+    if (activeId.startsWith('catalog-')) {
+      const recipeId = activeId.slice('catalog-'.length);
+      const fullRecipe = getRecipeById(recipeId);
+      if (!fullRecipe) return null;
+      return {
+        recipe: { originalRecipeId: recipeId, recipeData: fullRecipe },
+        index: -1,
+        dayNumber: -1,
+      };
+    }
 
     const [dayStr, indexStr] = activeId.split('-');
     const dayNumber = parseInt(dayStr);
@@ -331,7 +381,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={collisionDetection}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
@@ -458,9 +508,10 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
         )}
         
         {selectedDay !== null ? (
-          <RecipeList 
-            onSelectRecipie={handleRecipieSelect} 
+          <RecipeList
+            onSelectRecipie={handleRecipieSelect}
             selectedRecipieId={selectedRecipie}
+            isDraggable
           />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-muted-light">
@@ -489,7 +540,10 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
       </div>
       
       {/* Drag overlay */}
-      <DragOverlay style={{ zIndex: 1000, opacity: 0.5 }}>
+      <DragOverlay
+        style={{ zIndex: 1000, opacity: 0.5 }}
+        dropAnimation={activeId?.startsWith('catalog-') ? null : undefined}
+      >
         {activeRecipe ? (
           <div className="p-2 md:p-3 border rounded-lg bg-blue-50 border-blue-500 dark:bg-blue-900 dark:border-blue-400">
             <div className="flex items-center">

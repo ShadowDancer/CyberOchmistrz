@@ -107,13 +107,12 @@ No state library (Redux, Zustand, etc.). Pattern:
 
 ## Known Issues and Tech Debt
 
-1. **Drag between days broken** — Cross-day recipe drag-and-drop not working
-2. **localStorage only** — No sync between devices, no backend
-3. **No online recipe/supply editing** — New items generate JSON for manual file merge
-4. **No day add/remove** — Cruise day count fixed at creation (edit can change length but warns about recipe loss)
-5. **Typo in codebase** — "recipie" used consistently instead of "recipe" (in filenames, types, variables) — intentional per `.DotSettings` dictionary
-6. **Callback type mismatch** — `CruiseSuppliesTab` declares `onSupplyChange(cruise)` but parent passes zero-arg refresh function
-7. **DnD ID parsing fragility** — `activeId.split('-')` assumes recipe IDs don't contain hyphens
+1. **localStorage only** — No sync between devices, no backend
+2. **No online recipe/supply editing** — New items generate JSON for manual file merge
+3. **No day add/remove** — Cruise day count fixed at creation (edit can change length but warns about recipe loss)
+4. **Typo in codebase** — "recipie" used consistently instead of "recipe" (in filenames, types, variables) — intentional per `.DotSettings` dictionary
+5. **Callback type mismatch** — `CruiseSuppliesTab` declares `onSupplyChange(cruise)` but parent passes zero-arg refresh function
+6. **DnD ID parsing fragility** — `activeId.split('-')` assumes recipe IDs don't contain hyphens
 
 ---
 
