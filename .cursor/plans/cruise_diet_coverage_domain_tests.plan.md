@@ -1,9 +1,9 @@
 ---
-name: cruise diet coverage
+name: cruise diet coverage — domain + tests
 overview: Model crew as a tagged-member list (extensible tag registry) on a Cruise class with computed `crew`. Each recipe assigned to a day carries an explicit `crewCount` (portions to cook) and a `mealSlot` (which meal type on that day). Shopping list scales each recipe by its own `crewCount`. Per (day, mealSlot) coverage check reports whether the configured scaling satisfies all dietary buckets.
 todos:
   - id: tag-registry
-    content: Create src/model/dietTags.ts with DietTag type + DIET_TAG_REGISTRY (vegetarian, vegan) mapping to recipe satisfaction predicates
+    content: Create src/model/dietTags.ts with DietTag type + DIET_TAG_REGISTRY (omnivore default, vegetarian, vegan) mapping to recipe satisfaction predicates
     status: pending
   - id: types-crew
     content: Add CrewMember interface; replace Cruise.crew (number) with Cruise.crewMembers (CrewMember[]); update every call site that read cruise.crew to cruise.crewMembers.length. Cruise stays a plain interface, no class / no getter.
@@ -15,31 +15,13 @@ todos:
     content: Update createNewCruise(name, length, crewMembers, startDate); updateCruiseDetails to accept CrewMember[]; addRecipeToCruiseDay to accept crewCount + mealSlot (default smart); add setRecipeCrewCount + setRecipeMealSlot mutators; swap cruise.crew for cruise.crewMembers.length in aggregateShoppingList and any other call sites
     status: pending
   - id: smart-defaults
-    content: Add helper getDefaultCrewCount(cruise, recipe) in cruiseDietCoverage.ts — fully-inclusive default (count of crew the recipe could feed). vegan recipe → cruise.crewMembers.length; vegetarian recipe → total minus vegan count; omnivore recipe → countCrewWithNoKnownDietTag.
+    content: Add helper getDefaultCrewCount(cruise, recipe) in cruiseDietCoverage.ts — fully-inclusive default (count of crew the recipe could feed). vegan recipe → cruise.crewMembers.length; vegetarian recipe → total minus vegan count; omnivore recipe → countCrewWithTag(cruise, 'omnivore').
     status: pending
   - id: coverage-module
     content: Create src/model/cruiseDietCoverage.ts with max-flow via Dinic's algorithm (level-BFS + blocking-flow DFS with per-node edge cursor); exports MealCoverage, DayCoverageReport, getMealCoverage, getDayCoverage, getCruiseCoverage; over-scaling surfaced as yellow warning; per-tag shortage counts for reporting
     status: pending
   - id: shopping-list
     content: Change aggregateShoppingList to scale by recipe.crewCount (not cruise.crew); update RecipeAmountSource to carry crewCount instead of base amount; extend tests
-    status: pending
-  - id: crew-editor
-    content: Create src/components/CrewEditor.tsx with member list + tag chips + quick-add buttons
-    status: pending
-  - id: forms
-    content: Replace crew number input with CrewEditor in AddCruiseForm + EditCruiseForm; wire to crewMembers[]
-    status: pending
-  - id: day-recipe-ui
-    content: In CruiseMenuTab (or extracted day recipe card component), add crewCount input and mealSlot selector per recipe on a day; wire to setRecipeCrewCount/setRecipeMealSlot
-    status: pending
-  - id: add-recipe-flow
-    content: When user drops/picks a recipe onto a day, auto-assign mealSlot when recipe has a single mealType; prompt (small modal or inline selector) when multiple; compute smart default crewCount
-    status: pending
-  - id: coverage-display
-    content: Render per-meal-slot coverage block under Dzień {N} header; green/red/yellow lines per bucket; red dot warning on DroppableDayItem day card
-    status: pending
-  - id: info-tab
-    content: CruiseInfoTab shows crew total + per-tag counts + omnivore remainder + optional collapsible member list
     status: pending
   - id: tests-coverage
     content: Create test/cruiseDietCoverage.test.ts with allocation/coverage scenarios (table below)
@@ -54,7 +36,7 @@ todos:
     content: Extend cruise form validation tests for empty crewMembers
     status: pending
   - id: readme
-    content: Update README directory structure (add dietTags.ts, cruiseDietCoverage.ts, CrewEditor.tsx), features, glossary
+    content: Update README directory structure (add dietTags.ts, cruiseDietCoverage.ts), features, glossary
     status: pending
 isProject: false
 ---
@@ -76,7 +58,7 @@ isProject: false
 import { Recipie } from "../types";
 import { isRecipieVegan, isRecipieVegetarian } from "./recipieData";
 
-export const DIET_TAGS = ["vegetarian", "vegan"] as const;
+export const DIET_TAGS = ["omnivore", "vegetarian", "vegan"] as const;
 export type DietTag = (typeof DIET_TAGS)[number];
 
 export interface DietTagDefinition {
@@ -86,19 +68,29 @@ export interface DietTagDefinition {
   satisfies: (recipe: Recipie) => boolean;
   /** Tags in the same exclusiveGroup cannot coexist on a single CrewMember. */
   exclusiveGroup?: string;
+  /** If true, this tag is assigned to new crew members by default. */
+  isDefault?: boolean;
 }
 
 export const DIET_TAG_REGISTRY: Record<DietTag, DietTagDefinition> = {
+  omnivore: {
+    id: "omnivore",
+    labelPl: "wszystkożerna",
+    shortPl: "Omni.",
+    satisfies: () => true, // omnivores can eat any recipe
+    exclusiveGroup: "diet",
+    isDefault: true,
+  },
   vegetarian: {
     id: "vegetarian",
-    labelPl: "Wegetarianin",
-    shortPl: "Weg.",
+    labelPl: "wegetariańska",
+    shortPl: "Weget.",
     satisfies: isRecipieVegetarian,
     exclusiveGroup: "diet",
   },
   vegan: {
     id: "vegan",
-    labelPl: "Weganin",
+    labelPl: "wegańska",
     shortPl: "Wegan.",
     satisfies: isRecipieVegan,
     exclusiveGroup: "diet",
@@ -113,7 +105,8 @@ export function isKnownDietTag(tag: string): tag is DietTag {
 Notes:
 
 - `isRecipieVegan(r) ⇒ isRecipieVegetarian(r)` by the ingredient-model invariant (`isVegan ⇒ isVegetarian` per ingredient), so `vegetarian.satisfies = isRecipieVegetarian` already covers both.
-- `exclusiveGroup: 'diet'` on both existing tags expresses the "at most one of {vegetarian, vegan} per member" rule as data; `CrewEditor` reads it to hide/disable conflicting chips. A future `gluten-free` tag would omit `exclusiveGroup` (orthogonal) and stack freely.
+- `exclusiveGroup: 'diet'` on all three tags expresses the "at most one of {omnivore, vegetarian, vegan} per member" rule as data; `CrewEditor` reads it to hide/disable conflicting chips. A future `gluten-free` tag would omit `exclusiveGroup` (orthogonal) and stack freely.
+- `isDefault: true` on `omnivore` means `CrewEditor` pre-selects it when creating a new member. New members always carry exactly one diet tag.
 
 Future tags (e.g. `gluten-free`) add an entry here plus a matching ingredient flag and recipe predicate. Coverage algorithm is unchanged.
 
@@ -122,8 +115,8 @@ Future tags (e.g. `gluten-free`) add an entry here plus a matching ingredient fl
 ```ts
 export interface CrewMember {
   id: string;
-  name?: string; // omitted = "anonymous omnivore"; no validation beyond that
-  tags: string[]; // string[] not DietTag[] so unknown tags round-trip; CrewEditor enforces exclusiveGroup constraints on known tags
+  name?: string; // omitted = anonymous; no validation beyond that
+  tags: string[]; // string[] not DietTag[] so unknown tags round-trip; CrewEditor enforces exclusiveGroup constraints on known tags; new members default to ['omnivore']
 }
 
 // CruiseDay recipe entry:
@@ -192,7 +185,7 @@ Modeled as a flow network with 4 layers:
 ```
 
 - Source → member edges: capacity 1 (each member eats one portion)
-- Member → recipe edges: exist iff `member.tags.every(t => DIET_TAG_REGISTRY[t].satisfies(recipe.recipeData))`; capacity 1
+- Member → recipe edges: exist iff `member.tags.every(t => DIET_TAG_REGISTRY[t]?.satisfies(recipe.recipeData) ?? true)`; capacity 1 (unknown tags are treated as non-restrictive to avoid false negatives)
 - Recipe → sink edges: capacity = `recipe.crewCount`
 
 Run Dinic's algorithm:
@@ -277,17 +270,11 @@ export function getMealCoverage(
 ### Report shape
 
 ```ts
-export interface UnfedMember {
-  memberId: string;
-  memberName?: string;
-  tags: string[];
-}
-
 export interface MealCoverage {
   mealType: MealType;
   totalPortions: number;
   totalNeeded: number;
-  unfed: UnfedMember[];
+  unfed: CrewMember[]; // members who couldn't be assigned a portion
   missingTagCounts: Record<DietTag, number>; // e.g. { vegan: 1 }; derived from unfed for UI summary
   surplus: number;
 }
@@ -300,17 +287,13 @@ export interface DayCoverageReport {
 }
 ```
 
-Flat `unfed` list + `missingTagCounts` summary is sufficient given the current registry (both tags in a single exclusive group, at most one per member). When a second orthogonal tag category lands, extend the report shape then — not speculatively now.
+Flat `unfed: CrewMember[]` list reuses the existing type directly — no parallel struct. `missingTagCounts` summary is sufficient given the current registry (three tags in a single exclusive group, at most one per member). When a second orthogonal tag category lands, extend the report shape then — not speculatively now.
 
 ### Helper functions in `cruiseDietCoverage.ts`
 
 ```ts
 export function countCrewWithTag(cruise: Cruise, tag: string): number {
   return cruise.crewMembers.filter((m) => m.tags.includes(tag)).length;
-}
-
-export function countCrewWithNoKnownDietTag(cruise: Cruise): number {
-  return cruise.crewMembers.filter((m) => !m.tags.some(isKnownDietTag)).length;
 }
 
 export function getActiveDietTags(cruise: Cruise): DietTag[] {
@@ -328,7 +311,7 @@ Helper `getDefaultCrewCount(cruise, recipe)` in `cruiseDietCoverage.ts`:
 - Default = number of crew members the recipe **could** feed (inclusive upper bound):
   - `vegan` recipe satisfies everyone → `cruise.crewMembers.length`
   - `vegetarian` (non-vegan) recipe satisfies omnivores + vegetarians but not strict vegans → `cruise.crewMembers.length - countCrewWithTag(cruise, 'vegan')`
-  - `omnivore` recipe satisfies only crew with no known diet tag → `countCrewWithNoKnownDietTag(cruise)`
+  - `omnivore` recipe satisfies only crew tagged `omnivore` → `countCrewWithTag(cruise, 'omnivore')`
 - Rationale: a vegan recipe is usually added as a crowd-pleaser, not to feed the single vegan. Defaulting to "everyone who could eat it" matches intent. Over-scaling triggers a yellow surplus warning but never a red failure, so the default is safe to err on the side of inclusion. User still edits freely.
 
 ### Shopping list — `src/model/cruiseData.ts`
@@ -378,39 +361,6 @@ Pure function; N is tiny; no caching layer needed. Call `getCruiseCoverage(cruis
 
 Every mutator in [src/model/cruiseData.ts](src/model/cruiseData.ts) already calls `saveCruise` + the caller re-reads via `getCruiseById`, so this falls out naturally — no extra wiring required.
 
-### UI
-
-**`CrewEditor.tsx`** (new): list of rows `[name?] [tag chips] [×]` + quick-add buttons (single member, N omnivores, vegetarian, vegan).
-
-- Tag chips enforce `exclusiveGroup` from the registry: picking `wegan` disables/clears `wegetarianin` and vice versa. Unknown persisted tags render as read-only chips (not editable, not dropped).
-- Anonymous members (no name) allowed. A row with no name and no tags counts as one omnivore.
-- Summary line: `total` + per-known-tag count + omnivore remainder (`total - sum(known-tag counts)`). Since `exclusiveGroup: 'diet'` guarantees at most one of {vegetarian, vegan} per member, these counts partition the crew cleanly.
-
-**Forms** (`AddCruiseForm`, `EditCruiseForm`): swap crew number input for `CrewEditor`.
-
-**`CruiseMenuTab.tsx`** center panel, "Dzień {N}":
-
-- Coverage block per meal-slot with recipes: green "pokryte" when `unfed.length === 0 && surplus === 0`; otherwise show a red unfed section ("Niedobór: Anna (wegan), Celina (wegan)") and/or a yellow surplus line ("Nadmiar: 2 porcje"). Both can appear simultaneously.
-- Recipe cards show editable `crewCount` (including `0`, rendered with a muted warning so the user can bump it up rather than having the card hidden) and `mealSlot` selector.
-- Recipes assigned to `mealSlot = SNACK` render with a muted notice ("Przekąski nie wliczają się do pokrycia diety") so users don't expect coverage warnings for snack-slot recipes.
-- Recipe card example:
-
-  ```
-  Spaghetti bolognese   [obiad ▼]  [−] 5 [+]   ✎  🗑
-  ```
-
-**Add recipe flow**: on drop/click-add, if recipe has 1 mealType → auto-assign `mealSlot`. If multiple → inline prompt / small modal asking which meal. Smart default `crewCount` populated (fully-inclusive; see above).
-
-**`DroppableDayItem.tsx`** day-level dot (mirrors per-meal-slot dots):
-
-- `unfed > 0` → red dot (regardless of surplus). Tooltip lists first unfed member + "i N innych" if more.
-- `unfed === 0 && surplus > 0` → yellow dot. Tooltip: "Nadmiar: N porcji".
-- `unfed === 0 && surplus === 0` → no dot.
-
-The same red-overrides-yellow rule applies at the meal-slot level, but the detail panel still shows both the red unfed list **and** the yellow surplus line when both are present — the dots are a summary, the panel is authoritative.
-
-**`CruiseInfoTab.tsx`**: replace "Liczba załogantów: N" with summary block + per-tag counts + omnivore remainder + optional collapsible member list.
-
 ### Tests
 
 **`test/cruiseDietCoverage.test.ts`** — table scenarios:
@@ -426,11 +376,11 @@ The same red-overrides-yellow rule applies at the meal-slot level, but the detai
 | 3 omni                                                                                                                                                                                                                               | Soup omni ×5                                   | surplus 2 (warning)                                                                               |
 | 0 total                                                                                                                                                                                                                              | —                                              | no report rows                                                                                    |
 | snack recipes only                                                                                                                                                                                                                   | Cookie snack ×5                                | meal not included in coverage                                                                     |
-| modified recipe (meat→tofu) on obiad ×2, 1 vegan                                                                                                                                                                                     | —                                              | covered (reclassified via ingredient flags)                                                       |
-| recipe with mealType=[breakfast, supper], mealSlot=breakfast                                                                                                                                                                         | —                                              | counts only toward breakfast coverage                                                             |
-| future: unknown tag on crew member                                                                                                                                                                                                   | —                                              | ignored (not in registry, no false missing)                                                       |
-| **Dinic's correctness (crewCount > 1 split)**: 3 vegans + 1 vegan recipe ×2, 1 vegan recipe ×1                                                                                                                                       | —                                              | covered (algorithm finds valid assignment splitting across both)                                  |
-| **original + modified recipe as two entries**: 3 omni + 2 vegan crew; same day obiad has Bolognese (original omni recipeData) crewCount=3 AND Bolognese-tofu (modified vegan recipeData snapshot, same originalRecipeId) crewCount=2 | —                                              | covered; unfed=[]; surplus=0 (1:1 mapping: omni bucket eats original, vegan bucket eats modified) |
+| 1 vegan                                          | modified Bolognese (meat→tofu, vegan recipeData) ×2                                                        | covered (reclassified via ingredient flags)                                                       |
+| 2 omni                                           | Eggs [mealType=breakfast+supper, mealSlot=breakfast] ×2                                                    | counts only toward breakfast coverage; obiad slot has no entry                                    |
+| 1 omni, 1 crew with unknown tag 'halal'          | Steak omni ×2                                                                                              | no false missing; unknown tag ignored (not in registry)                                           |
+| **Dinic's correctness**: 3 vegans                | Tofu A (vegan) ×2, Tofu B (vegan) ×1                                                                      | covered (algorithm finds valid assignment splitting across both)                                  |
+| **original + modified**: 3 omni, 2 vegan         | Bolognese (omni recipeData) ×3, Bolognese-tofu (vegan recipeData, same originalRecipeId) ×2               | covered; unfed=[]; surplus=0 (1:1 mapping: omni bucket eats original, vegan bucket eats modified) |
 
 **`test/cruiseDataRehydrate.test.ts`** — new (lightweight regression check):
 
@@ -448,21 +398,21 @@ The same red-overrides-yellow rule applies at the meal-slot level, but the detai
 
 - Empty `crewMembers` → error
 - `crewMembers.length >= 100` → error
-- `CrewMember` with no name and no tags is valid (anonymous omnivore)
-- `CrewMember` cannot hold two tags from the same `exclusiveGroup` (e.g. both `vegetarian` and `vegan`) — UI prevents, model-level guard in `CrewEditor` save path
+- `CrewMember` with no name and `tags: ['omnivore']` (the default) is valid (anonymous omnivore)
+- `CrewMember` cannot hold two tags from the same `exclusiveGroup` (e.g. both `vegetarian` and `vegan`, or `omnivore` and `vegan`) — UI prevents, model-level guard in `CrewEditor` save path
 
 **Smart default `crewCount`** — new:
 
 - vegan recipe + mixed crew → default equals total crew size (fully inclusive)
 - vegetarian (non-vegan) recipe + crew with vegans → default equals `total - vegan count`
-- omnivore recipe + mixed crew → default equals `countCrewWithNoKnownDietTag`
+- omnivore recipe + mixed crew → default equals `countCrewWithTag(cruise, 'omnivore')`
 - defaults against empty/zero buckets → return `0` cleanly
 
 ### README
 
-- Directory structure: add `src/model/dietTags.ts`, `src/model/cruiseDietCoverage.ts`, `src/components/CrewEditor.tsx`
+- Directory structure: add `src/model/dietTags.ts`, `src/model/cruiseDietCoverage.ts`
 - Features: mention per-recipe scaling + diet-aware coverage with extensible tag registry
-- Polish glossary: add `wegetarianin`, `weganin`, `wszystkożerca`, `załogant`
+- Polish glossary: add `dieta wegetariańska`, `dieta wegańska`, `wszystkożerna`, `załogant`
 
 ## Backward compatibility
 
@@ -473,7 +423,7 @@ Not a concern. Greenfield development — any localStorage data predating this c
 - **Missed `cruise.crew` call sites** after the field rename. Mitigation: compiler catches them — `cruise.crew` is no longer a property, so every surviving read becomes a type error. Grep audit as a belt-and-braces check.
 - **Max-flow implementation correctness**: hand-rolled Dinic's (level BFS + blocking-flow DFS); covered by table-driven tests including the `crewCount > 1` split row and the original-plus-modified-recipe row.
 - **Recipe with multiple mealTypes**: user must pick `mealSlot` on add. Auto-pick when only one mealType.
-- **Form complexity**: `CrewEditor` is the biggest new UI component. Quick-add buttons mitigate bulk entry.
+- **Form complexity**: `CrewEditor` is a significant new UI component (covered in the UI plan).
 
 ## Out of scope
 
