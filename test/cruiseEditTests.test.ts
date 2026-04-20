@@ -1,33 +1,32 @@
 import { createNewCruise, updateCruiseDetails, willLengthReductionRemoveRecipes, addRecipeToCruiseDay, saveCruise } from '../src/model/cruiseData';
-import { clearCruises } from './cruiseTestHarness';
+import { MealType } from '../src/types';
+import { clearCruises, makeCrewMembers, createTestRecipe } from './cruiseTestHarness';
 
 describe('cruise edit functionality', () => {
   beforeEach(() => {
-    // Clear all mocks and storage before each test
     jest.clearAllMocks();
     clearCruises();
   });
 
   describe('updateCruiseDetails', () => {
     it('should update cruise name, length, and crew', () => {
-      const cruise = createNewCruise('Test Cruise', 5, 4);
+      const cruise = createNewCruise('Test Cruise', 5, makeCrewMembers(4));
       saveCruise(cruise);
-      updateCruiseDetails(cruise.id, 'Updated Cruise', 7, 6);
+      updateCruiseDetails(cruise.id, 'Updated Cruise', 7, makeCrewMembers(6));
 
-      // Import getCruiseById here to avoid circular dependency
       const { getCruiseById } = require('../src/model/cruiseData');
       const updatedCruise = getCruiseById(cruise.id);
 
       expect(updatedCruise?.name).toBe('Updated Cruise');
       expect(updatedCruise?.length).toBe(7);
-      expect(updatedCruise?.crew).toBe(6);
+      expect(updatedCruise?.crewMembers).toHaveLength(6);
       expect(updatedCruise?.days).toHaveLength(7);
     });
 
     it('should add days when length increases', () => {
-      const cruise = createNewCruise('Test Cruise', 3, 4);
+      const cruise = createNewCruise('Test Cruise', 3, makeCrewMembers(4));
       saveCruise(cruise);
-      updateCruiseDetails(cruise.id, 'Test Cruise', 5, 4);
+      updateCruiseDetails(cruise.id, 'Test Cruise', 5, makeCrewMembers(4));
 
       const { getCruiseById } = require('../src/model/cruiseData');
       const updatedCruise = getCruiseById(cruise.id);
@@ -39,9 +38,9 @@ describe('cruise edit functionality', () => {
     });
 
     it('should remove days when length decreases', () => {
-      const cruise = createNewCruise('Test Cruise', 5, 4);
+      const cruise = createNewCruise('Test Cruise', 5, makeCrewMembers(4));
       saveCruise(cruise);
-      updateCruiseDetails(cruise.id, 'Test Cruise', 3, 4);
+      updateCruiseDetails(cruise.id, 'Test Cruise', 3, makeCrewMembers(4));
 
       const { getCruiseById } = require('../src/model/cruiseData');
       const updatedCruise = getCruiseById(cruise.id);
@@ -53,24 +52,26 @@ describe('cruise edit functionality', () => {
 
   describe('willLengthReductionRemoveRecipes', () => {
     it('should return false when length is not reduced', () => {
-      const cruise = createNewCruise('Test Cruise', 5, 4);
+      const cruise = createNewCruise('Test Cruise', 5, makeCrewMembers(4));
       saveCruise(cruise);
       const result = willLengthReductionRemoveRecipes(cruise.id, 5);
       expect(result).toBe(false);
     });
 
     it('should return false when no recipes on days being removed', () => {
-      const cruise = createNewCruise('Test Cruise', 5, 4);
+      const cruise = createNewCruise('Test Cruise', 5, makeCrewMembers(4));
       saveCruise(cruise);
       const result = willLengthReductionRemoveRecipes(cruise.id, 3);
       expect(result).toBe(false);
     });
 
     it('should return true when recipes exist on days being removed', () => {
-      const cruise = createNewCruise('Test Cruise', 5, 4);
+      const cruise = createNewCruise('Test Cruise', 5, makeCrewMembers(4));
       saveCruise(cruise);
-      addRecipeToCruiseDay(cruise.id, 4, 'recipe1');
-      addRecipeToCruiseDay(cruise.id, 5, 'recipe2');
+      const recipe1 = createTestRecipe('recipe1', 'Recipe 1');
+      const recipe2 = createTestRecipe('recipe2', 'Recipe 2');
+      addRecipeToCruiseDay(cruise.id, 4, 'recipe1', recipe1, 4, MealType.DINNER);
+      addRecipeToCruiseDay(cruise.id, 5, 'recipe2', recipe2, 4, MealType.DINNER);
 
       const result = willLengthReductionRemoveRecipes(cruise.id, 3);
       expect(result).toBe(true);

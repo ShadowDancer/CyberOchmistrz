@@ -45,12 +45,22 @@ export interface CruiseSupply {
   isPerDay: boolean;
 }
 
+export interface CrewMember {
+  id: string;
+  name?: string; // omitted = anonymous; no validation beyond that
+  tags: string[]; // string[] not DietTag[] so unknown tags round-trip safely
+}
+
+export interface CruiseDayRecipe {
+  originalRecipeId: string;
+  recipeData: Recipie; // required: snapshot taken at add-time
+  crewCount: number;
+  mealSlot: MealType;
+}
+
 export interface CruiseDay {
   dayNumber: number;
-  recipes: { 
-    originalRecipeId: string;
-    recipeData?: Recipie;  // Stored copy of the recipe at the time it was added to the cruise
-  }[];
+  recipes: CruiseDayRecipe[];
 }
 
 export class RecipeAmountSource {
@@ -58,11 +68,13 @@ export class RecipeAmountSource {
   amount: number; // base amount before crew scaling
   recipeName?: string;
   dayNumber?: number;
+  crewCount: number;
 
-  constructor(amount: number, recipeName?: string, dayNumber?: number) {
+  constructor(amount: number, recipeName?: string, dayNumber?: number, crewCount: number = 1) {
     this.amount = amount;
     this.recipeName = recipeName;
     this.dayNumber = dayNumber;
+    this.crewCount = crewCount;
   }
 }
 
@@ -97,7 +109,7 @@ export interface Cruise {
   dateCreated: string;
   dateModified: string;
   length: number; // in days
-  crew: number;
+  crewMembers: CrewMember[]; // was: crew: number
   days: CruiseDay[];
   additionalSupplies?: CruiseSupply[];
   startDate?: string; // YYYY-MM-DD format
@@ -123,14 +135,14 @@ export interface AdditionalSupplyCategoryGroup {
 export interface CruiseFormData {
   name: string;
   length: number;
-  crew: number;
+  crewMembers: CrewMember[];
   startDate?: string;
 }
 
 export interface CruiseFormErrors {
   name: string;
   length: string;
-  crew: string;
+  crewMembers: string;
   startDate: string;
 }
 

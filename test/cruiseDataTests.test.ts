@@ -1,6 +1,6 @@
 import { getCruises, getCruiseById, saveCruise, deleteCruise, createNewCruise } from '../src/model/cruiseData';
-import { Cruise } from '../src/types';
-import { setupCruises, clearCruises, getStoredCruises, localStorageMock } from './cruiseTestHarness';
+import { Cruise, CrewMember } from '../src/types';
+import { setupCruises, clearCruises, getStoredCruises, localStorageMock, makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseData', () => {
   const makeCruise = (overrides?: Partial<Cruise>): Cruise => ({
@@ -9,7 +9,7 @@ describe('cruiseData', () => {
     dateCreated: '2023-01-01T00:00:00.000Z',
     dateModified: '2023-01-01T00:00:00.000Z',
     length: 3,
-    crew: 2,
+    crewMembers: makeCrewMembers(2),
     days: [],
     ...overrides,
   });
@@ -28,12 +28,13 @@ describe('cruiseData', () => {
 
   describe('createNewCruise', () => {
     it('should create a new cruise with correct properties', () => {
-      const cruise = createNewCruise('Test Cruise', 5, 4);
+      const crew = makeCrewMembers(4);
+      const cruise = createNewCruise('Test Cruise', 5, crew);
 
       expect(cruise).toEqual(expect.objectContaining({
         name: 'Test Cruise',
         length: 5,
-        crew: 4,
+        crewMembers: crew,
       }));
       expect(cruise.id).toBeDefined();
       expect(cruise.dateCreated).toBeDefined();
@@ -83,7 +84,7 @@ describe('cruiseData', () => {
   describe('deleteCruise', () => {
     it('should delete a cruise from localStorage', () => {
       const cruise1 = makeCruise();
-      const cruise2 = makeCruise({ id: 'test-cruise-2', name: 'Cruise 2', dateCreated: '2023-01-02T00:00:00.000Z', dateModified: '2023-01-02T00:00:00.000Z', length: 4, crew: 3 });
+      const cruise2 = makeCruise({ id: 'test-cruise-2', name: 'Cruise 2', dateCreated: '2023-01-02T00:00:00.000Z', dateModified: '2023-01-02T00:00:00.000Z', length: 4, crewMembers: makeCrewMembers(3) });
       setupCruises([cruise1, cruise2]);
 
       deleteCruise('test-cruise-1');
@@ -119,7 +120,7 @@ describe('cruiseData', () => {
   describe('getCruiseById', () => {
     it('should return the cruise with the given id', () => {
       const cruise1 = makeCruise();
-      const cruise2 = makeCruise({ id: 'test-cruise-2', name: 'Cruise 2', dateCreated: '2023-01-02T00:00:00.000Z', dateModified: '2023-01-02T00:00:00.000Z', length: 4, crew: 3 });
+      const cruise2 = makeCruise({ id: 'test-cruise-2', name: 'Cruise 2', dateCreated: '2023-01-02T00:00:00.000Z', dateModified: '2023-01-02T00:00:00.000Z', length: 4, crewMembers: makeCrewMembers(3) });
       localStorageMock.getItem.mockReturnValue(JSON.stringify([cruise1, cruise2]));
 
       expect(getCruiseById('test-cruise-2')).toEqual(cruise2);

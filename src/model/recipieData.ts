@@ -58,3 +58,11 @@ export function isRecipieVegan(dish: Recipie): boolean {
   return ingredients.every(ing => ing.isVegan);
 }
 
+export type RecipieDietCategory = 'vegan' | 'vegetarian' | 'omnivore';
+
+export function getRecipieDietCategory(dish: Recipie): RecipieDietCategory {
+  if (isRecipieVegan(dish)) return 'vegan';
+  if (isRecipieVegetarian(dish)) return 'vegetarian';
+  return 'omnivore';
+}
+

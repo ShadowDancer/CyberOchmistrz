@@ -1,11 +1,12 @@
 import { createNewCruise, addRecipeToCruiseDay, removeRecipeFromCruiseDay } from '../src/model/cruiseData';
-import { setupCruises, clearCruises, getStoredCruises, localStorageMock, createTestRecipe, createCruiseWithRecipes } from './cruiseTestHarness';
+import { MealType } from '../src/types';
+import { setupCruises, clearCruises, getStoredCruises, localStorageMock, createTestRecipe, createCruiseWithRecipes, makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseRecipeData', () => {
   const getUpdatedCruise = () => getStoredCruises()[0];
 
   const setupEmptyCruise = (id: string, length = 3) => {
-    const cruise = createNewCruise('Test Cruise', length, 2);
+    const cruise = createNewCruise('Test Cruise', length, makeCrewMembers(2));
     cruise.id = id;
     setupCruises([cruise]);
   };
@@ -20,32 +21,29 @@ describe('cruiseRecipeData', () => {
       setupEmptyCruise('test-cruise-1');
       const recipeData = createTestRecipe('recipe-1', 'Test Recipe');
 
-      addRecipeToCruiseDay('test-cruise-1', 2, 'recipe-1', recipeData);
+      addRecipeToCruiseDay('test-cruise-1', 2, 'recipe-1', recipeData, 2, MealType.DINNER);
 
       const updated = getUpdatedCruise();
       expect(updated.days[1].recipes).toHaveLength(1);
-      expect(updated.days[1].recipes[0]).toEqual({ originalRecipeId: 'recipe-1', recipeData });
-    });
-
-    it('should add a recipe reference without recipeData', () => {
-      setupEmptyCruise('test-cruise-1');
-
-      addRecipeToCruiseDay('test-cruise-1', 1, 'recipe-1');
-
-      const updated = getUpdatedCruise();
-      expect(updated.days[0].recipes).toHaveLength(1);
-      expect(updated.days[0].recipes[0]).toEqual({ originalRecipeId: 'recipe-1', recipeData: undefined });
+      expect(updated.days[1].recipes[0]).toEqual(expect.objectContaining({
+        originalRecipeId: 'recipe-1',
+        recipeData,
+        crewCount: 2,
+        mealSlot: MealType.DINNER,
+      }));
     });
 
     it('should do nothing if cruise does not exist', () => {
       setupCruises([]);
-      addRecipeToCruiseDay('nonexistent-cruise', 1, 'recipe-1');
+      const recipeData = createTestRecipe('recipe-1', 'Test Recipe');
+      addRecipeToCruiseDay('nonexistent-cruise', 1, 'recipe-1', recipeData, 1, MealType.DINNER);
       expect(localStorageMock.setItem).not.toHaveBeenCalled();
     });
 
     it('should do nothing if day number is invalid', () => {
       setupEmptyCruise('test-cruise-1');
-      addRecipeToCruiseDay('test-cruise-1', 10, 'recipe-1');
+      const recipeData = createTestRecipe('recipe-1', 'Test Recipe');
+      addRecipeToCruiseDay('test-cruise-1', 10, 'recipe-1', recipeData, 1, MealType.DINNER);
       expect(localStorageMock.setItem).not.toHaveBeenCalled();
     });
 
@@ -53,7 +51,7 @@ describe('cruiseRecipeData', () => {
       setupEmptyCruise('test-cruise-1');
       const originalRecipeData = createTestRecipe('recipe-1', 'Original Recipe');
 
-      addRecipeToCruiseDay('test-cruise-1', 2, 'recipe-1', originalRecipeData);
+      addRecipeToCruiseDay('test-cruise-1', 2, 'recipe-1', originalRecipeData, 2, MealType.DINNER);
 
       originalRecipeData.name = 'Modified Recipe';
       originalRecipeData.ingredients[0].amount = 200;
@@ -63,10 +61,10 @@ describe('cruiseRecipeData', () => {
       const recipeInCruise = getUpdatedCruise().days[1].recipes[0].recipeData;
       expect(recipeInCruise).toBeDefined();
       expect(recipeInCruise).not.toBe(originalRecipeData);
-      expect(recipeInCruise!.name).toBe('Original Recipe');
-      expect(recipeInCruise!.ingredients[0].amount).toBe(100);
-      expect(recipeInCruise!.description).toBe('Test recipe description');
-      expect(recipeInCruise!.instructions).toEqual(['Step 1', 'Step 2']);
+      expect(recipeInCruise.name).toBe('Original Recipe');
+      expect(recipeInCruise.ingredients[0].amount).toBe(100);
+      expect(recipeInCruise.description).toBe('Test recipe description');
+      expect(recipeInCruise.instructions).toEqual(['Step 1', 'Step 2']);
     });
   });
 
@@ -82,7 +80,7 @@ describe('cruiseRecipeData', () => {
 
       const updated = getUpdatedCruise();
       expect(updated.days[1].recipes).toHaveLength(1);
-      expect(updated.days[1].recipes[0]).toEqual({ originalRecipeId: 'recipe-2', recipeData: undefined });
+      expect(updated.days[1].recipes[0]).toEqual(expect.objectContaining({ originalRecipeId: 'recipe-2' }));
     });
 
     it('should do nothing if cruise does not exist', () => {
@@ -117,9 +115,9 @@ describe('cruiseRecipeData', () => {
       expect(localStorageMock.setItem).not.toHaveBeenCalled();
     });
 
-    it('should remove an unknown recipe (recipeData is undefined)', () => {
+    it('should remove a recipe added without explicit recipeData', () => {
       const cruise = createCruiseWithRecipes('test-cruise-1', 'Test Cruise', 3, {
-        1: [{ recipeId: 'unknown-recipe', recipeData: undefined }]
+        1: [{ recipeId: 'unknown-recipe' }]
       });
       setupCruises([cruise]);
 

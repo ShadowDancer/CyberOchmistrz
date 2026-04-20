@@ -6,7 +6,7 @@ import {
   groupAdditionalSuppliesByCategory
 } from '../src/model/cruiseData';
 import { CruiseSupply } from '../src/types';
-import { setupCruises, clearCruises, getStoredCruises, localStorageMock } from './cruiseTestHarness';
+import { setupCruises, clearCruises, getStoredCruises, localStorageMock, makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseSupplies', () => {
   const supply = (id: string, amount: number, perPerson: boolean, perDay: boolean) =>
@@ -17,7 +17,7 @@ describe('cruiseSupplies', () => {
 
   const setupTestCruise = (opts?: { id?: string; supplies?: CruiseSupply[]; length?: number; crew?: number }) => {
     const id = opts?.id ?? 'rejs-na-mazury-2024';
-    const cruise = createNewCruise('Rejs na Mazury 2024', opts?.length ?? 7, opts?.crew ?? 4);
+    const cruise = createNewCruise('Rejs na Mazury 2024', opts?.length ?? 7, makeCrewMembers(opts?.crew ?? 4));
     cruise.id = id;
     if (opts?.supplies) cruise.additionalSupplies = opts.supplies;
     setupCruises([cruise]);
@@ -251,7 +251,7 @@ describe('cruiseSupplies', () => {
 
   describe('realistic cruise supplies management', () => {
     it('should demonstrate typical cruise supply operations', () => {
-      const cruise = createNewCruise('Żeglarski Rejs Bałtycki 2024', 10, 6);
+      const cruise = createNewCruise('Żeglarski Rejs Bałtycki 2024', 10, makeCrewMembers(6));
       cruise.id = 'zeglarski-rejs-baltycki-2024';
       cruise.additionalSupplies = [
         { id: 'woda_butelkowana', amount: 60, isPerPerson: false, isPerDay: false },

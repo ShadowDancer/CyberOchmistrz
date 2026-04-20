@@ -5,7 +5,7 @@ import {
   removeAdditionalSupplyFromCruise
 } from '../src/model/cruiseData';
 import { CruiseSupply } from '../src/types';
-import { setupCruises, clearCruises, getStoredCruises } from './cruiseTestHarness';
+import { setupCruises, clearCruises, getStoredCruises, makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseAdditionalSuppliesFlags', () => {
   const supply = (id: string, amount: number, perPerson: boolean, perDay: boolean) =>
@@ -16,7 +16,7 @@ describe('cruiseAdditionalSuppliesFlags', () => {
 
   const setupTestCruise = (opts?: { id?: string; supplies?: CruiseSupply[]; length?: number; crew?: number }) => {
     const id = opts?.id ?? 'test-cruise';
-    const cruise = createNewCruise('Test Cruise', opts?.length ?? 7, opts?.crew ?? 4);
+    const cruise = createNewCruise('Test Cruise', opts?.length ?? 7, makeCrewMembers(opts?.crew ?? 4));
     cruise.id = id;
     if (opts?.supplies) cruise.additionalSupplies = opts.supplies;
     setupCruises([cruise]);

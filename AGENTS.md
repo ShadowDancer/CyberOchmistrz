@@ -43,3 +43,7 @@ Polish appears in string literals and route paths, not in variable/function name
 | zaloga               | crew                   | cruise form fields       |
 | lista zakupow        | shopping list          | UI strings               |
 | danie                | dish                   | recipe type labels       |
+| wegetarianska        | vegetarian             | diet tag labelPl         |
+| weganska             | vegan                  | diet tag labelPl         |
+| wszystkozerna        | omnivore               | diet tag labelPl         |
+| zalogant             | crew member            | CrewMember type          |

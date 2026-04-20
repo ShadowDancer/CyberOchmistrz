@@ -1,6 +1,8 @@
 import {
   Cruise,
+  CrewMember,
   Recipie,
+  MealType,
   AggregatedShoppingList,
   AggregatedItem,
   AmountSource,
@@ -15,7 +17,6 @@ const STORAGE_KEY = 'cyber-ochmistrz-cruises';
 
 export function getCruises(): Cruise[] {
   if (typeof window === 'undefined') return [];
-  
   
   const storedCruises = localStorage.getItem(STORAGE_KEY);
   return storedCruises ? JSON.parse(storedCruises) : [];
@@ -50,10 +51,9 @@ export function deleteCruise(id: string): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cruises));
 }
 
-export function createNewCruise(name: string, length: number, crew: number, startDate?: string): Cruise {
+export function createNewCruise(name: string, length: number, crewMembers: CrewMember[], startDate?: string): Cruise {
   const now = new Date().toISOString();
 
-  // Create an array of days with empty recipe arrays
   const days = Array.from({ length }, (_, i) => ({
     dayNumber: i + 1,
     recipes: []
@@ -65,13 +65,20 @@ export function createNewCruise(name: string, length: number, crew: number, star
     dateCreated: now,
     dateModified: now,
     length,
-    crew,
+    crewMembers,
     days,
     startDate
   };
 }
 
-export function addRecipeToCruiseDay(cruiseId: string, dayNumber: number, recipeId: string, recipeData?: Recipie): void {
+export function addRecipeToCruiseDay(
+  cruiseId: string,
+  dayNumber: number,
+  recipeId: string,
+  recipeData: Recipie,
+  crewCount: number,
+  mealSlot: MealType
+): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
 
@@ -80,8 +87,48 @@ export function addRecipeToCruiseDay(cruiseId: string, dayNumber: number, recipe
 
   cruise.days[dayIndex].recipes.push({
     originalRecipeId: recipeId,
-    recipeData: recipeData ? JSON.parse(JSON.stringify(recipeData)) : undefined
+    recipeData: JSON.parse(JSON.stringify(recipeData)),
+    crewCount,
+    mealSlot,
   });
+  saveCruise(cruise);
+}
+
+export function setRecipeCrewCount(
+  cruiseId: string,
+  dayNumber: number,
+  recipeIndex: number,
+  crewCount: number
+): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+
+  const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
+  if (dayIndex === -1) return;
+
+  const recipe = cruise.days[dayIndex].recipes[recipeIndex];
+  if (!recipe) return;
+
+  recipe.crewCount = crewCount;
+  saveCruise(cruise);
+}
+
+export function setRecipeMealSlot(
+  cruiseId: string,
+  dayNumber: number,
+  recipeIndex: number,
+  mealSlot: MealType
+): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+
+  const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
+  if (dayIndex === -1) return;
+
+  const recipe = cruise.days[dayIndex].recipes[recipeIndex];
+  if (!recipe) return;
+
+  recipe.mealSlot = mealSlot;
   saveCruise(cruise);
 }
 
@@ -93,7 +140,6 @@ export function removeRecipeFromCruiseDay(cruiseId: string, dayNumber: number, r
   if (dayIndex === -1) return;
   
   const recipies = cruise.days[dayIndex].recipes;
-  // Remove only the recipe at the specific index
   if (recipeIndex >= 0 && recipeIndex < recipies.length && recipies[recipeIndex].originalRecipeId === recipeId) {
     recipies.splice(recipeIndex, 1);
     saveCruise(cruise);
@@ -104,19 +150,15 @@ export function addAdditionalSupplyToCruise(cruiseId: string, supplyId: string, 
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
 
-  // Initialize additional supplies array if it doesn't exist
   if (!cruise.additionalSupplies) {
     cruise.additionalSupplies = [];
   }
 
-  // Check if the supply with same flags already exists
   const existingSupplyIndex = cruise.additionalSupplies.findIndex(s => s.id === supplyId && s.isPerPerson === isPerPerson && s.isPerDay === isPerDay);
 
   if (existingSupplyIndex >= 0) {
-    // Update existing supply
     cruise.additionalSupplies[existingSupplyIndex].amount += amount;
   } else {
-    // Add new supply
     cruise.additionalSupplies.push({ id: supplyId, amount, isPerPerson, isPerDay });
   }
 
@@ -127,17 +169,14 @@ export function updateAdditionalSupplyAmount(cruiseId: string, supplyId: string,
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
 
-  // Initialize additional supplies array if it doesn't exist
   if (!cruise.additionalSupplies) {
     cruise.additionalSupplies = [];
   }
 
   const supplyIndex = cruise.additionalSupplies.findIndex(s => s.id === supplyId && s.isPerPerson === isPerPerson && s.isPerDay === isPerDay);
   if (supplyIndex >= 0) {
-    // Update existing supply
     cruise.additionalSupplies[supplyIndex].amount = amount;
   } else {
-    // Add new supply if it doesn't exist
     cruise.additionalSupplies.push({ id: supplyId, amount, isPerPerson, isPerDay });
   }
 
@@ -171,6 +210,7 @@ export function getAdditionalSupplyAmount(cruiseId: string, supplyId: string, is
 
   return item ? item.amount : null;
 }
+
 export function groupAdditionalSuppliesByCategory(cruiseId: string): AdditionalSupplyCategoryGroup[] {
   const cruise = getCruiseById(cruiseId);
   if (!cruise || !cruise.additionalSupplies) return [];
@@ -195,24 +235,21 @@ export function groupAdditionalSuppliesByCategory(cruiseId: string): AdditionalS
     }
   });
 
-  // Convert to array and sort by category name for consistent display order
   return Object.keys(grouped)
     .sort()
     .map(category => ({
       category,
       supplies: grouped[category].sort((a, b) => {
-        // First sort by supply name
         const nameComparison = a.supply.name.localeCompare(b.supply.name, 'pl');
         if (nameComparison !== 0) {
           return nameComparison;
         }
 
-        // If names are equal, sort by flag combination priority: fixed -> per person -> per day -> per person per day
         const getPriority = (item: AdditionalSupplyItem) => {
-          if (!item.isPerPerson && !item.isPerDay) return 0; // fixed
-          if (item.isPerPerson && !item.isPerDay) return 1; // per person
-          if (!item.isPerPerson && item.isPerDay) return 2; // per day
-          return 3; // per person per day
+          if (!item.isPerPerson && !item.isPerDay) return 0;
+          if (item.isPerPerson && !item.isPerDay) return 1;
+          if (!item.isPerPerson && item.isPerDay) return 2;
+          return 3;
         };
 
         return getPriority(a) - getPriority(b);
@@ -233,18 +270,15 @@ export function updateRecipeIngredientInCruise(
   const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
   if (dayIndex === -1) return;
   
-  // Get the recipe at the specified index
   const recipe = cruise.days[dayIndex].recipes[recipeIndex];
   if (!recipe || !recipe.recipeData) return;
   
-  // Ensure ingredients array exists and the index is valid
   if (!recipe.recipeData.ingredients || 
       ingredientIndex < 0 || 
       ingredientIndex >= recipe.recipeData.ingredients.length) {
     return;
   }
   
-  // Update the ingredient amount
   recipe.recipeData.ingredients[ingredientIndex].amount = newAmount;
   saveCruise(cruise);
 }
@@ -262,16 +296,13 @@ export function addIngredientToRecipeInCruise(
   const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
   if (dayIndex === -1) return;
   
-  // Get the recipe at the specified index
   const recipe = cruise.days[dayIndex].recipes[recipeIndex];
   if (!recipe || !recipe.recipeData) return;
   
-  // Ensure ingredients array exists
   if (!recipe.recipeData.ingredients) {
     recipe.recipeData.ingredients = [];
   }
   
-  // Add the new ingredient
   recipe.recipeData.ingredients.push({ id: ingredientId, amount });
   saveCruise(cruise);
 }
@@ -288,18 +319,15 @@ export function removeIngredientFromRecipeInCruise(
   const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
   if (dayIndex === -1) return;
   
-  // Get the recipe at the specified index
   const recipe = cruise.days[dayIndex].recipes[recipeIndex];
   if (!recipe || !recipe.recipeData) return;
   
-  // Ensure ingredients array exists and the index is valid
   if (!recipe.recipeData.ingredients || 
       ingredientIndex < 0 || 
       ingredientIndex >= recipe.recipeData.ingredients.length) {
     return;
   }
   
-  // Remove the ingredient
   recipe.recipeData.ingredients.splice(ingredientIndex, 1);
   saveCruise(cruise);
 }
@@ -321,7 +349,6 @@ export function reorderRecipesInCruiseDay(
     return;
   }
 
-  // Reorder the recipes array
   const [movedRecipe] = recipes.splice(fromIndex, 1);
   recipes.splice(toIndex, 0, movedRecipe);
 
@@ -332,7 +359,6 @@ export function willLengthReductionRemoveRecipes(cruiseId: string, newLength: nu
   const cruise = getCruiseById(cruiseId);
   if (!cruise || newLength >= cruise.length) return false;
 
-  // Check if any days being removed (from newLength+1 to current length) have recipes
   for (let dayNum = newLength + 1; dayNum <= cruise.length; dayNum++) {
     const day = cruise.days.find(d => d.dayNumber === dayNum);
     if (day && day.recipes.length > 0) {
@@ -342,16 +368,15 @@ export function willLengthReductionRemoveRecipes(cruiseId: string, newLength: nu
   return false;
 }
 
-export function updateCruiseDetails(cruiseId: string, name: string, length: number, crew: number, startDate?: string): void {
+export function updateCruiseDetails(cruiseId: string, name: string, length: number, crewMembers: CrewMember[], startDate?: string): void {
   const cruise = getCruiseById(cruiseId);
   if (!cruise) return;
 
   cruise.name = name;
-  cruise.crew = crew;
+  cruise.crewMembers = crewMembers;
   cruise.startDate = startDate;
 
   if (length > cruise.length) {
-    // Add new empty days
     for (let i = cruise.length + 1; i <= length; i++) {
       cruise.days.push({
         dayNumber: i,
@@ -359,18 +384,18 @@ export function updateCruiseDetails(cruiseId: string, name: string, length: numb
       });
     }
   } else if (length < cruise.length) {
-    // Remove days from the end
     cruise.days = cruise.days.filter(day => day.dayNumber <= length);
   }
 
   cruise.length = length;
   saveCruise(cruise);
 }
+
 export function validateCruiseForm(formData: CruiseFormData): CruiseFormErrors {
   const errors: CruiseFormErrors = {
     name: '',
     length: '',
-    crew: '',
+    crewMembers: '',
     startDate: ''
   };
 
@@ -384,13 +409,12 @@ export function validateCruiseForm(formData: CruiseFormData): CruiseFormErrors {
     errors.length = 'Długość rejsu nie może być większa niż 99 dni';
   }
 
-  if (formData.crew < 1) {
-    errors.crew = 'Liczba załogantów musi być większa niż 0';
-  } else if (formData.crew >= 100) {
-    errors.crew = 'Liczba załogantów nie może być większa niż 99 osób';
+  if (formData.crewMembers.length < 1) {
+    errors.crewMembers = 'Liczba załogantów musi być większa niż 0';
+  } else if (formData.crewMembers.length >= 100) {
+    errors.crewMembers = 'Liczba załogantów nie może być większa niż 99 osób';
   }
 
-  // startDate validation: optional, but if provided must be valid date
   if (formData.startDate && formData.startDate.trim() !== '') {
     const date = new Date(formData.startDate);
     if (isNaN(date.getTime())) {
@@ -425,10 +449,8 @@ export function moveRecipeBetweenCruiseDays(
 
   if (fromIndex < 0 || fromIndex >= fromRecipes.length) return;
 
-  // Remove recipe from source day
   const [movedRecipe] = fromRecipes.splice(fromIndex, 1);
 
-  // Add recipe to target day at specified index or at the end
   const insertIndex = toIndex !== undefined && toIndex >= 0 && toIndex <= toRecipes.length ? toIndex : toRecipes.length;
   toRecipes.splice(insertIndex, 0, movedRecipe);
 
@@ -436,10 +458,8 @@ export function moveRecipeBetweenCruiseDays(
 }
 
 export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
-  // Map to hold all items with their total amounts and sources
   const itemsMap: Map<string, { supply: Supply, amount: number, sources: AmountSource[] }> = new Map();
 
-  // Helper function to add items to the itemsMap
   const addToItemsMap = (
     itemsMap: Map<string, { supply: Supply, amount: number, sources: AmountSource[] }>,
     supply: Supply,
@@ -447,12 +467,10 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
     source: AmountSource
   ) => {
     if (itemsMap.has(supply.id)) {
-      // Add to existing item
       const existingItem = itemsMap.get(supply.id)!;
       existingItem.amount += amount;
       existingItem.sources.push(source);
     } else {
-      // Add new item
       itemsMap.set(supply.id, {
         supply,
         amount,
@@ -461,7 +479,6 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
     }
   };
 
-  // Helper function to create invalid supply placeholder
   const createInvalidSupply = (id: string, isIngredient: boolean): Supply => ({
     id,
     name: `Nieprawidłowy produkt: ${id}`,
@@ -470,10 +487,10 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
     category: 'Nieprawidłowe produkty'
   });
 
-  // 1. Add ingredients from recipes in the meal plan
+  // 1. Add ingredients from recipes in the meal plan, scaled by each recipe's crewCount
   cruise.days.forEach(day => {
     day.recipes.forEach(recipe => {
-      // Use the recipe data stored in the cruise if available, otherwise fall back to the original recipe
+      if (recipe.crewCount === 0) return;
       const recipeData = recipe.recipeData;
       if (recipeData) {
         recipeData.ingredients.forEach(ingredientAmount => {
@@ -481,9 +498,8 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
           if (!ingredient) {
             ingredient = createInvalidSupply(ingredientAmount.id, true);
           }
-          // Adjust amount based on crew size
-          const scaledAmount = ingredientAmount.amount * cruise.crew;
-          const source = new RecipeAmountSource(ingredientAmount.amount, recipeData.name, day.dayNumber);
+          const scaledAmount = ingredientAmount.amount * recipe.crewCount;
+          const source = new RecipeAmountSource(ingredientAmount.amount, recipeData.name, day.dayNumber, recipe.crewCount);
 
           addToItemsMap(itemsMap, ingredient, scaledAmount, source);
         });
@@ -498,8 +514,7 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
       if (!supply) {
         supply = createInvalidSupply(item.id, false);
       }
-      // Calculate scaled amount based on flags
-      const crewMultiplier = item.isPerPerson ? cruise.crew : 1;
+      const crewMultiplier = item.isPerPerson ? cruise.crewMembers.length : 1;
       const dayMultiplier = item.isPerDay ? cruise.length : 1;
       const scaledAmount = item.amount * crewMultiplier * dayMultiplier;
       const source = new AdditionalSupplyAmountSource(item.amount, item.isPerPerson, item.isPerDay);
@@ -508,7 +523,6 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
     });
   }
 
-  // Group items by category
   const groupedItems: AggregatedShoppingList = {};
 
   itemsMap.forEach((item) => {
@@ -521,7 +535,6 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
     groupedItems[category].push(item as AggregatedItem);
   });
 
-  // Sort items in each category alphabetically
   Object.keys(groupedItems).forEach(category => {
     groupedItems[category].sort((a, b) => a.supply.name.localeCompare(b.supply.name, 'pl'));
   });
@@ -556,7 +569,6 @@ export function generateShoppingListCSV(aggregatedList: AggregatedShoppingList):
 }
 
 function escapeCSVValue(value: string): string {
-  // If value contains comma, quote, or newline, wrap in quotes and escape internal quotes
   if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
     return '"' + value.replace(/"/g, '""') + '"';
   }

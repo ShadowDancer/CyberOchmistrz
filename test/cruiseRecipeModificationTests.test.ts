@@ -6,7 +6,7 @@ import {
   removeIngredientFromRecipeInCruise
 } from '../src/model/cruiseData';
 import { Recipie, MealType } from '../src/types';
-import { setupCruises, clearCruises, getStoredCruises, localStorageMock, createCruiseWithRecipes } from './cruiseTestHarness';
+import { setupCruises, clearCruises, getStoredCruises, localStorageMock, createCruiseWithRecipes, makeCrewMembers } from './cruiseTestHarness';
 
 const realisticJajecznicaRecipe: Recipie = {
   id: "jajecznica",
@@ -49,10 +49,10 @@ describe('cruiseRecipeModification', () => {
   const getUpdatedCruise = () => getStoredCruises()[0];
 
   const setupJajecznica = (day = 1) =>
-    createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, { [day]: [{ recipeId: 'jajecznica', recipeData: realisticJajecznicaRecipe }] }, 4);
+    createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, { [day]: [{ recipeId: 'jajecznica', recipeData: realisticJajecznicaRecipe }] }, makeCrewMembers(4));
 
   const setupPesto = (day = 2) =>
-    createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, { [day]: [{ recipeId: 'pesto-z-tuczykiem', recipeData: realisticPestoRecipe }] }, 4);
+    createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, { [day]: [{ recipeId: 'pesto-z-tuczykiem', recipeData: realisticPestoRecipe }] }, makeCrewMembers(4));
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -116,15 +116,17 @@ describe('cruiseRecipeModification', () => {
       expect(recipe.ingredients[3]).toEqual(expect.objectContaining({ id: 'parmezan', amount: 20 }));
     });
 
-    it('should initialize ingredients array if it does not exist', () => {
+    it('should add an ingredient even when recipe was added without explicit recipeData', () => {
       const cruise = createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, {
         1: [{ recipeId: 'jajecznica' }]
-      }, 4);
+      }, makeCrewMembers(4));
       setupCruises([cruise]);
 
       addIngredientToRecipeInCruise(ID, 1, 0, 'parmezan', 20);
 
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
+      const recipe = getStoredCruises()[0].days[0].recipes[0].recipeData;
+      expect(recipe).toBeDefined();
+      expect(recipe.ingredients.find(i => i.id === 'parmezan')).toEqual(expect.objectContaining({ id: 'parmezan', amount: 20 }));
     });
 
     it('should not modify the original recipe data', () => {
@@ -175,7 +177,7 @@ describe('cruiseRecipeModification', () => {
       const cruise = createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, {
         1: [{ recipeId: 'jajecznica', recipeData: realisticJajecznicaRecipe }],
         2: [{ recipeId: 'pesto-z-tuczykiem', recipeData: realisticPestoRecipe }]
-      }, 4);
+      }, makeCrewMembers(4));
       setupCruises([cruise]);
 
       updateRecipeIngredientInCruise(ID, 1, 0, 0, 12);
