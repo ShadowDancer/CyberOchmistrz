@@ -8,6 +8,14 @@ Read README.md to learn about code structure and data flow.
 
 Do not load all files into context initially, use README.md to figure out parts to read and load the rest lazily - if already loaded part of code references it or you have moderate suspicion that changes you make might influence unloaded parts of the code.
 
+## Comments
+
+If you encounter a comment in code - leave it as-is, unless your change makes it innacurate (in such case - make it accurate) or outdated (remove if cannot fix).
+
+Under no cirsumstance, remove or edit comments in parts of file unrelated to your changes. If you do not make functional change in a file, do not touch comments in it.
+
+If there are magic numbers, especially in tests, use comments to explain briefly where do those numbers come from and, if applicable, how they were calculated.
+
 ---
 
 ## Language in repository

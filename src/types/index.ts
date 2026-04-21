@@ -109,7 +109,7 @@ export interface Cruise {
   dateCreated: string;
   dateModified: string;
   length: number; // in days
-  crewMembers: CrewMember[]; // was: crew: number
+  crewMembers: CrewMember[];
   days: CruiseDay[];
   additionalSupplies?: CruiseSupply[];
   startDate?: string; // YYYY-MM-DD format
