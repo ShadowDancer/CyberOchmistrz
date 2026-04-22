@@ -1,4 +1,7 @@
 import {
+  createRecipie,
+} from './recipieData';
+import {
   Cruise,
   CrewMember,
   Recipie,
@@ -84,6 +87,8 @@ export function addRecipeToCruiseDay(
 
   const dayIndex = cruise.days.findIndex(day => day.dayNumber === dayNumber);
   if (dayIndex === -1) return;
+
+  createRecipie(recipeData);
 
   cruise.days[dayIndex].recipes.push({
     originalRecipeId: recipeId,

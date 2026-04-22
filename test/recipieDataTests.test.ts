@@ -63,14 +63,15 @@ jest.mock('../src/data/supplies.json', () => [
   }
 ]);
 
-import { getRecipies, getRecipeById, getIngredients, getIngredientById, getRecipieIngredients, isRecipieVegetarian, isRecipieVegan } from '../src/model/recipieData';
+import { getRecipies, getRecipeById, getIngredients, getIngredientById, getRecipieIngredients, isRecipieVegetarian, isRecipieVegan, createRecipie } from '../src/model/recipieData';
 import { Recipie, IngredientAmount, MealType } from '../src/types';
 
 describe('recipieData', () => {
-  const makeRecipe = (overrides?: Partial<Recipie>): Recipie => ({
+  /** Builds raw Recipie data for tests that need to bypass createRecipie (e.g. diet function defense-in-depth). */
+  const makeRawRecipe = (overrides?: Partial<Recipie>): Recipie => ({
     id: 'test-recipe',
     name: 'Test Recipe',
-    ingredients: [],
+    ingredients: [{ id: 'czosnek', amount: 1 }],
     description: '',
     mealType: [MealType.DINNER],
     difficulty: 1,
@@ -140,33 +141,54 @@ describe('recipieData', () => {
 
   describe('isRecipieVegetarian', () => {
     it('should return true if all ingredients are vegetarian', () => {
-      expect(isRecipieVegetarian(makeRecipe({ ingredients: [{ id: 'czosnek', amount: 100 }] }))).toBe(true);
+      expect(isRecipieVegetarian(makeRawRecipe({ ingredients: [{ id: 'czosnek', amount: 100 }] }))).toBe(true);
     });
 
     it('should return false if any ingredient is not vegetarian', () => {
-      expect(isRecipieVegetarian(makeRecipe({
+      expect(isRecipieVegetarian(makeRawRecipe({
         ingredients: [{ id: 'czosnek', amount: 100 }, { id: 'kiełbasa-podstępna', amount: 200 }],
       }))).toBe(false);
     });
 
-    it('should return true if ingredient not found (unknown ingredients are ignored)', () => {
-      expect(isRecipieVegetarian(makeRecipe({ ingredients: [{ id: 'unknown', amount: 100 }] }))).toBe(true);
+    it('should return false if all ingredients are unknown (no resolved ingredients)', () => {
+      expect(isRecipieVegetarian(makeRawRecipe({ ingredients: [{ id: 'unknown', amount: 100 }] }))).toBe(false);
     });
   });
 
   describe('isRecipieVegan', () => {
     it('should return true if all ingredients are vegan', () => {
-      expect(isRecipieVegan(makeRecipe({ ingredients: [{ id: 'czosnek', amount: 100 }] }))).toBe(true);
+      expect(isRecipieVegan(makeRawRecipe({ ingredients: [{ id: 'czosnek', amount: 100 }] }))).toBe(true);
     });
 
     it('should return false if any ingredient is not vegan', () => {
-      expect(isRecipieVegan(makeRecipe({
+      expect(isRecipieVegan(makeRawRecipe({
         ingredients: [{ id: 'czosnek', amount: 100 }, { id: 'ser', amount: 200 }],
       }))).toBe(false);
     });
 
-    it('should return true if ingredient not found (unknown ingredients are ignored)', () => {
-      expect(isRecipieVegan(makeRecipe({ ingredients: [{ id: 'unknown', amount: 100 }] }))).toBe(true);
+    it('should return false if all ingredients are unknown (no resolved ingredients)', () => {
+      expect(isRecipieVegan(makeRawRecipe({ ingredients: [{ id: 'unknown', amount: 100 }] }))).toBe(false);
+    });
+  });
+
+  describe('createRecipie', () => {
+    it('should throw when ingredients array is empty', () => {
+      expect(() => createRecipie(makeRawRecipe({ ingredients: [] }))).toThrow('Recipe must have at least one ingredient');
+    });
+
+    it('should return the recipe when ingredients are present', () => {
+      const data = makeRawRecipe({ ingredients: [{ id: 'czosnek', amount: 1 }] });
+      expect(createRecipie(data)).toBe(data);
+    });
+  });
+
+  describe('empty-ingredients defense-in-depth', () => {
+    it('should classify empty-ingredients recipe as not vegetarian', () => {
+      expect(isRecipieVegetarian(makeRawRecipe({ ingredients: [] }))).toBe(false);
+    });
+
+    it('should classify empty-ingredients recipe as not vegan', () => {
+      expect(isRecipieVegan(makeRawRecipe({ ingredients: [] }))).toBe(false);
     });
   });
 });

@@ -3,81 +3,83 @@
 import { useState } from 'react';
 import { createNewCruise, saveCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
+import { CrewMember } from "../types";
+import { DIET_TAGS, DietTag } from '../model/dietTags';
 
 export default function AddCruiseForm() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: '',
+    name: "",
     length: 1,
     crew: 1,
-    startDate: ''
+    startDate: "",
   });
   const [errors, setErrors] = useState({
-    name: '',
-    length: '',
-    crew: '',
-    startDate: ''
+    name: "",
+    length: "",
+    crew: "",
+    startDate: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'number' ? Number(value) : value
+      [name]: type === "number" ? Number(value) : value,
     }));
-    
+
     // Clear error when user types
     if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {
-      name: '',
-      length: '',
-      crew: '',
-      startDate: ''
+      name: "",
+      length: "",
+      crew: "",
+      startDate: "",
     };
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Nazwa rejsu jest wymagana';
+      newErrors.name = "Nazwa rejsu jest wymagana";
     }
 
     if (formData.length < 1) {
-      newErrors.length = 'Długość rejsu musi być większa niż 0';
+      newErrors.length = "Długość rejsu musi być większa niż 0";
     }
 
     if (formData.crew < 1) {
-      newErrors.crew = 'Liczba załogantów musi być większa niż 0';
+      newErrors.crew = "Liczba załogantów musi być większa niż 0";
     }
 
     // startDate is optional
 
     setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error !== '');
+    return !Object.values(newErrors).some((error) => error !== "");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     const newCruise = createNewCruise(
       formData.name,
       formData.length,
-      formData.crew,
-      formData.startDate || undefined
+      new Array<CrewMember>().fill({ id: "", tags: ["omnivore"] }),
+      formData.startDate || undefined,
     );
-    
+
     saveCruise(newCruise);
-    router.push('/rejsy');
+    router.push("/rejsy");
   };
 
   return (
@@ -96,7 +98,7 @@ export default function AddCruiseForm() {
             value={formData.name}
             onChange={handleChange}
             className={`input-field ${
-              errors.name ? 'input-field-error' : 'input-field-valid'
+              errors.name ? "input-field-error" : "input-field-valid"
             }`}
           />
           {errors.name && <p className="error-text">{errors.name}</p>}
@@ -114,7 +116,7 @@ export default function AddCruiseForm() {
             value={formData.length}
             onChange={handleChange}
             className={`input-field ${
-              errors.length ? 'input-field-error' : 'input-field-valid'
+              errors.length ? "input-field-error" : "input-field-valid"
             }`}
           />
           {errors.length && <p className="error-text">{errors.length}</p>}
@@ -132,7 +134,7 @@ export default function AddCruiseForm() {
             value={formData.crew}
             onChange={handleChange}
             className={`input-field ${
-              errors.crew ? 'input-field-error' : 'input-field-valid'
+              errors.crew ? "input-field-error" : "input-field-valid"
             }`}
           />
           {errors.crew && <p className="error-text">{errors.crew}</p>}
@@ -149,22 +151,19 @@ export default function AddCruiseForm() {
             value={formData.startDate}
             onChange={handleChange}
             className={`input-field ${
-              errors.startDate ? 'input-field-error' : 'input-field-valid'
+              errors.startDate ? "input-field-error" : "input-field-valid"
             }`}
           />
           {errors.startDate && <p className="error-text">{errors.startDate}</p>}
         </div>
 
         <div className="flex gap-4 pt-4">
-          <button
-            type="submit"
-            className="btn-primary"
-          >
+          <button type="submit" className="btn-primary">
             Zapisz rejs
           </button>
           <button
             type="button"
-            onClick={() => router.push('/rejsy')}
+            onClick={() => router.push("/rejsy")}
             className="btn-secondary"
           >
             Anuluj

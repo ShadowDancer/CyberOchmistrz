@@ -2,9 +2,15 @@ import { Recipie, Ingredient, IngredientAmount, Supply } from '../types';
 import recipies from '../data/recipies.json';
 import suppliesData from '../data/supplies.json';
 
+export function createRecipie(data: Recipie): Recipie {
+  if (data.ingredients.length === 0) {
+    throw new Error('Recipe must have at least one ingredient');
+  }
+  return data;
+}
+
 export function getRecipies(): Recipie[] {
-  // Cast to unknown first and then to Recipie[] to avoid TypeScript errors
-  return (recipies as unknown) as Recipie[];
+  return ((recipies as unknown) as Recipie[]).map(r => createRecipie(r));
 }
 
 export function getRecipeById(id: string): Recipie | undefined {
@@ -46,7 +52,9 @@ export function isRecipieVegetarian(dish: Recipie): boolean {
   const ingredients = dish.ingredients
     .map(ing => getIngredientById(ing.id))
     .filter((ing): ing is Ingredient => ing !== undefined);
-  
+
+  // Defense-in-depth: legacy snapshots from localStorage may predate the factory guard
+  if (ingredients.length === 0) return false;
   return ingredients.every(ing => ing.isVegetarian);
 }
 
@@ -54,7 +62,9 @@ export function isRecipieVegan(dish: Recipie): boolean {
   const ingredients = dish.ingredients
     .map(ing => getIngredientById(ing.id))
     .filter((ing): ing is Ingredient => ing !== undefined);
-  
+
+  // Defense-in-depth: legacy snapshots from localStorage may predate the factory guard
+  if (ingredients.length === 0) return false;
   return ingredients.every(ing => ing.isVegan);
 }
 

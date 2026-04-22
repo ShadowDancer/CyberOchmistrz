@@ -1,4 +1,5 @@
 import { getMealCoverage, getDayCoverage, getCruiseCoverage, countCrewWithTag, getActiveDietTags, getDefaultCrewCount } from '../src/model/cruiseDietCoverage';
+import { createRecipie } from '../src/model/recipieData';
 import { CrewMember, CruiseDayRecipe, MealType, Recipie, Cruise } from '../src/types';
 import theories from 'jest-theories';
 
@@ -21,15 +22,16 @@ const veg = (id: string) => member(id, 'vegetarian');
 const vegan = (id: string) => member(id, 'vegan');
 const halal = (id: string) => member(id, 'halal');
 
-const recipe = (id: string, ingredientIds: string[], mealSlot: MealType = MealType.DINNER): Recipie => ({
-  id,
-  name: id,
-  description: '',
-  mealType: [mealSlot],
-  difficulty: 1,
-  instructions: [],
-  ingredients: ingredientIds.map(iid => ({ id: iid, amount: 1 })),
-});
+const recipe = (id: string, ingredientIds: string[], mealSlot: MealType = MealType.DINNER): Recipie =>
+  createRecipie({
+    id,
+    name: id,
+    description: '',
+    mealType: [mealSlot],
+    difficulty: 1,
+    instructions: [],
+    ingredients: ingredientIds.map(iid => ({ id: iid, amount: 1 })),
+  });
 
 const slot = (r: Recipie, crewCount: number, mealSlot: MealType = MealType.DINNER): CruiseDayRecipe => ({
   originalRecipeId: r.id,

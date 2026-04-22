@@ -1,14 +1,16 @@
 import { Cruise, CrewMember, CruiseDayRecipe, MealType, Recipie } from '../src/types';
+import { createRecipie } from '../src/model/recipieData';
 
-const makeRecipe = (id: string): Recipie => ({
-  id,
-  name: id,
-  description: 'desc',
-  mealType: [MealType.DINNER],
-  difficulty: 2,
-  instructions: ['step'],
-  ingredients: [{ id: 'jajka', amount: 3 }],
-});
+const makeRecipe = (id: string): Recipie =>
+  createRecipie({
+    id,
+    name: id,
+    description: 'desc',
+    mealType: [MealType.DINNER],
+    difficulty: 2,
+    instructions: ['step'],
+    ingredients: [{ id: 'jajka', amount: 3 }],
+  });
 
 const makeMember = (id: string): CrewMember => ({ id, name: `Member ${id}`, tags: ['omnivore'] });
 

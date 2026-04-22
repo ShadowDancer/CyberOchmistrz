@@ -1,4 +1,5 @@
 import { aggregateShoppingList } from '../src/model/cruiseData';
+import { createRecipie } from '../src/model/recipieData';
 import { Cruise, CruiseDay, CruiseSupply, Recipie, IngredientAmount, AggregatedShoppingList, AmountSource, RecipeAmountSource, AdditionalSupplyAmountSource, CrewMember, MealType, CruiseDayRecipe } from '../src/types';
 
 // Mock the supplies data
@@ -136,15 +137,16 @@ describe('aggregateShoppingList', () => {
   const makeCrewMembers = (count: number): CrewMember[] =>
     Array.from({ length: count }, (_, i) => ({ id: `c${i}`, tags: ['omnivore'] }));
 
-  const makeRecipe = (name: string, ingredients: IngredientAmount[]): Recipie => ({
-    id: name,
-    name,
-    ingredients,
-    description: '',
-    mealType: [],
-    difficulty: 1,
-    instructions: [],
-  });
+  const makeRecipe = (name: string, ingredients: IngredientAmount[]): Recipie =>
+    createRecipie({
+      id: name,
+      name,
+      ingredients,
+      description: '',
+      mealType: [],
+      difficulty: 1,
+      instructions: [],
+    });
 
   const dayRecipe = (recipe: Recipie, crewCount: number): CruiseDayRecipe => ({
     originalRecipeId: recipe.id,

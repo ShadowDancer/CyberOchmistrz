@@ -81,7 +81,9 @@ function maxFlow(g: FlowEdge[][], s: number, t: number): number {
   let total = 0;
   for (;;) {
     const level = bfsLevels(g, s, t);
+
     if (!level) return total;
+
     const iter = new Array<number>(g.length).fill(0);
     for (
       let f = dfsPush(g, s, t, Infinity, level, iter);
