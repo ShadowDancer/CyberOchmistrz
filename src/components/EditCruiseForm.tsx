@@ -1,12 +1,10 @@
 'use client';
 
 import {useState} from 'react';
-import {Cruise, CruiseFormData, CruiseFormErrors} from '../types';
+import {Cruise, CrewMember} from '../types';
 import {
     updateCruiseDetails,
     willLengthReductionRemoveRecipes,
-    validateCruiseForm,
-    isCruiseFormValid
 } from '../model/cruiseData';
 import {useRouter} from 'next/navigation';
 
@@ -16,13 +14,13 @@ interface EditCruiseFormProps {
 
 export default function EditCruiseForm({cruise}: EditCruiseFormProps) {
     const router = useRouter();
-    const [formData, setFormData] = useState<CruiseFormData>({
+    const [formData, setFormData] = useState({
         name: cruise.name,
         length: cruise.length,
-        crew: cruise.crew,
+        crew: cruise.crewMembers.length,
         startDate: cruise.startDate || ''
     });
-    const [errors, setErrors] = useState<CruiseFormErrors>({
+    const [errors, setErrors] = useState({
         name: '',
         length: '',
         crew: '',
@@ -32,14 +30,14 @@ export default function EditCruiseForm({cruise}: EditCruiseFormProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value, type} = e.target;
 
-        setFormData((prev: CruiseFormData) => ({
+        setFormData((prev) => ({
             ...prev,
             [name]: type === 'number' ? Number(value) : value
         }));
 
         // Clear error when user types
         if (errors[name as keyof typeof errors]) {
-            setErrors((prev: CruiseFormErrors) => ({
+            setErrors((prev) => ({
                 ...prev,
                 [name]: ''
             }));
@@ -47,9 +45,18 @@ export default function EditCruiseForm({cruise}: EditCruiseFormProps) {
     };
 
     const validateForm = () => {
-        const newErrors = validateCruiseForm(formData);
+        const newErrors = { name: '', length: '', crew: '', startDate: '' };
+        if (!formData.name.trim()) {
+            newErrors.name = 'Nazwa rejsu jest wymagana';
+        }
+        if (formData.length < 1) {
+            newErrors.length = 'Długość rejsu musi być większa niż 0';
+        }
+        if (formData.crew < 1) {
+            newErrors.crew = 'Liczba załogantów musi być większa niż 0';
+        }
         setErrors(newErrors);
-        return isCruiseFormValid(newErrors);
+        return !Object.values(newErrors).some(e => e !== '');
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -67,7 +74,10 @@ export default function EditCruiseForm({cruise}: EditCruiseFormProps) {
             }
         }
 
-        updateCruiseDetails(cruise.id, formData.name, formData.length, formData.crew, formData.startDate || undefined);
+        const crewMembers: CrewMember[] = Array.from({ length: formData.crew }, (_, i) => 
+            cruise.crewMembers[i] ?? { id: '', tags: ['omnivore'] as const }
+        );
+        updateCruiseDetails(cruise.id, formData.name, formData.length, crewMembers, formData.startDate || undefined);
         router.push(`/rejsy?id=${cruise.id}`);
     };
 

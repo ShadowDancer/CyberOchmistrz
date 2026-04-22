@@ -52,11 +52,11 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
     // Add recipes
     const recipeSources = item.sources.filter(s => s.type === 'recipe') as RecipeAmountSource[];
     if (recipeSources.length > 0) {
-      tooltipContent += `Z przepisów (załoga: ${cruise.crew} osób):\n`;
+      tooltipContent += `Z przepisów (załoga: ${cruise.crewMembers.length} osób):\n`;
       recipeSources.forEach(source => {
         if (source.recipeName && source.dayNumber !== undefined) {
-          const scaledAmount = source.amount * cruise.crew;
-          tooltipContent += `- ${source.recipeName} (dzień ${source.dayNumber}): ${source.amount} ${declineUnit(item.supply.unit, source.amount)} × ${cruise.crew} ${declineUnit('załogant', cruise.crew)} = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}\n`;
+          const scaledAmount = source.amount * cruise.crewMembers.length;
+          tooltipContent += `- ${source.recipeName} (dzień ${source.dayNumber}): ${source.amount} ${declineUnit(item.supply.unit, source.amount)} × ${cruise.crewMembers.length} ${declineUnit('załogant', cruise.crewMembers.length)} = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}\n`;
         }
       });
     }
@@ -67,11 +67,11 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
       if (tooltipContent) tooltipContent += '\n';
       tooltipContent += `Z dodatkowych zakupów:\n`;
       additionalSources.forEach(source => {
-        const crewMultiplier = source.isPerPerson ? cruise.crew : 1;
+        const crewMultiplier = source.isPerPerson ? cruise.crewMembers.length : 1;
         const dayMultiplier = source.isPerDay ? cruise.length : 1;
         const scaledAmount = source.amount * crewMultiplier * dayMultiplier;
         let calculation = `${source.amount} ${declineUnit(item.supply.unit, source.amount)}`;
-        if (source.isPerPerson) calculation += ` × ${cruise.crew} ${declineUnit('załogant', cruise.crew)}`;
+        if (source.isPerPerson) calculation += ` × ${cruise.crewMembers.length} ${declineUnit('załogant', cruise.crewMembers.length)}`;
         if (source.isPerDay) calculation += ` × ${cruise.length} dni`;
         if (source.isPerPerson || source.isPerDay){
           calculation += ` = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}`;

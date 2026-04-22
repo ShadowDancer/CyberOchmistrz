@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, Recipie } from '../types';
+import { Cruise, Recipie, MealType } from '../types';
 import {
   addRecipeToCruiseDay,
   removeRecipeFromCruiseDay,
@@ -103,7 +103,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
         // Create a deep copy of the recipe to store with the day
         const recipeSnapshot = JSON.parse(JSON.stringify(fullRecipe));
         // Add original recipe ID reference and the recipe copy to the cruise day
-        addRecipeToCruiseDay(cruise.id, selectedDay, recipie.id.toString(), recipeSnapshot);
+        addRecipeToCruiseDay(cruise.id, selectedDay, recipie.id.toString(), recipeSnapshot, cruise.crewMembers.length, recipeSnapshot.mealType?.[0] ?? MealType.BREAKFAST);
       }
       
       // Trigger parent refresh
@@ -249,7 +249,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
       if (!fullRecipe) return;
 
       const recipeSnapshot = JSON.parse(JSON.stringify(fullRecipe));
-      addRecipeToCruiseDay(cruise.id, selectedDay, recipeId, recipeSnapshot);
+      addRecipeToCruiseDay(cruise.id, selectedDay, recipeId, recipeSnapshot, cruise.crewMembers.length, recipeSnapshot.mealType?.[0] ?? MealType.BREAKFAST);
       onCruiseChange();
       return;
     }

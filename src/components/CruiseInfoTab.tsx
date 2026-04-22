@@ -54,7 +54,7 @@ export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
             </div>
             <div className="info-detail-row">
               <span className="info-detail-label">Liczba załogantów:</span>
-              <span>{cruise.crew} osób</span>
+              <span>{cruise.crewMembers.length} osób</span>
             </div>
           </div>
         </div>
@@ -67,10 +67,7 @@ export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
         >
           Edytuj rejs
         </button>
-        <button
-          onClick={handleDelete}
-          className="btn-small btn-remove"
-        >
+        <button onClick={handleDelete} className="btn-small btn-remove">
           Usuń rejs
         </button>
       </div>

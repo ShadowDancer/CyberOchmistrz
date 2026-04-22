@@ -71,7 +71,7 @@ export default function CruiseList() {
                   <span className="font-medium">Długość:</span> {cruise.length} dni
                 </div>
                 <div>
-                  <span className="font-medium">Załoga:</span> {cruise.crew} osób
+                  <span className="font-medium">Załoga:</span> {cruise.crewMembers.length} osób
                 </div>
               </div>
             </div>
