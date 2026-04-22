@@ -195,6 +195,52 @@ describe('getMealCoverage', () => {
       expect(result.surplus).toBe(1);
     });
   });
+
+  describe('edge cases', () => {
+    it('should report all members unfed when no recipes given', () => {
+      const crew = [omni('1'), vegan('2')];
+      const result = getMealCoverage([], crew, MealType.DINNER);
+      expect(result.unfed).toHaveLength(2);
+      expect(result.totalPortions).toBe(0);
+      expect(result.surplus).toBe(0);
+    });
+
+    it('should feed member with empty tags (vacuously compatible)', () => {
+      const noTags = member('x');
+      const result = getMealCoverage([slot(spaghetti, 1)], [noTags], MealType.DINNER);
+      expect(result.unfed).toHaveLength(0);
+    });
+
+    it('should restrict multi-tag member by known tag but ignore unknown tag', () => {
+      const multiTag = member('x', 'vegetarian', 'halal');
+      const cantEatMeat = getMealCoverage([slot(spaghetti, 1)], [multiTag], MealType.DINNER);
+      expect(cantEatMeat.unfed).toHaveLength(1);
+      const canEatCheese = getMealCoverage([slot(pasta, 1)], [multiTag], MealType.DINNER);
+      expect(canEatCheese.unfed).toHaveLength(0);
+    });
+
+    it('should leave member unfed when recipe has crewCount 0', () => {
+      const result = getMealCoverage([slot(spaghetti, 0)], [omni('1')], MealType.DINNER);
+      expect(result.unfed).toHaveLength(1);
+    });
+
+    it('should report surplus and unfed simultaneously when diet mismatch', () => {
+      // 5 meat portions for 1 vegan → surplus 4 (max(0, 5-1)), vegan unfed
+      const result = getMealCoverage([slot(spaghetti, 5)], [vegan('1')], MealType.DINNER);
+      expect(result.surplus).toBe(4);
+      expect(result.unfed).toHaveLength(1);
+    });
+
+    it('should report all unfed with correct tag counts when all recipes incompatible', () => {
+      const result = getMealCoverage(
+        [slot(spaghetti, 2), slot(eggs, 2)],
+        [vegan('1'), vegan('2')],
+        MealType.DINNER
+      );
+      expect(result.unfed).toHaveLength(2);
+      expect(result.missingTagCounts.vegan).toBe(2);
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -241,6 +287,62 @@ describe('getDayCoverage', () => {
     const report = getDayCoverage(1, [slot(spaghetti, 3)], crew);
     expect(report.hasSurplus).toBe(true);
   });
+
+  it('should not be fully covered when crew present but no recipes', () => {
+    const report = getDayCoverage(1, [], [omni('1')]);
+    expect(report.isFullyCovered).toBe(false);
+    expect(report.hasSurplus).toBe(false);
+  });
+
+  it('should be fully covered when both crew and recipes empty', () => {
+    const report = getDayCoverage(1, [], []);
+    expect(report.meals).toHaveLength(0);
+    expect(report.isFullyCovered).toBe(true);
+  });
+
+  it('should compute each meal type independently', () => {
+    const breakfastSlot = slot(eggs, 2, MealType.BREAKFAST);
+    const dinnerSlot = slot(spaghetti, 2, MealType.DINNER);
+    const crew = [omni('1'), omni('2')];
+    const report = getDayCoverage(1, [breakfastSlot, dinnerSlot], crew);
+    expect(report.meals).toHaveLength(2);
+    expect(report.meals.find(m => m.mealType === MealType.BREAKFAST)?.unfed).toHaveLength(0);
+    expect(report.meals.find(m => m.mealType === MealType.DINNER)?.unfed).toHaveLength(0);
+  });
+
+  it('should report fully covered with no surplus on exact match', () => {
+    const crew = [omni('1'), omni('2')];
+    const report = getDayCoverage(1, [slot(spaghetti, 2)], crew);
+    expect(report.isFullyCovered).toBe(true);
+    expect(report.hasSurplus).toBe(false);
+  });
+
+  it('should report ok / unfed / surplus across three different meals in one day', () => {
+    const crew = [omni('1'), omni('2'), omni('3'), vegan('4')];
+    const report = getDayCoverage(1, [
+      slot(eggs, 3, MealType.BREAKFAST), slot(tofu, 1, MealType.BREAKFAST), // 3 omni + 1 vegan = exact
+      slot(spaghetti, 4, MealType.DINNER),                                  // vegan can't eat meat → 1 unfed
+      slot(tofu, 6, MealType.SUPPER),                                       // vegan feeds all, 6 - 4 = 2 surplus
+    ], crew);
+
+    expect(report.meals).toHaveLength(3);
+
+    const breakfast = report.meals.find(m => m.mealType === MealType.BREAKFAST)!;
+    expect(breakfast.unfed).toHaveLength(0);
+    expect(breakfast.surplus).toBe(0);
+
+    const dinner = report.meals.find(m => m.mealType === MealType.DINNER)!;
+    expect(dinner.unfed).toHaveLength(1);
+    expect(dinner.unfed[0].id).toBe('4');
+    expect(dinner.surplus).toBe(0);
+
+    const supper = report.meals.find(m => m.mealType === MealType.SUPPER)!;
+    expect(supper.unfed).toHaveLength(0);
+    expect(supper.surplus).toBe(2);
+
+    expect(report.isFullyCovered).toBe(false);
+    expect(report.hasSurplus).toBe(true);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -253,22 +355,39 @@ describe('getCruiseCoverage', () => {
     expect(getCruiseCoverage(cruise)).toEqual([]);
   });
 
-  it('should return one report per day', () => {
-    const crew = [omni('1'), omni('2')];
+  it('should return one report per day with correct coverage per day', () => {
+    const crew = [omni('1'), omni('2'), vegan('3')];
     const cruise: Cruise = {
       id: 'c', name: 'c', dateCreated: '', dateModified: '',
       length: 3,
       crewMembers: crew,
       days: [
-        { dayNumber: 1, recipes: [slot(spaghetti, 2)] },
-        { dayNumber: 2, recipes: [] },
-        { dayNumber: 3, recipes: [slot(tofu, 2)] },
+        { dayNumber: 1, recipes: [slot(spaghetti, 2), slot(tofu, 1)] }, // exact match
+        { dayNumber: 2, recipes: [slot(spaghetti, 3)] },               // vegan unfed
+        { dayNumber: 3, recipes: [slot(tofu, 5)] },                    // all fed, surplus 2
       ],
     };
     const reports = getCruiseCoverage(cruise);
     expect(reports).toHaveLength(3);
+
+    // Day 1: fully covered, no surplus
     expect(reports[0].dayNumber).toBe(1);
+    expect(reports[0].isFullyCovered).toBe(true);
+    expect(reports[0].hasSurplus).toBe(false);
+
+    // Day 2: vegan unfed (3 meat portions, but vegan can't eat)
+    expect(reports[1].dayNumber).toBe(2);
+    expect(reports[1].isFullyCovered).toBe(false);
+    const day2Dinner = reports[1].meals.find(m => m.mealType === MealType.DINNER)!;
+    expect(day2Dinner.unfed).toHaveLength(1);
+    expect(day2Dinner.unfed[0].id).toBe('3');
+
+    // Day 3: all fed via vegan recipe, surplus = 5 - 3 = 2
     expect(reports[2].dayNumber).toBe(3);
+    expect(reports[2].isFullyCovered).toBe(true);
+    expect(reports[2].hasSurplus).toBe(true);
+    const day3Dinner = reports[2].meals.find(m => m.mealType === MealType.DINNER)!;
+    expect(day3Dinner.surplus).toBe(2);
   });
 });
 
@@ -284,6 +403,10 @@ describe('countCrewWithTag', () => {
     expect(countCrewWithTag(cruise, 'vegetarian')).toBe(1);
     expect(countCrewWithTag(cruise, 'gluten-free')).toBe(0);
   });
+
+  it('should return 0 for empty crew', () => {
+    expect(countCrewWithTag(makeCruise([]), 'omnivore')).toBe(0);
+  });
 });
 
 describe('getActiveDietTags', () => {
@@ -293,6 +416,15 @@ describe('getActiveDietTags', () => {
     expect(tags).toContain('omnivore');
     expect(tags).toContain('vegan');
     expect(tags).not.toContain('vegetarian');
+  });
+
+  it('should return empty array for empty crew', () => {
+    expect(getActiveDietTags(makeCruise([]))).toEqual([]);
+  });
+
+  it('should return empty array when crew has only unknown tags', () => {
+    // halal not in DIET_TAGS → filtered out
+    expect(getActiveDietTags(makeCruise([halal('1')]))).toEqual([]);
   });
 });
 

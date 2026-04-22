@@ -210,7 +210,7 @@ export function getDayCoverage(
   return {
     dayNumber,
     meals,
-    isFullyCovered: meals.every(m => m.unfed.length === 0),
+    isFullyCovered: members.length === 0 || (meals.length > 0 && meals.every(m => m.unfed.length === 0)),
     hasSurplus: meals.some(m => m.surplus > 0),
   };
 }
