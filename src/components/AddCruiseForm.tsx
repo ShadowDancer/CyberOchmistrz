@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { createNewCruise, saveCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import { CrewMember } from "../types";
-import { DIET_TAGS, DietTag } from '../model/dietTags';
 
 export default function AddCruiseForm() {
   const router = useRouter();
