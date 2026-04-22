@@ -207,10 +207,14 @@ export function getDayCoverage(
     meals.push(getMealCoverage(slotRecipes, members, slot));
   }
 
+  const NON_SNACK_MEALS = [MealType.BREAKFAST, MealType.DINNER, MealType.SUPPER];
+  const presentMealTypes = new Set(meals.map(m => m.mealType));
+  const allNonSnackPresent = NON_SNACK_MEALS.every(t => presentMealTypes.has(t));
+
   return {
     dayNumber,
     meals,
-    isFullyCovered: members.length === 0 || (meals.length > 0 && meals.every(m => m.unfed.length === 0)),
+    isFullyCovered: members.length === 0 || (allNonSnackPresent && meals.every(m => m.unfed.length === 0)),
     hasSurplus: meals.some(m => m.surplus > 0),
   };
 }

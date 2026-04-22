@@ -312,9 +312,33 @@ describe('getDayCoverage', () => {
 
   it('should report fully covered with no surplus on exact match', () => {
     const crew = [omni('1'), omni('2')];
-    const report = getDayCoverage(1, [slot(spaghetti, 2)], crew);
+    const report = getDayCoverage(1, [
+      slot(spaghetti, 2, MealType.BREAKFAST),
+      slot(spaghetti, 2, MealType.DINNER),
+      slot(spaghetti, 2, MealType.SUPPER),
+    ], crew);
     expect(report.isFullyCovered).toBe(true);
     expect(report.hasSurplus).toBe(false);
+  });
+
+  it('should not be fully covered when a non-snack meal type is missing', () => {
+    const crew = [omni('1'), omni('2')];
+    // Only breakfast + dinner — supper missing → not fully covered
+    const report = getDayCoverage(1, [
+      slot(spaghetti, 2, MealType.BREAKFAST),
+      slot(spaghetti, 2, MealType.DINNER),
+    ], crew);
+    expect(report.isFullyCovered).toBe(false);
+  });
+
+  it('should be fully covered with all non-snack meals present even without snack', () => {
+    const crew = [omni('1'), omni('2')];
+    const report = getDayCoverage(1, [
+      slot(spaghetti, 2, MealType.BREAKFAST),
+      slot(spaghetti, 2, MealType.DINNER),
+      slot(spaghetti, 2, MealType.SUPPER),
+    ], crew);
+    expect(report.isFullyCovered).toBe(true);
   });
 
   it('should report ok / unfed / surplus across three different meals in one day', () => {
@@ -362,9 +386,17 @@ describe('getCruiseCoverage', () => {
       length: 3,
       crewMembers: crew,
       days: [
-        { dayNumber: 1, recipes: [slot(spaghetti, 2), slot(tofu, 1)] }, // exact match
-        { dayNumber: 2, recipes: [slot(spaghetti, 3)] },               // vegan unfed
-        { dayNumber: 3, recipes: [slot(tofu, 5)] },                    // all fed, surplus 2
+        { dayNumber: 1, recipes: [
+          slot(tofu, 3, MealType.BREAKFAST),
+          slot(spaghetti, 2), slot(tofu, 1),      // dinner: exact match
+          slot(tofu, 3, MealType.SUPPER),
+        ]},
+        { dayNumber: 2, recipes: [slot(spaghetti, 3)] },               // vegan unfed + missing meals
+        { dayNumber: 3, recipes: [
+          slot(tofu, 3, MealType.BREAKFAST),
+          slot(tofu, 5),                           // dinner: all fed, surplus 2
+          slot(tofu, 3, MealType.SUPPER),
+        ]},
       ],
     };
     const reports = getCruiseCoverage(cruise);
