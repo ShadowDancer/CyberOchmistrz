@@ -1,6 +1,6 @@
 import { Cruise, CrewMember, CruiseDayRecipe, MealType } from "../types";
-import { DIET_TAGS, DIET_TAG_REGISTRY, DietTagId } from "./dietTags";
-import { maxFlow, addEdge, FlowEdge } from "../utils/maxFlow";
+import { DIET_TAGS, DIET_REGISTRY, DietTagId } from "./dietTags";
+import { CrewRecipeAllocationChecker } from "../utils/maxFlow";
 
 // ---------------------------------------------------------------------------
 // Report types
@@ -82,70 +82,51 @@ export function getMealCoverage(
   const totalPortions = slotRecipes.reduce((s, r) => s + r.crewCount, 0);
 
   if (members.length === 0) {
-    return {
-      mealType: mealSlot,
-      totalPortions,
-      totalNeeded: 0,
-      unfed: [],
-      missingTagCounts: Object.fromEntries(
-        DIET_TAGS.map((t) => [t, 0]),
-      ) as Record<DietTagId, number>,
-      surplus: totalPortions,
-    };
+    return defaultMealCoverage(mealSlot, totalPortions);
   }
 
-  // Node layout:
-  //   0         = source
-  //   1..M      = member nodes (M = members.length)
-  //   M+1..M+R  = recipe nodes (R = slotRecipes.length)
-  //   M+R+1     = sink
-  const M = members.length;
-  const R = slotRecipes.length;
-  const source = 0;
-  const sink = M + R + 1;
-  const nodeCount = sink + 1;
+  const allocationChecker = new CrewRecipeAllocationChecker(members, slotRecipes, (member, recipe) => {
+    return member.tags.every((tag) => {
+      const diet = DIET_REGISTRY[tag as DietTagId];
+      // Unknown tags are treated as non-restrictive
+      return diet === undefined || diet.satisfies(recipe.recipeData);
+    })
+  });
 
-  const g: FlowEdge[][] = Array.from({ length: nodeCount }, () => []);
+  const unfed = allocationChecker.getUnfedCrewMembers();
 
-  // Source → each member (cap 1)
-  for (let i = 0; i < M; i++) {
-    addEdge(g, source, i + 1, 1);
-  }
+  return {
+    mealType: mealSlot,
+    totalPortions,
+    totalNeeded,
+    unfed,
+    missingTagCounts: getMissingTagCounts(unfed),
+    surplus: Math.max(0, totalPortions - totalNeeded),
+  };
+}
 
-  // Member → recipe edges (cap 1 each) if recipe satisfies all known tags of member
-  for (let i = 0; i < M; i++) {
-    const member = members[i];
-    for (let j = 0; j < R; j++) {
-      const recipe = slotRecipes[j];
-      const compatible = member.tags.every((tag) => {
-        const def = DIET_TAG_REGISTRY[tag as DietTagId];
-        // Unknown tags are treated as non-restrictive
-        return def === undefined || def.satisfies(recipe.recipeData);
-      });
-      if (compatible) {
-        addEdge(g, i + 1, M + 1 + j, 1);
-      }
-    }
-  }
+// ---------------------------------------------------------------------------
+// Helper utilities
+// ---------------------------------------------------------------------------
 
-  // Recipe → sink (cap = crewCount)
-  for (let j = 0; j < R; j++) {
-    addEdge(g, M + 1 + j, sink, slotRecipes[j].crewCount);
-  }
+function defaultMealCoverage(mealSlot: MealType, totalPortions: number): MealCoverage {
+  return {
+    mealType: mealSlot,
+    totalPortions,
+    totalNeeded: 0,
+    unfed: [],
+    missingTagCounts: Object.fromEntries(
+      DIET_TAGS.map((t) => [t, 0]),
+    ) as Record<DietTagId, number>,
+    surplus: totalPortions,
+  };
+}
 
-  maxFlow(g, source, sink);
-
-  // Identify unfed members: source→member_i edge (g[source][i]) still has cap=1 if no flow went through it.
-  const unfed: CrewMember[] = [];
-  for (let i = 0; i < M; i++) {
-    if (g[source][i].cap > 0) {
-      unfed.push(members[i]);
-    }
-  }
-
+function getMissingTagCounts(unfed: CrewMember[]): Record<DietTagId, number> {
   const missingTagCounts = Object.fromEntries(
     DIET_TAGS.map((t) => [t, 0]),
   ) as Record<DietTagId, number>;
+
   for (const member of unfed) {
     for (const tag of member.tags) {
       if (tag in missingTagCounts) {
@@ -154,21 +135,8 @@ export function getMealCoverage(
     }
   }
 
-  const surplus = Math.max(0, totalPortions - totalNeeded);
-
-  return {
-    mealType: mealSlot,
-    totalPortions,
-    totalNeeded,
-    unfed,
-    missingTagCounts,
-    surplus,
-  };
+  return missingTagCounts;
 }
-
-// ---------------------------------------------------------------------------
-// Helper utilities
-// ---------------------------------------------------------------------------
 
 export function countCrewWithTag(cruise: Cruise, tag: string): number {
   return cruise.crewMembers.filter((m) => m.tags.includes(tag)).length;

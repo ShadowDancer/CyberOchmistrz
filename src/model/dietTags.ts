@@ -15,7 +15,7 @@ export interface DietTag {
   isDefault?: boolean;
 }
 
-export const DIET_TAG_REGISTRY: Record<DietTagId, DietTag> = {
+export const DIET_REGISTRY: Record<DietTagId, DietTag> = {
   omnivore: {
     id: "omnivore",
     labelPl: "wszystkożerna",
@@ -39,7 +39,3 @@ export const DIET_TAG_REGISTRY: Record<DietTagId, DietTag> = {
     exclusiveGroup: "diet",
   },
 };
-
-export function isKnownDietTag(tag: string): tag is DietTagId {
-  return tag in DIET_TAG_REGISTRY;
-}
