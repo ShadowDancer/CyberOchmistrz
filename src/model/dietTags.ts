@@ -2,10 +2,10 @@ import { Recipie } from "../types";
 import { isRecipieVegan, isRecipieVegetarian } from "./recipieData";
 
 export const DIET_TAGS = ["omnivore", "vegetarian", "vegan"] as const;
-export type DietTag = (typeof DIET_TAGS)[number];
+export type DietTagId = (typeof DIET_TAGS)[number];
 
-export interface DietTagDefinition {
-  id: DietTag;
+export interface DietTag {
+  id: DietTagId;
   labelPl: string;
   shortPl: string;
   satisfies: (recipe: Recipie) => boolean;
@@ -15,7 +15,7 @@ export interface DietTagDefinition {
   isDefault?: boolean;
 }
 
-export const DIET_TAG_REGISTRY: Record<DietTag, DietTagDefinition> = {
+export const DIET_TAG_REGISTRY: Record<DietTagId, DietTag> = {
   omnivore: {
     id: "omnivore",
     labelPl: "wszystkożerna",
@@ -40,6 +40,6 @@ export const DIET_TAG_REGISTRY: Record<DietTag, DietTagDefinition> = {
   },
 };
 
-export function isKnownDietTag(tag: string): tag is DietTag {
+export function isKnownDietTag(tag: string): tag is DietTagId {
   return tag in DIET_TAG_REGISTRY;
 }
