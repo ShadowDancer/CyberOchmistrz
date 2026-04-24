@@ -52,11 +52,12 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
     // Add recipes
     const recipeSources = item.sources.filter(s => s.type === 'recipe') as RecipeAmountSource[];
     if (recipeSources.length > 0) {
-      tooltipContent += `Z przepisów (załoga: ${cruise.crewMembers.length} osób):\n`;
+      tooltipContent += `Z przepisów:\n`;
       recipeSources.forEach(source => {
         if (source.recipeName && source.dayNumber !== undefined) {
-          const scaledAmount = source.amount * cruise.crewMembers.length;
-          tooltipContent += `- ${source.recipeName} (dzień ${source.dayNumber}): ${source.amount} ${declineUnit(item.supply.unit, source.amount)} × ${cruise.crewMembers.length} ${declineUnit('załogant', cruise.crewMembers.length)} = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}\n`;
+          const crewCount = source.crewCount ?? 1;
+          const scaledAmount = source.amount * crewCount;
+          tooltipContent += `- Dzień ${source.dayNumber}, ${source.recipeName}: ${source.amount} ${declineUnit(item.supply.unit, source.amount)} × ${crewCount} ${declineUnit('załogant', crewCount)} = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}\n`;
         }
       });
     }
