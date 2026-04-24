@@ -1,7 +1,6 @@
-import { getMealCoverage, getDayCoverage, getCruiseCoverage, countCrewWithTag, getActiveDietTags, getDefaultCrewCount } from '../src/model/cruiseDietCoverage';
+import { getMealCoverage, getDayCoverage, getCruiseCoverage, countCrewWithTag, getActiveDietTags } from '../src/model/cruiseDietCoverage';
 import { createRecipie } from '../src/model/recipieData';
 import { CrewMember, CruiseDayRecipe, MealType, Recipie, Cruise } from '../src/types';
-import theories from 'jest-theories';
 
 // Mock supplies so isRecipieVegan/isRecipieVegetarian work deterministically
 jest.mock('../src/data/supplies.json', () => [
@@ -457,54 +456,5 @@ describe('getActiveDietTags', () => {
   it('should return empty array when crew has only unknown tags', () => {
     // halal not in DIET_TAGS → filtered out
     expect(getActiveDietTags(makeCruise([halal('1')]))).toEqual([]);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// getDefaultCrewCount
-// ---------------------------------------------------------------------------
-
-describe('getDefaultCrewCount', () => {
-  const mixedCrew = [
-    omni('1'), omni('2'), omni('3'),
-    veg('4'), veg('5'),
-    vegan('6'),
-  ];
-
-  it('vegan recipe + mixed crew → full crew size', () => {
-    const cruise = makeCruise(mixedCrew);
-    expect(getDefaultCrewCount(cruise, tofu)).toBe(6);
-  });
-
-  it('vegetarian (non-vegan) recipe + mixed crew → total minus vegan count', () => {
-    const cruise = makeCruise(mixedCrew);
-    expect(getDefaultCrewCount(cruise, pasta)).toBe(5);
-  });
-
-  it('omnivore recipe + mixed crew → omnivore count', () => {
-    const cruise = makeCruise(mixedCrew);
-    expect(getDefaultCrewCount(cruise, spaghetti)).toBe(3);
-  });
-
-  it('vegan recipe + all-omni crew → full crew size', () => {
-    const cruise = makeCruise([omni('1'), omni('2')]);
-    expect(getDefaultCrewCount(cruise, tofu)).toBe(2);
-  });
-
-  it('omnivore recipe + crew with no omnivores → 0', () => {
-    const cruise = makeCruise([veg('1'), vegan('2')]);
-    expect(getDefaultCrewCount(cruise, spaghetti)).toBe(0);
-  });
-
-  it('vegetarian recipe + crew with all vegans → crewSize - veganCount = 0', () => {
-    const cruise = makeCruise([vegan('1'), vegan('2')]);
-    expect(getDefaultCrewCount(cruise, pasta)).toBe(0);
-  });
-
-  it('should return 0 cleanly for empty crew', () => {
-    const cruise = makeCruise([]);
-    expect(getDefaultCrewCount(cruise, spaghetti)).toBe(0);
-    expect(getDefaultCrewCount(cruise, pasta)).toBe(0);
-    expect(getDefaultCrewCount(cruise, tofu)).toBe(0);
   });
 });

@@ -26,7 +26,7 @@ export function getIngredientById(id: string): Ingredient | undefined {
 }
 
 export function getRecipieIngredients(ingredients: IngredientAmount[]): (IngredientAmount & Ingredient)[] {
- 
+
   return ingredients.map(ing => {
     const ingredient = getIngredientById(ing.id);
     if (!ingredient) {
@@ -67,12 +67,3 @@ export function isRecipieVegan(dish: Recipie): boolean {
   if (ingredients.length === 0) return false;
   return ingredients.every(ing => ing.isVegan);
 }
-
-export type RecipieDietCategory = 'vegan' | 'vegetarian' | 'omnivore';
-
-export function getRecipieDietCategory(dish: Recipie): RecipieDietCategory {
-  if (isRecipieVegan(dish)) return 'vegan';
-  if (isRecipieVegetarian(dish)) return 'vegetarian';
-  return 'omnivore';
-}
-

@@ -1,6 +1,5 @@
 import { Cruise, CrewMember, CruiseDayRecipe, MealType } from "../types";
 import { DIET_TAGS, DIET_TAG_REGISTRY, DietTagId } from "./dietTags";
-import { getRecipieDietCategory } from "./recipieData";
 import { maxFlow, addEdge, FlowEdge } from "../utils/maxFlow";
 
 // ---------------------------------------------------------------------------
@@ -179,19 +178,4 @@ export function getActiveDietTags(cruise: Cruise): DietTagId[] {
   const present = new Set<string>();
   cruise.crewMembers.forEach((m) => m.tags.forEach((t) => present.add(t)));
   return DIET_TAGS.filter((t) => present.has(t));
-}
-
-export function getDefaultCrewCount(
-  cruise: Cruise,
-  recipe: CruiseDayRecipe["recipeData"],
-): number {
-  const category = getRecipieDietCategory(recipe);
-  switch (category) {
-    case "vegan":
-      return cruise.crewMembers.length;
-    case "vegetarian":
-      return cruise.crewMembers.length - countCrewWithTag(cruise, "vegan");
-    case "omnivore":
-      return countCrewWithTag(cruise, "omnivore");
-  }
 }
