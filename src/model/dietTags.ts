@@ -19,7 +19,7 @@ export const DIET_REGISTRY: Record<DietTagId, DietTag> = {
   omnivore: {
     id: "omnivore",
     labelPl: "wszystkożerna",
-    shortPl: "Omni.",
+    shortPl: "Wszystkoż.",
     satisfies: () => true,
     exclusiveGroup: "diet",
     isDefault: true,
