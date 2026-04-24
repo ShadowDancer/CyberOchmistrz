@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Cruise, Recipie, MealType } from '../types';
 import {
   addRecipeToCruiseDay,
@@ -14,7 +14,6 @@ import {
   setRecipeCrewCount,
   setRecipeMealSlot,
 } from '../model/cruiseData';
-import { getCruiseCoverage } from '../model/cruiseDietCoverage';
 import { getRecipeById } from '../model/recipieData';
 import { getSupplyById } from '../model/supplyData';
 import RecipeList from './RecipeList';
@@ -72,13 +71,6 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
       setSelectedDay(firstDay);
     }
   }, [cruise.days, selectedDay]);
-
-  const coverageByDay = useMemo(() => {
-    const reports = getCruiseCoverage(cruise);
-    const map = new Map<number, ReturnType<typeof getCruiseCoverage>[number]>();
-    reports.forEach((r) => map.set(r.dayNumber, r));
-    return map;
-  }, [cruise]);
 
   const handleDaySelect = (dayNumber: number) => {
     setSelectedDay(dayNumber === selectedDay ? null : dayNumber);
@@ -458,11 +450,11 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
                 key={day.dayNumber}
                 dayNumber={day.dayNumber}
                 recipes={day.recipes}
+                crewMembers={cruise.crewMembers}
                 isSelected={selectedDay === day.dayNumber}
                 isOver={overId === `day-list-${day.dayNumber}`}
                 onClick={() => handleDaySelect(day.dayNumber)}
                 startDate={cruise.startDate}
-                coverageReport={coverageByDay.get(day.dayNumber)}
               />
             ))}
           </div>

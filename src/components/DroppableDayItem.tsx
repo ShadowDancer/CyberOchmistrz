@@ -2,27 +2,33 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { getRecipeById } from '../model/recipieData';
-import { Recipie } from '../types';
-import { DayCoverageReport } from '../model/cruiseDietCoverage';
+import { getMealCoverage, MealCoverage } from '../model/cruiseDietCoverage';
+import { CrewMember, CruiseDayRecipe, MealType } from '../types';
+
+const MEAL_SLOT_DOTS: { slot: MealType; label: string }[] = [
+  { slot: MealType.BREAKFAST, label: 'Śniadanie' },
+  { slot: MealType.DINNER, label: 'Obiad' },
+  { slot: MealType.SUPPER, label: 'Kolacja' },
+];
 
 interface DroppableDayItemProps {
   dayNumber: number;
-  recipes: { originalRecipeId: string; recipeData?: Recipie }[];
+  recipes: CruiseDayRecipe[];
+  crewMembers: CrewMember[];
   isSelected: boolean;
   isOver: boolean;
   onClick: () => void;
   startDate?: string;
-  coverageReport?: DayCoverageReport;
 }
 
 export default function DroppableDayItem({
   dayNumber,
   recipes,
+  crewMembers,
   isSelected,
   isOver,
   onClick,
   startDate,
-  coverageReport,
 }: DroppableDayItemProps) {
   const { setNodeRef } = useDroppable({
     id: `day-list-${dayNumber}`,
@@ -55,8 +61,6 @@ export default function DroppableDayItem({
 
   const dateInfo = getDateInfo();
 
-  const dot = getStatusDot(coverageReport);
-
   return (
     <div
       ref={setNodeRef}
@@ -71,28 +75,53 @@ export default function DroppableDayItem({
     >
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="font-medium text-sm md:text-base flex items-center gap-2">
+          <h3 className="font-medium text-sm md:text-base">
             <span>Dzień {dayNumber}</span>
-            {dot && (
-              <span
-                className={`w-2 h-2 rounded-full inline-block ${dot.className}`}
-                title={dot.title}
-                aria-label={dot.title}
-              />
-            )}
           </h3>
           {dateInfo && (
             <p className="text-xs text-muted-light mt-1">{dateInfo}</p>
           )}
         </div>
-        <span className="text-xs md:text-sm text-muted-light">
-          {dayRecipes}{' '}
-          {dayRecipes === 1
-            ? 'przepis'
-            : dayRecipes > 1 && dayRecipes < 5
-            ? 'przepisy'
-            : 'przepisów'}
-        </span>
+        <div
+          className="grid w-[7.5rem] shrink-0 grid-cols-[auto_1fr] items-center gap-1.5 pl-1 text-xs sm:w-[8rem] sm:gap-2 md:text-sm"
+        >
+          <span
+            className="inline-flex items-center justify-center gap-0.5 self-center"
+            role="list"
+            aria-label="Status śniadania, obiadu, kolacji"
+          >
+            {MEAL_SLOT_DOTS.map(({ slot, label }) => {
+              const slotRecipes = recipes.filter((r) => r.mealSlot === slot);
+              const coverage = getMealCoverage(
+                slotRecipes,
+                crewMembers,
+                slot,
+              );
+              const dot = mealStatusDot(
+                coverage,
+                slotRecipes.length === 0,
+                label,
+              );
+              return (
+                <span
+                  key={slot}
+                  role="listitem"
+                  className={`w-2 h-2 rounded-full shrink-0 ${dot.className}`}
+                  title={dot.title}
+                  aria-label={dot.title}
+                />
+              );
+            })}
+          </span>
+          <span className="min-w-0 text-center text-muted-light tabular-nums leading-tight">
+            {dayRecipes}{' '}
+            {dayRecipes === 1
+              ? 'przepis'
+              : dayRecipes > 1 && dayRecipes < 5
+              ? 'przepisy'
+              : 'przepisów'}
+          </span>
+        </div>
       </div>
 
       {dayRecipes > 0 && (
@@ -118,30 +147,36 @@ export default function DroppableDayItem({
   );
 }
 
-function getStatusDot(
-  report?: DayCoverageReport,
-): { className: string; title: string } | null {
-  if (!report) return null;
+/** Same rules as `CoverageDisplay` in DroppableRecipieContainer (per meal slot). */
+function mealStatusDot(
+  coverage: MealCoverage,
+  isSlotEmpty: boolean,
+  mealLabel: string,
+): { className: string; title: string } {
+  const { totalPortions, totalNeeded, unfed, surplus } = coverage;
+  const ratio = `${totalPortions}/${totalNeeded}`;
 
-  const allUnfed = report.meals.flatMap((m) => m.unfed);
-  if (allUnfed.length > 0) {
-    const first = allUnfed[0];
-    const firstName = first.name;
-    const rest = allUnfed.length - 1;
-    const title =
-      rest > 0
-        ? `Niedobór: ${firstName} i ${rest} innych`
-        : `Niedobór: ${firstName}`;
-    return { className: 'bg-red-500', title };
-  }
-
-  const totalSurplus = report.meals.reduce((sum, m) => sum + m.surplus, 0);
-  if (totalSurplus > 0) {
+  if (isSlotEmpty) {
     return {
-      className: 'bg-yellow-500',
-      title: `Nadmiar: ${totalSurplus} porcji`,
+      className:
+        'box-border border-2 border-gray-400 bg-transparent dark:border-gray-500',
+      title: `${mealLabel}: ${ratio} - Dodaj racje`,
     };
   }
-
-  return null;
+  if (unfed.length > 0) {
+    return {
+      className: 'bg-red-500',
+      title: `${mealLabel}: ${ratio} - Braki w kambuzie`,
+    };
+  }
+  if (surplus > 0) {
+    return {
+      className: 'bg-yellow-500',
+      title: `${mealLabel}: ${ratio} - Nadwyżka racji`,
+    };
+  }
+  return {
+    className: 'bg-green-500',
+    title: `${mealLabel}: ${ratio} - Zaprowiantowano`,
+  };
 }
