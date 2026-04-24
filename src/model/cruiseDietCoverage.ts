@@ -1,19 +1,11 @@
 import { Cruise, CrewMember, CruiseDayRecipe, MealType } from "../types";
-import { DIET_TAGS, DIET_TAG_REGISTRY, DietTag } from "./dietTags";
+import { DIET_TAGS, DIET_TAG_REGISTRY, DietTagId } from "./dietTags";
 import { getRecipieDietCategory } from "./recipieData";
+import { maxFlow, addEdge, FlowEdge } from "../utils/maxFlow";
 
 // ---------------------------------------------------------------------------
 // Report types
 // ---------------------------------------------------------------------------
-
-export interface MealCoverage {
-  mealType: MealType;
-  totalPortions: number;
-  totalNeeded: number;
-  unfed: CrewMember[];
-  missingTagCounts: Record<DietTag, number>;
-  surplus: number;
-}
 
 export interface DayCoverageReport {
   dayNumber: number;
@@ -22,87 +14,70 @@ export interface DayCoverageReport {
   hasSurplus: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Dinic's max-flow
-// ---------------------------------------------------------------------------
-
-interface FlowEdge {
-  to: number;
-  cap: number;
-  rev: number;
-}
-
-function addEdge(g: FlowEdge[][], u: number, v: number, cap: number): void {
-  g[u].push({ to: v, cap, rev: g[v].length });
-  g[v].push({ to: u, cap: 0, rev: g[u].length - 1 });
-}
-
-function bfsLevels(g: FlowEdge[][], s: number, t: number): number[] | null {
-  const level = new Array<number>(g.length).fill(-1);
-  level[s] = 0;
-  const queue: number[] = [s];
-  let head = 0;
-  while (head < queue.length) {
-    const u = queue[head++];
-    for (const e of g[u]) {
-      if (e.cap > 0 && level[e.to] === -1) {
-        level[e.to] = level[u] + 1;
-        queue.push(e.to);
-      }
-    }
-  }
-  return level[t] !== -1 ? level : null;
-}
-
-function dfsPush(
-  g: FlowEdge[][],
-  u: number,
-  t: number,
-  pushed: number,
-  level: number[],
-  iter: number[]
-): number {
-  if (u === t) return pushed;
-  for (; iter[u] < g[u].length; iter[u]++) {
-    const e = g[u][iter[u]];
-    if (e.cap > 0 && level[e.to] === level[u] + 1) {
-      const d = dfsPush(g, e.to, t, Math.min(pushed, e.cap), level, iter);
-      if (d > 0) {
-        e.cap -= d;
-        g[e.to][e.rev].cap += d;
-        return d;
-      }
-    }
-  }
-  return 0;
-}
-
-function maxFlow(g: FlowEdge[][], s: number, t: number): number {
-  let total = 0;
-  for (;;) {
-    const level = bfsLevels(g, s, t);
-
-    if (!level) return total;
-
-    const iter = new Array<number>(g.length).fill(0);
-    for (
-      let f = dfsPush(g, s, t, Infinity, level, iter);
-      f > 0;
-      f = dfsPush(g, s, t, Infinity, level, iter)
-    ) {
-      total += f;
-    }
-  }
+export interface MealCoverage {
+  mealType: MealType;
+  totalPortions: number;
+  totalNeeded: number;
+  unfed: CrewMember[];
+  missingTagCounts: Record<DietTagId, number>;
+  surplus: number;
 }
 
 // ---------------------------------------------------------------------------
 // Coverage computation
 // ---------------------------------------------------------------------------
 
+export function getCruiseCoverage(cruise: Cruise): DayCoverageReport[] {
+  if (cruise.crewMembers.length === 0) return [];
+
+  return cruise.days.map((day) =>
+    getDayCoverage(day.dayNumber, day.recipes, cruise.crewMembers),
+  );
+}
+
+export function getDayCoverage(
+  dayNumber: number,
+  recipes: CruiseDayRecipe[],
+  members: CrewMember[],
+): DayCoverageReport {
+  // Group non-snack recipes by mealSlot
+  const bySlot = new Map<MealType, CruiseDayRecipe[]>();
+  for (const recipe of recipes) {
+    if (recipe.mealSlot === MealType.SNACK) continue;
+    const list = bySlot.get(recipe.mealSlot) ?? [];
+    list.push(recipe);
+    bySlot.set(recipe.mealSlot, list);
+  }
+
+  const meals: MealCoverage[] = [];
+  for (const [slot, slotRecipes] of bySlot) {
+    meals.push(getMealCoverage(slotRecipes, members, slot));
+  }
+
+  const NON_SNACK_MEALS = [
+    MealType.BREAKFAST,
+    MealType.DINNER,
+    MealType.SUPPER,
+  ];
+  const presentMealTypes = new Set(meals.map((m) => m.mealType));
+  const allNonSnackPresent = NON_SNACK_MEALS.every((t) =>
+    presentMealTypes.has(t),
+  );
+
+  return {
+    dayNumber,
+    meals,
+    isFullyCovered:
+      members.length === 0 ||
+      (allNonSnackPresent && meals.every((m) => m.unfed.length === 0)),
+    hasSurplus: meals.some((m) => m.surplus > 0),
+  };
+}
+
 export function getMealCoverage(
   slotRecipes: CruiseDayRecipe[],
   members: CrewMember[],
-  mealSlot: MealType
+  mealSlot: MealType,
 ): MealCoverage {
   const totalNeeded = members.length;
   const totalPortions = slotRecipes.reduce((s, r) => s + r.crewCount, 0);
@@ -113,7 +88,9 @@ export function getMealCoverage(
       totalPortions,
       totalNeeded: 0,
       unfed: [],
-      missingTagCounts: Object.fromEntries(DIET_TAGS.map(t => [t, 0])) as Record<DietTag, number>,
+      missingTagCounts: Object.fromEntries(
+        DIET_TAGS.map((t) => [t, 0]),
+      ) as Record<DietTagId, number>,
       surplus: totalPortions,
     };
   }
@@ -141,8 +118,8 @@ export function getMealCoverage(
     const member = members[i];
     for (let j = 0; j < R; j++) {
       const recipe = slotRecipes[j];
-      const compatible = member.tags.every(tag => {
-        const def = DIET_TAG_REGISTRY[tag as DietTag];
+      const compatible = member.tags.every((tag) => {
+        const def = DIET_TAG_REGISTRY[tag as DietTagId];
         // Unknown tags are treated as non-restrictive
         return def === undefined || def.satisfies(recipe.recipeData);
       });
@@ -167,11 +144,13 @@ export function getMealCoverage(
     }
   }
 
-  const missingTagCounts = Object.fromEntries(DIET_TAGS.map(t => [t, 0])) as Record<DietTag, number>;
+  const missingTagCounts = Object.fromEntries(
+    DIET_TAGS.map((t) => [t, 0]),
+  ) as Record<DietTagId, number>;
   for (const member of unfed) {
     for (const tag of member.tags) {
       if (tag in missingTagCounts) {
-        missingTagCounts[tag as DietTag]++;
+        missingTagCounts[tag as DietTagId]++;
       }
     }
   }
@@ -188,67 +167,31 @@ export function getMealCoverage(
   };
 }
 
-export function getDayCoverage(
-  dayNumber: number,
-  recipes: CruiseDayRecipe[],
-  members: CrewMember[]
-): DayCoverageReport {
-  // Group non-snack recipes by mealSlot
-  const bySlot = new Map<MealType, CruiseDayRecipe[]>();
-  for (const recipe of recipes) {
-    if (recipe.mealSlot === MealType.SNACK) continue;
-    const list = bySlot.get(recipe.mealSlot) ?? [];
-    list.push(recipe);
-    bySlot.set(recipe.mealSlot, list);
-  }
-
-  const meals: MealCoverage[] = [];
-  for (const [slot, slotRecipes] of bySlot) {
-    meals.push(getMealCoverage(slotRecipes, members, slot));
-  }
-
-  const NON_SNACK_MEALS = [MealType.BREAKFAST, MealType.DINNER, MealType.SUPPER];
-  const presentMealTypes = new Set(meals.map(m => m.mealType));
-  const allNonSnackPresent = NON_SNACK_MEALS.every(t => presentMealTypes.has(t));
-
-  return {
-    dayNumber,
-    meals,
-    isFullyCovered: members.length === 0 || (allNonSnackPresent && meals.every(m => m.unfed.length === 0)),
-    hasSurplus: meals.some(m => m.surplus > 0),
-  };
-}
-
-export function getCruiseCoverage(cruise: Cruise): DayCoverageReport[] {
-  if (cruise.crewMembers.length === 0) return [];
-
-  return cruise.days.map(day =>
-    getDayCoverage(day.dayNumber, day.recipes, cruise.crewMembers)
-  );
-}
-
 // ---------------------------------------------------------------------------
 // Helper utilities
 // ---------------------------------------------------------------------------
 
 export function countCrewWithTag(cruise: Cruise, tag: string): number {
-  return cruise.crewMembers.filter(m => m.tags.includes(tag)).length;
+  return cruise.crewMembers.filter((m) => m.tags.includes(tag)).length;
 }
 
-export function getActiveDietTags(cruise: Cruise): DietTag[] {
+export function getActiveDietTags(cruise: Cruise): DietTagId[] {
   const present = new Set<string>();
-  cruise.crewMembers.forEach(m => m.tags.forEach(t => present.add(t)));
-  return DIET_TAGS.filter(t => present.has(t));
+  cruise.crewMembers.forEach((m) => m.tags.forEach((t) => present.add(t)));
+  return DIET_TAGS.filter((t) => present.has(t));
 }
 
-export function getDefaultCrewCount(cruise: Cruise, recipe: CruiseDayRecipe["recipeData"]): number {
+export function getDefaultCrewCount(
+  cruise: Cruise,
+  recipe: CruiseDayRecipe["recipeData"],
+): number {
   const category = getRecipieDietCategory(recipe);
   switch (category) {
-    case 'vegan':
+    case "vegan":
       return cruise.crewMembers.length;
-    case 'vegetarian':
-      return cruise.crewMembers.length - countCrewWithTag(cruise, 'vegan');
-    case 'omnivore':
-      return countCrewWithTag(cruise, 'omnivore');
+    case "vegetarian":
+      return cruise.crewMembers.length - countCrewWithTag(cruise, "vegan");
+    case "omnivore":
+      return countCrewWithTag(cruise, "omnivore");
   }
 }
