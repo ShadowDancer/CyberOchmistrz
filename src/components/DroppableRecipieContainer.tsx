@@ -5,6 +5,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CrewMember, CruiseDayRecipe, MealType, Recipie } from '../types';
 import DraggableRecipeItem from './DraggableRecipeItem';
 import { getMealCoverage, MealCoverage } from '../model/cruiseDietCoverage';
+import { DIET_REGISTRY, DietTagId } from '../model/dietTags';
 
 interface DroppableRecipieContainerProps {
   dayNumber: number;
@@ -169,7 +170,10 @@ function SlotSection({
         )}
       </div>
       {coverage && (
-        <CoverageDisplay coverage={coverage} crewMembers={crewMembers} />
+        <CoverageDisplay
+          coverage={coverage}
+          isSlotEmpty={slotRecipes.length === 0}
+        />
       )}
     </section>
   );
@@ -177,52 +181,56 @@ function SlotSection({
 
 interface CoverageDisplayProps {
   coverage: MealCoverage;
-  crewMembers: CrewMember[];
+  isSlotEmpty: boolean;
 }
 
-function CoverageDisplay({ coverage, crewMembers }: CoverageDisplayProps) {
-  if (crewMembers.length === 0) {
-    return (
-      <div className="mt-2 text-xs md:text-sm text-muted-light italic px-2">
-        Brak załogi — Dodaj załogantów, aby sprawdzić pokrycie diety
-      </div>
-    );
-  }
+function formatMissingTagLine(missingTagCounts: MealCoverage['missingTagCounts']) {
+  const parts = (Object.entries(missingTagCounts) as [DietTagId, number][])
+    .filter(([, n]) => n > 0)
+    .map(([id, n]) => `${DIET_REGISTRY[id].labelPl}: ${n}`);
+  return parts.length > 0 ? "Brakuje " + parts.join(', ') : null;
+}
 
-  const { unfed, surplus } = coverage;
+function CoverageDisplay({ coverage, isSlotEmpty }: CoverageDisplayProps) {
+  const { unfed, totalPortions, totalNeeded, surplus, missingTagCounts } =
+    coverage;
   const hasUnfed = unfed.length > 0;
-  const hasSurplus = surplus > 0;
+  const missingTagsLine = formatMissingTagLine(missingTagCounts);
 
-  if (!hasUnfed && !hasSurplus) {
+  if (isSlotEmpty) {
     return (
-      <div className="mt-2 text-xs md:text-sm text-green-700 dark:text-green-400 px-2">
-        ✓ Pokryte
+      <div className="mt-2 px-2">
+        <div className="text-xs md:text-sm text-muted-light">
+          {totalPortions}/{totalNeeded} - Dodaj racje
+        </div>
       </div>
     );
   }
 
-  const unfedLabel = unfed
-    .map((m) => {
-      const dietTag = m.tags.find((t) =>
-        ['vegetarian', 'vegan'].includes(t),
-      );
-      const name = m.name;
-      return dietTag ? `${name} (${dietTag})` : name;
-    })
-    .join(', ');
+  let statusClass = 'text-green-700 dark:text-green-400';
+  let statusLabel = 'Zaprowiantowano';
+
+  if (hasUnfed) {
+    statusClass = 'text-red-700 dark:text-red-400';
+    statusLabel = 'Braki w kambuzie';
+  } else if (surplus > 0) {
+    statusClass = 'text-yellow-700 dark:text-yellow-400';
+    statusLabel = 'Nadwyżka racji';
+  }
 
   return (
-    <div className="mt-2 flex flex-col gap-1 px-2">
+    <div className="mt-2 px-2">
+      <div className={`text-xs md:text-sm ${statusClass}`}>
+        {totalPortions}/{totalNeeded} - {statusLabel}
+      </div>
       {hasUnfed && (
-        <div className="text-xs md:text-sm text-red-700 dark:text-red-400">
-          ✗ Niedobór: {unfedLabel}
+        <div className="mt-1 text-xs text-red-700 dark:text-red-400">
+          <span className="font-medium">Nienakarmieni: </span>
+          {unfed.map((m) => m.name).join(', ')}
         </div>
       )}
-      {hasSurplus && (
-        <div className="text-xs md:text-sm text-yellow-700 dark:text-yellow-400">
-          ⚠ Nadmiar: {surplus}{' '}
-          {surplus === 1 ? 'porcja' : surplus > 1 && surplus < 5 ? 'porcje' : 'porcji'}
-        </div>
+      {missingTagsLine && (
+        <div className="mt-1 text-xs text-muted-light">{missingTagsLine}</div>
       )}
     </div>
   );
