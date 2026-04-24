@@ -49,8 +49,6 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
-  const [activeDragMealTypes, setActiveDragMealTypes] = useState<MealType[] | null>(null);
-
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, {
@@ -176,18 +174,6 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
-    const activeType = event.active.data.current?.type;
-    if (activeType === 'catalog-recipe') {
-      const recipeId = event.active.data.current?.recipeId as string | undefined;
-      if (recipeId) {
-        const recipe = getRecipeById(recipeId);
-        if (recipe) {
-          setActiveDragMealTypes(recipe.mealType);
-          return;
-        }
-      }
-    }
-    setActiveDragMealTypes(null);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -212,7 +198,6 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
 
     setActiveId(null);
     setOverId(null);
-    setActiveDragMealTypes(null);
 
     if (!over || !active.data.current) return;
 
@@ -242,7 +227,6 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
       const recipeId: string = activeData.recipeId;
       const fullRecipe = getRecipeById(recipeId);
       if (!fullRecipe) return;
-      if (!fullRecipe.mealType.includes(targetSlot)) return;
 
       const recipeSnapshot = JSON.parse(JSON.stringify(fullRecipe));
       addRecipeToCruiseDay(
@@ -502,7 +486,6 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
                   dayNumber={selectedDay}
                   recipes={selectedDayData.recipes}
                   crewMembers={cruise.crewMembers}
-                  activeDragMealTypes={activeDragMealTypes}
                   onEditIngredients={handleEditIngredients}
                   onRemoveRecipe={handleRemoveRecipe}
                   onCrewCountChange={handleCrewCountChange}

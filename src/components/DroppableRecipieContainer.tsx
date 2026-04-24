@@ -10,7 +10,6 @@ interface DroppableRecipieContainerProps {
   dayNumber: number;
   recipes: CruiseDayRecipe[];
   crewMembers: CrewMember[];
-  activeDragMealTypes: MealType[] | null;
   onEditIngredients: (
     dayNumber: number,
     recipe: { originalRecipeId: string; recipeData?: Recipie },
@@ -47,7 +46,6 @@ export default function DroppableRecipieContainer({
   dayNumber,
   recipes,
   crewMembers,
-  activeDragMealTypes,
   onEditIngredients,
   onRemoveRecipe,
   onCrewCountChange,
@@ -61,9 +59,6 @@ export default function DroppableRecipieContainer({
             .map((recipe, originalIndex) => ({ recipe, originalIndex }))
             .filter(({ recipe }) => recipe.mealSlot === slot);
 
-        const isGrayedOut =
-          activeDragMealTypes !== null && !activeDragMealTypes.includes(slot);
-
         return (
           <SlotSection
             key={slot}
@@ -71,7 +66,6 @@ export default function DroppableRecipieContainer({
             dayNumber={dayNumber}
             slotRecipes={slotRecipes}
             crewMembers={crewMembers}
-            isGrayedOut={isGrayedOut}
             isDragging={isDragging}
             onEditIngredients={onEditIngredients}
             onRemoveRecipe={onRemoveRecipe}
@@ -88,7 +82,6 @@ interface SlotSectionProps {
   dayNumber: number;
   slotRecipes: { recipe: CruiseDayRecipe; originalIndex: number }[];
   crewMembers: CrewMember[];
-  isGrayedOut: boolean;
   isDragging: boolean;
   onEditIngredients: DroppableRecipieContainerProps['onEditIngredients'];
   onRemoveRecipe: DroppableRecipieContainerProps['onRemoveRecipe'];
@@ -100,7 +93,6 @@ function SlotSection({
   dayNumber,
   slotRecipes,
   crewMembers,
-  isGrayedOut,
   isDragging,
   onEditIngredients,
   onRemoveRecipe,
@@ -113,7 +105,6 @@ function SlotSection({
       dayNumber,
       mealSlot: slot,
     },
-    disabled: isGrayedOut,
   });
 
   const sortableIds = slotRecipes.map(
@@ -131,11 +122,7 @@ function SlotSection({
         );
 
   return (
-    <section
-      className={`transition-opacity ${
-        isGrayedOut ? 'opacity-40 pointer-events-none' : ''
-      }`}
-    >
+    <section className="transition-opacity">
       <div className="flex items-baseline justify-between mb-1">
         <h4 className="font-semibold text-sm md:text-base">
           {SLOT_LABEL[slot]}
@@ -157,7 +144,7 @@ function SlotSection({
         }`}
       >
         {slotRecipes.length === 0 ? (
-          <div className="flex items-center justify-center h-16 text-muted-light text-xs md:text-sm border-2 border-dashed rounded-lg border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+          <div className="flex items-center justify-center h-16 text-muted-light text-xs md:text-sm border-2 border-solid rounded-lg border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             Przeciągnij przepis tutaj
           </div>
         ) : (
