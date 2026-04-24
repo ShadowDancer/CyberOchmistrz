@@ -73,7 +73,7 @@ export default function CrewEditor({ members, onChange }: CrewEditorProps) {
       <div className="flex flex-col gap-2">
         {members.length === 0 && (
           <p className="text-sm text-muted-light italic">
-            Brak członków załogi. Dodaj za pomocą przycisku poniżej.
+            Bez załogi nigdzie nie popłyniemy. Zaciągnij kogoś za pomocą przycisku poniżej.
           </p>
         )}
         {members.map((member, index) => {
@@ -87,8 +87,8 @@ export default function CrewEditor({ members, onChange }: CrewEditorProps) {
             >
               <input
                 type="text"
-                placeholder="Imię (opcjonalne)"
-                value={member.name ?? ''}
+                placeholder="Nazwa"
+                value={member.name ?? 'Załogant #' + (index + 1)}
                 onChange={(e) => handleNameChange(index, e.target.value)}
                 className="input-field flex-1 min-w-[140px]"
               />
@@ -135,23 +135,25 @@ export default function CrewEditor({ members, onChange }: CrewEditorProps) {
         })}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted">
-        <span>{members.length} osób</span>
-        {activeTagIds.has('vegetarian') && (
-          <span>· {vegCount} wegetarian</span>
-        )}
-        {activeTagIds.has('vegan') && <span>· {veganCount} wegan</span>}
-        {omnivoreRemainder > 0 && (
-          <span>· {omnivoreRemainder} wszystkożernych</span>
-        )}
-      </div>
+      {members.length > 0 && 
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted">
+          <span>{members.length} osób</span>
+          {activeTagIds.has('vegetarian') && (
+            <span>· {vegCount} wegetarian</span>
+          )}
+          {activeTagIds.has('vegan') && <span>· {veganCount} wegan</span>}
+          {omnivoreRemainder > 0 && (
+            <span>· {omnivoreRemainder} wszystkożernych</span>
+          )}
+        </div>
+      }
 
       <button
         type="button"
         onClick={addMember}
         className="btn-primary btn-small mt-3"
       >
-        + Dodaj załoganta
+        + Zaokrętuj
       </button>
     </div>
   );
