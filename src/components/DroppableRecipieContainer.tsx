@@ -219,7 +219,7 @@ function CoverageDisplay({ coverage, crewMembers }: CoverageDisplayProps) {
       const dietTag = m.tags.find((t) =>
         ['vegetarian', 'vegan'].includes(t),
       );
-      const name = m.name ?? 'anonimowy';
+      const name = m.name;
       return dietTag ? `${name} (${dietTag})` : name;
     })
     .join(', ');

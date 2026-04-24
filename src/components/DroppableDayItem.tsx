@@ -126,7 +126,7 @@ function getStatusDot(
   const allUnfed = report.meals.flatMap((m) => m.unfed);
   if (allUnfed.length > 0) {
     const first = allUnfed[0];
-    const firstName = first.name ?? 'anonimowy';
+    const firstName = first.name;
     const rest = allUnfed.length - 1;
     const title =
       rest > 0

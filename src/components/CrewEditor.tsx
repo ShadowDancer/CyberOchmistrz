@@ -23,17 +23,13 @@ export default function CrewEditor({ members, onChange }: CrewEditorProps) {
       typeof crypto !== 'undefined' && 'randomUUID' in crypto
         ? crypto.randomUUID()
         : `crew-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    onChange([...members, { id, tags: [] }]);
+    onChange([...members, { id, tags: [], name: 'Załogant #' + (members.length + 1) }]);
   };
 
   const handleNameChange = (index: number, name: string) => {
     updateMember(index, (m) => {
       const next = { ...m };
-      if (name.trim() === '') {
-        delete next.name;
-      } else {
-        next.name = name;
-      }
+      next.name = name;
       return next;
     });
   };
@@ -88,7 +84,7 @@ export default function CrewEditor({ members, onChange }: CrewEditorProps) {
               <input
                 type="text"
                 placeholder="Nazwa"
-                value={member.name ?? 'Załogant #' + (index + 1)}
+                value={member.name ?? ''}
                 onChange={(e) => handleNameChange(index, e.target.value)}
                 className="input-field flex-1 min-w-[140px]"
               />

@@ -47,7 +47,7 @@ export interface CruiseSupply {
 
 export interface CrewMember {
   id: string;
-  name?: string; // omitted = anonymous; no validation beyond that
+  name: string; // can be empty string
   tags: string[]; // string[] not DietTag[] so unknown tags round-trip safely
 }
 

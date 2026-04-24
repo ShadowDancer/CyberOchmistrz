@@ -117,7 +117,7 @@ export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
 }
 
 function describeMember(member: CrewMember): string {
-  const name = member.name?.trim() ? member.name : '(anonimowy)';
+  const name = member.name?.trim();
   const knownTags = member.tags
     .map((t) => DIET_REGISTRY[t as DietTagId])
     .filter((t): t is NonNullable<typeof t> => t !== undefined)
