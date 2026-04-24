@@ -3,21 +3,27 @@
 import { useState } from 'react';
 import { createNewCruise, saveCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
-import { CrewMember } from "../types";
+import { CrewMember } from '../types';
+import CrewEditor from './CrewEditor';
 
 export default function AddCruiseForm() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: "",
+  const [formData, setFormData] = useState<{
+    name: string;
+    length: number;
+    crewMembers: CrewMember[];
+    startDate: string;
+  }>({
+    name: '',
     length: 1,
-    crew: 1,
-    startDate: "",
+    crewMembers: [],
+    startDate: '',
   });
   const [errors, setErrors] = useState({
-    name: "",
-    length: "",
-    crew: "",
-    startDate: "",
+    name: '',
+    length: '',
+    crewMembers: '',
+    startDate: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,42 +31,46 @@ export default function AddCruiseForm() {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "number" ? Number(value) : value,
+      [name]: type === 'number' ? Number(value) : value,
     }));
 
-    // Clear error when user types
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({
         ...prev,
-        [name]: "",
+        [name]: '',
       }));
+    }
+  };
+
+  const handleCrewChange = (crewMembers: CrewMember[]) => {
+    setFormData((prev) => ({ ...prev, crewMembers }));
+    if (errors.crewMembers) {
+      setErrors((prev) => ({ ...prev, crewMembers: '' }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {
-      name: "",
-      length: "",
-      crew: "",
-      startDate: "",
+      name: '',
+      length: '',
+      crewMembers: '',
+      startDate: '',
     };
 
     if (!formData.name.trim()) {
-      newErrors.name = "Nazwa rejsu jest wymagana";
+      newErrors.name = 'Nazwa rejsu jest wymagana';
     }
 
     if (formData.length < 1) {
-      newErrors.length = "Długość rejsu musi być większa niż 0";
+      newErrors.length = 'Długość rejsu musi być większa niż 0';
     }
 
-    if (formData.crew < 1) {
-      newErrors.crew = "Liczba załogantów musi być większa niż 0";
+    if (formData.crewMembers.length < 1) {
+      newErrors.crewMembers = 'Dodaj przynajmniej jednego załoganta';
     }
-
-    // startDate is optional
 
     setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error !== "");
+    return !Object.values(newErrors).some((error) => error !== '');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -73,12 +83,12 @@ export default function AddCruiseForm() {
     const newCruise = createNewCruise(
       formData.name,
       formData.length,
-      new Array<CrewMember>().fill({ id: "", tags: ["omnivore"] }),
+      formData.crewMembers,
       formData.startDate || undefined,
     );
 
     saveCruise(newCruise);
-    router.push("/rejsy");
+    router.push('/rejsy');
   };
 
   return (
@@ -97,7 +107,7 @@ export default function AddCruiseForm() {
             value={formData.name}
             onChange={handleChange}
             className={`input-field ${
-              errors.name ? "input-field-error" : "input-field-valid"
+              errors.name ? 'input-field-error' : 'input-field-valid'
             }`}
           />
           {errors.name && <p className="error-text">{errors.name}</p>}
@@ -115,28 +125,21 @@ export default function AddCruiseForm() {
             value={formData.length}
             onChange={handleChange}
             className={`input-field ${
-              errors.length ? "input-field-error" : "input-field-valid"
+              errors.length ? 'input-field-error' : 'input-field-valid'
             }`}
           />
           {errors.length && <p className="error-text">{errors.length}</p>}
         </div>
 
         <div>
-          <label htmlFor="crew" className="form-label">
-            Liczba załogantów
-          </label>
-          <input
-            type="number"
-            id="crew"
-            name="crew"
-            min="1"
-            value={formData.crew}
-            onChange={handleChange}
-            className={`input-field ${
-              errors.crew ? "input-field-error" : "input-field-valid"
-            }`}
+          <label className="form-label">Załoga</label>
+          <CrewEditor
+            members={formData.crewMembers}
+            onChange={handleCrewChange}
           />
-          {errors.crew && <p className="error-text">{errors.crew}</p>}
+          {errors.crewMembers && (
+            <p className="error-text">{errors.crewMembers}</p>
+          )}
         </div>
 
         <div>
@@ -150,7 +153,7 @@ export default function AddCruiseForm() {
             value={formData.startDate}
             onChange={handleChange}
             className={`input-field ${
-              errors.startDate ? "input-field-error" : "input-field-valid"
+              errors.startDate ? 'input-field-error' : 'input-field-valid'
             }`}
           />
           {errors.startDate && <p className="error-text">{errors.startDate}</p>}
@@ -162,7 +165,7 @@ export default function AddCruiseForm() {
           </button>
           <button
             type="button"
-            onClick={() => router.push("/rejsy")}
+            onClick={() => router.push('/rejsy')}
             className="btn-secondary"
           >
             Anuluj
