@@ -135,7 +135,7 @@ export default function IngredientListEditor({
             className="input-simple"
           />
           {showCombobox && filteredIngredients.length > 0 && (
-            <div className="dropdown-container">
+            <div className="dropdown-container bottom-full top-auto mb-1 mt-0">
               {filteredIngredients.map((ing) => (
                 <button
                   key={ing.id}

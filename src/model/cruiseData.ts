@@ -357,6 +357,24 @@ export function removeIngredientFromRecipeInCruise(
   saveCruise(cruise);
 }
 
+export function saveCruiseDayRecipeEdits(
+  cruiseId: string,
+  dayNumber: number,
+  recipeIndex: number,
+  name: string,
+  ingredients: Array<{ id: string; amount: number }>
+): void {
+  const cruise = getCruiseById(cruiseId);
+  if (!cruise) return;
+  const dayIndex = cruise.days.findIndex(d => d.dayNumber === dayNumber);
+  if (dayIndex === -1) return;
+  const recipe = cruise.days[dayIndex].recipes[recipeIndex];
+  if (!recipe?.recipeData) return;
+  recipe.recipeData.name = name;
+  recipe.recipeData.ingredients = ingredients;
+  saveCruise(cruise);
+}
+
 export function reorderRecipesInCruiseDay(
   cruiseId: string,
   dayNumber: number,
