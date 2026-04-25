@@ -5,9 +5,7 @@ import { Cruise, Recipie, MealType } from '../types';
 import {
   addRecipeToCruiseDay,
   removeRecipeFromCruiseDay,
-  updateRecipeIngredientInCruise,
-  addIngredientToRecipeInCruise,
-  removeIngredientFromRecipeInCruise,
+  saveCruiseDayRecipeEdits,
   getCruiseById,
   reorderRecipesInCruiseDay,
   moveRecipeBetweenCruiseDays,
@@ -113,51 +111,15 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
     onCruiseChange();
   };
 
-  const refreshEditingRecipeFromCruise = (dayNumber: number, recipeIndex: number) => {
-    if (!editingRecipe) return;
-    const updatedCruise = getCruiseById(cruise.id);
-    if (!updatedCruise) return;
-    const dayIndex = updatedCruise.days.findIndex((day) => day.dayNumber === dayNumber);
-    if (dayIndex === -1) return;
-    const updatedRecipe = updatedCruise.days[dayIndex].recipes[recipeIndex];
-    if (updatedRecipe && updatedRecipe.recipeData) {
-      setEditingRecipe({ ...editingRecipe, recipe: updatedRecipe.recipeData });
-    }
-  };
-
-  const handleIngredientUpdate = (
+  const handleSaveRecipeEdits = (
     dayNumber: number,
     recipeIndex: number,
-    ingredientIndex: number,
-    newAmount: number,
+    name: string,
+    ingredients: Array<{ id: string; amount: number }>,
   ) => {
     if (!cruise) return;
-    updateRecipeIngredientInCruise(cruise.id, dayNumber, recipeIndex, ingredientIndex, newAmount);
+    saveCruiseDayRecipeEdits(cruise.id, dayNumber, recipeIndex, name, ingredients);
     onCruiseChange();
-    refreshEditingRecipeFromCruise(dayNumber, recipeIndex);
-  };
-
-  const handleIngredientAdd = (
-    dayNumber: number,
-    recipeIndex: number,
-    ingredientId: string,
-    amount: number,
-  ) => {
-    if (!cruise) return;
-    addIngredientToRecipeInCruise(cruise.id, dayNumber, recipeIndex, ingredientId, amount);
-    onCruiseChange();
-    refreshEditingRecipeFromCruise(dayNumber, recipeIndex);
-  };
-
-  const handleIngredientRemove = (
-    dayNumber: number,
-    recipeIndex: number,
-    ingredientIndex: number,
-  ) => {
-    if (!cruise) return;
-    removeIngredientFromRecipeInCruise(cruise.id, dayNumber, recipeIndex, ingredientIndex);
-    onCruiseChange();
-    refreshEditingRecipeFromCruise(dayNumber, recipeIndex);
   };
 
   const closeIngredientEditor = () => {
@@ -504,9 +466,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
             recipe={editingRecipe.recipe}
             dayNumber={editingRecipe.dayNumber}
             recipeIndex={editingRecipe.recipeIndex}
-            onIngredientUpdate={handleIngredientUpdate}
-            onIngredientAdd={handleIngredientAdd}
-            onIngredientRemove={handleIngredientRemove}
+            onSave={handleSaveRecipeEdits}
             onClose={closeIngredientEditor}
           />
         )}
