@@ -15,7 +15,7 @@ import {
   setRecipeMealSlot,
 } from '../model/cruiseData';
 import { getRecipeById } from '../model/recipieData';
-import { getSupplyById } from '../model/supplyData';
+import { generateMarkdown } from '../utils/markdownExport';
 import RecipeList from './RecipeList';
 import RecipeIngredientEditor from './RecipeIngredientEditor';
 import DroppableRecipieContainer from './DroppableRecipieContainer';
@@ -345,48 +345,17 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
 
   const activeRecipe = getActiveRecipe();
 
-  const generateCsvData = () => {
-    const rows = [['Day', 'Name', 'Ingredients', 'Description', 'Instructions']];
-    cruise.days.forEach((day) => {
-      day.recipes.forEach((recipe) => {
-        if (recipe.recipeData) {
-          const ingredients = recipe.recipeData.ingredients
-            .map((ing) => {
-              const supply = getSupplyById(ing.id);
-              return supply
-                ? `${supply.name}: ${ing.amount} ${supply.unit}`
-                : `${ing.id}: ${ing.amount}`;
-            })
-            .join(', ');
-          const instructions = recipe.recipeData.instructions.join('; ');
-          rows.push([
-            day.dayNumber.toString(),
-            recipe.recipeData.name,
-            ingredients,
-            recipe.recipeData.description,
-            instructions,
-          ]);
-        }
-      });
-    });
-    return rows
-      .map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(','))
-      .join('\n');
-  };
-
-  const exportToCsv = () => {
-    const csvData = generateCsvData();
-    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+  const exportToMarkdown = () => {
+    const markdown = generateMarkdown(cruise);
+    const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const dateStr = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', `cruise-menu-${cruise.name}-${dateStr}.csv`);
-    link.style.visibility = 'hidden';
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `cruise-menu-${cruise.name}-${new Date().toISOString()}.md`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -428,7 +397,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
         >
           <div className="flex items-center justify-between mb-3 md:mb-4">
             <h2 className="text-lg md:text-xl font-bold">Dni rejsu</h2>
-            <button onClick={exportToCsv} className="btn-secondary flex items-center gap-2">
+            <button onClick={exportToMarkdown} className="btn-secondary flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -437,7 +406,7 @@ export default function CruiseMenuTab({ cruise, onCruiseChange }: CruisePlanTabP
                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              Pobierz CSV
+              Eksportuj do pliku
             </button>
           </div>
           <div

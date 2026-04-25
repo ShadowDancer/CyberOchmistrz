@@ -66,6 +66,7 @@ CyberOchmistrz/
 │   ├── types/                 # TypeScript interfaces and enums
 │   │   └── index.ts           # Supply, Ingredient, Recipie, Cruise, shopping list types
 │   └── utils/
+│       ├── markdownExport.ts    # Markdown export for cruise menu (days, slots, recipes, warnings)
 │       └── polishDeclension.ts  # Polish grammatical number for units
 ├── test/                      # Jest test suite (~18 test files)
 │   └── AGENTS.md              # Test conventions for AI agents
