@@ -12,6 +12,7 @@ const unitDeclensions: Record<string, DeclensionForms> = {
   'rolki': { singular: 'rolka', paucal: 'rolki', plural: 'rolek' },
   'tabliczka': { singular: 'tabliczka', paucal: 'tabliczki', plural: 'tabliczek' },
   'załogant': { singular: 'załogant', paucal: 'załoganci', plural: 'załogantów' },
+  'osoba': { singular: 'osoba', paucal: 'osoby', plural: 'osób' },
 };
 
 export function declineUnit(unit: string, amount: number): string {

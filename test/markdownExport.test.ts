@@ -2,6 +2,10 @@ import { generateMarkdown } from '../src/utils/markdownExport';
 import { Cruise, CruiseDay, CruiseDayRecipe, CrewMember, MealType, Recipie } from '../src/types';
 import { makeCrewMembers } from './cruiseTestHarness';
 
+jest.mock('../src/data/recipies.json', () => [
+  { id: 'catalog-base', name: 'Zupa bazowa', ingredients: [{ id: 'bread', amount: 1 }], description: '', mealType: ['obiad'], difficulty: 1, instructions: ['Krok katalogowy 1', 'Krok katalogowy 2'] },
+]);
+
 jest.mock('../src/data/supplies.json', () => [
   { id: 'egg', name: 'Jajko', unit: 'sztuki', isIngredient: true, category: 'nabiał', isVegetarian: true, isVegan: false },
   { id: 'meat', name: 'Wołowina', unit: 'gramy', isIngredient: true, category: 'mięso', isVegetarian: false, isVegan: false },
@@ -197,5 +201,151 @@ describe('generateMarkdown', () => {
     expect(result).toContain('- 10 sztuk Jajko');
     // 100 * 2 = 200 → declineUnit('gramy', 200) = 'gramów'
     expect(result).toContain('- 200 gramów Wołowina');
+  });
+
+  // 13
+  it('two versions same slot same originalRecipeId — grouped, instructions from catalog, note shown', () => {
+    // v1: bigger crew (5), v2: smaller crew (3) — both share 'catalog-base'
+    const v1: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      recipeData: makeRecipe('v1', 'Zupa z mięsem', ['meat'], ['Krok v1 — powinien być zignorowany']),
+      crewCount: 5,
+      mealSlot: MealType.DINNER,
+    };
+    const v2: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      recipeData: makeRecipe('v2', 'Zupa zwykła', ['bread'], ['Krok v2 — powinien być zignorowany']),
+      crewCount: 3,
+      mealSlot: MealType.DINNER,
+    };
+    const cruise = makeCruise([], [{ dayNumber: 1, recipes: [v1, v2] }]);
+    const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
+    // Header: sorted desc → v1 first → names: ['Zupa z mięsem', 'Zupa zwykła']
+    expect(result).toContain('### Zupa z mięsem / Zupa zwykła.');
+    // Ingredient headers with correct declension: 5 → osób, 3 → osoby
+    expect(result).toContain('Składniki (Zupa z mięsem, 5 osób):');
+    // 1 * 5 = 5 gramów Wołowina
+    expect(result).toContain('- 5 gramów Wołowina');
+    expect(result).toContain('Składniki (Zupa zwykła, 3 osoby):');
+    // 1 * 3 = 3 sztuki Chleb
+    expect(result).toContain('- 3 sztuki Chleb');
+    expect(result).toContain('Zmodyfikowana wersja przepisu wymaga od kuka okrętowego inwencji twórczej podczas gotowania!');
+    // Instructions appear exactly once, from catalog
+    expect(result.match(/Sposób przygotowania:/g)?.length).toBe(1);
+    expect(result).toContain('1. Krok katalogowy 1');
+    expect(result).toContain('2. Krok katalogowy 2');
+    expect(result).not.toContain('Krok v1');
+    expect(result).not.toContain('Krok v2');
+  });
+
+  // 14
+  it('same originalRecipeId in different slots — two separate groups, no cross-slot merging', () => {
+    const v1: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      recipeData: makeRecipe('d1', 'Obiad wersja A', ['meat'], ['krok']),
+      crewCount: 5,
+      mealSlot: MealType.DINNER,
+    };
+    const v2: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      recipeData: makeRecipe('d2', 'Obiad wersja B', ['bread'], ['krok']),
+      crewCount: 3,
+      mealSlot: MealType.DINNER,
+    };
+    const v3: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      recipeData: makeRecipe('s1', 'Kolacja wersja A', ['meat'], ['krok']),
+      crewCount: 4,
+      mealSlot: MealType.SUPPER,
+    };
+    const v4: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      recipeData: makeRecipe('s2', 'Kolacja wersja B', ['bread'], ['krok']),
+      crewCount: 2,
+      mealSlot: MealType.SUPPER,
+    };
+    const cruise = makeCruise([], [{ dayNumber: 1, recipes: [v1, v2, v3, v4] }]);
+    const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
+    // Note appears once per slot group — 2 total
+    expect(result.match(/Zmodyfikowana wersja przepisu/g)?.length).toBe(2);
+    // DINNER group has 5-person and 3-person headers
+    expect(result).toContain('Składniki (Obiad wersja A, 5 osób):');
+    expect(result).toContain('Składniki (Obiad wersja B, 3 osoby):');
+    // SUPPER group has 4-person and 2-person headers
+    expect(result).toContain('Składniki (Kolacja wersja A, 4 osoby):');
+    expect(result).toContain('Składniki (Kolacja wersja B, 2 osoby):');
+    // DINNER slot appears before SUPPER slot
+    expect(result.indexOf('## Obiad')).toBeLessThan(result.indexOf('## Kolacja'));
+  });
+
+  // 15
+  it('three versions — sorted descending by crewCount, header deduped for matching names', () => {
+    const v1: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      // crewCount=3, same name as v2 — should appear once in header (deduped)
+      recipeData: makeRecipe('t1', 'Zupa', ['bread'], ['krok']),
+      crewCount: 3,
+      mealSlot: MealType.DINNER,
+    };
+    const v2: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      // crewCount=7, highest — comes first
+      recipeData: makeRecipe('t2', 'Zupa', ['egg'], ['krok']),
+      crewCount: 7,
+      mealSlot: MealType.DINNER,
+    };
+    const v3: CruiseDayRecipe = {
+      originalRecipeId: 'catalog-base',
+      // crewCount=5, unique name
+      recipeData: makeRecipe('t3', 'Zupa specjalna', ['meat'], ['krok']),
+      crewCount: 5,
+      mealSlot: MealType.DINNER,
+    };
+    const cruise = makeCruise([], [{ dayNumber: 1, recipes: [v1, v2, v3] }]);
+    const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
+    // Sorted desc: 7,5,3 — first unique names in that order: ['Zupa','Zupa specjalna']
+    expect(result).toContain('### Zupa / Zupa specjalna.');
+    // Order in output: crewCount=7 before 5 before 3
+    const idx7 = result.indexOf('Składniki (Zupa, 7 osób):');
+    const idx5 = result.indexOf('Składniki (Zupa specjalna, 5 osób):');
+    const idx3 = result.indexOf('Składniki (Zupa, 3 osoby):');
+    expect(idx7).toBeLessThan(idx5);
+    expect(idx5).toBeLessThan(idx3);
+  });
+
+  // 16
+  it('catalog miss — falls back to first version instructions (highest crewCount), note still shown', () => {
+    const v1: CruiseDayRecipe = {
+      originalRecipeId: 'no-such-recipe',
+      // crewCount=5 — highest, will be sortedGroup[0] → its instructions used as fallback
+      recipeData: makeRecipe('f1', 'Zupa A', ['meat'], ['Fallback 1', 'Fallback 2']),
+      crewCount: 5,
+      mealSlot: MealType.DINNER,
+    };
+    const v2: CruiseDayRecipe = {
+      originalRecipeId: 'no-such-recipe',
+      recipeData: makeRecipe('f2', 'Zupa B', ['bread'], ['Ignorowany krok']),
+      crewCount: 3,
+      mealSlot: MealType.DINNER,
+    };
+    const cruise = makeCruise([], [{ dayNumber: 1, recipes: [v1, v2] }]);
+    const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
+    expect(result).toContain('Zmodyfikowana wersja przepisu wymaga od kuka okrętowego inwencji twórczej podczas gotowania!');
+    // Fallback instructions from v1 (crewCount=5, first in sorted desc)
+    expect(result).toContain('1. Fallback 1');
+    expect(result).toContain('2. Fallback 2');
+    expect(result).not.toContain('Ignorowany krok');
+  });
+
+  // 17
+  it('single version — original format unchanged, no grouping markers', () => {
+    const recipe = makeRecipe('r1', 'Zupa', ['bread'], ['Krok 1', 'Krok 2']);
+    const cruise = makeCruise([], [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 2)] }]);
+    const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
+    expect(result).toContain('### Zupa.');
+    // Single-recipe format uses 'Składniki:' not 'Składniki (...):'
+    expect(result).toContain('Składniki:');
+    expect(result).not.toContain('Składniki (');
+    expect(result).not.toContain('Zmodyfikowana wersja przepisu');
   });
 });
