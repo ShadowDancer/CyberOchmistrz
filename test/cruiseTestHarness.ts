@@ -45,11 +45,12 @@ export const getStoredCruises = (): Cruise[] => {
 };
 
 import { Cruise, CrewMember, Recipie, MealType, IngredientAmount } from '../src/types';
+import { Diet } from '../src/model/crew';
 import { createNewCruise } from '../src/model/cruiseData';
 import { createRecipie } from '../src/model/recipieData';
 
-export const makeCrewMembers = (count: number, tags: string[] = ['omnivore']): CrewMember[] =>
-  Array.from({ length: count }, (_, i) => ({ id: `crew-${i}`, tags, name: `Zaloga ${i + 1}` }));
+export const makeCrewMembers = (count: number, diet: Diet = 'omnivore'): CrewMember[] =>
+  Array.from({ length: count }, (_, i) => ({ id: `crew-${i}`, diet, name: `Zaloga ${i + 1}` }));
 
 export const createTestRecipe = (id: string, name: string, ingredients?: IngredientAmount[]): Recipie =>
   createRecipie({

@@ -1,6 +1,7 @@
-import { getMealCoverage, getDayCoverage, getCruiseCoverage, countCrewWithTag, getActiveDietTags } from '../src/model/cruiseDietCoverage';
+import { getMealCoverage, getDayCoverage, getCruiseCoverage, countCrewWithTag, getActiveDietTags, canEat } from '../src/model/cruiseDietCoverage';
 import { createRecipie } from '../src/model/recipieData';
 import { CrewMember, CruiseDayRecipe, MealType, Recipie, Cruise } from '../src/types';
+import { Diet } from '../src/model/crew';
 
 // Mock supplies so isRecipieVegan/isRecipieVegetarian work deterministically
 jest.mock('../src/data/supplies.json', () => [
@@ -15,11 +16,10 @@ jest.mock('../src/data/supplies.json', () => [
 // Helpers
 // ---------------------------------------------------------------------------
 
-const member = (id: string, ...tags: string[]): CrewMember => ({ id, tags });
+const member = (id: string, diet: Diet = 'omnivore'): CrewMember => ({ id, name: id, diet });
 const omni = (id: string) => member(id, 'omnivore');
 const veg = (id: string) => member(id, 'vegetarian');
 const vegan = (id: string) => member(id, 'vegan');
-const halal = (id: string) => member(id, 'halal');
 
 const recipe = (id: string, ingredientIds: string[], mealSlot: MealType = MealType.DINNER): Recipie =>
   createRecipie({
@@ -60,6 +60,30 @@ const stirFry = recipe('stir-fry-vegan', ['tofu', 'pasta']);   // vegan
 const eggs = recipe('eggs-omni', ['egg', 'meat']);              // omnivore
 
 // ---------------------------------------------------------------------------
+// canEat — unit tests
+// ---------------------------------------------------------------------------
+
+describe('canEat', () => {
+  it('omnivore eats any recipe', () => {
+    expect(canEat(omni('1'), spaghetti)).toBe(true);
+    expect(canEat(omni('1'), tofu)).toBe(true);
+    expect(canEat(omni('1'), pasta)).toBe(true);
+  });
+
+  it('vegetarian blocked by meat recipe', () => {
+    expect(canEat(veg('1'), spaghetti)).toBe(false); // has meat
+    expect(canEat(veg('1'), pasta)).toBe(true);      // dairy OK for vegetarian
+    expect(canEat(veg('1'), tofu)).toBe(true);
+  });
+
+  it('vegan blocked by dairy recipe', () => {
+    expect(canEat(vegan('1'), pasta)).toBe(false);   // has cheese (dairy, not vegan)
+    expect(canEat(vegan('1'), tofu)).toBe(true);
+    expect(canEat(vegan('1'), spaghetti)).toBe(false); // has meat
+  });
+});
+
+// ---------------------------------------------------------------------------
 // getMealCoverage — table-driven scenarios
 // ---------------------------------------------------------------------------
 
@@ -88,7 +112,7 @@ describe('getMealCoverage', () => {
       const result = getMealCoverage([slot(spaghetti, 6)], crew, MealType.DINNER);
       expect(result.unfed).toHaveLength(1);
       expect(result.unfed[0].id).toBe('6');
-      expect(result.missingTagCounts.vegan).toBe(1);
+      expect(result.unfedCountByDiet.vegan).toBe(1);
     });
 
     it('should cover 5 omni + 1 vegan with tofu ×6 (vegan recipe feeds omnis)', () => {
@@ -151,14 +175,6 @@ describe('getMealCoverage', () => {
     });
   });
 
-  describe('unknown tags treated as non-restrictive', () => {
-    it('should not false-flag halal crew member as unfed when steak ×2 given', () => {
-      const crew = [omni('1'), halal('2')];
-      const result = getMealCoverage([slot(spaghetti, 2)], crew, MealType.DINNER);
-      expect(result.unfed).toHaveLength(0);
-    });
-  });
-
   describe('empty crew', () => {
     it('should return empty report for 0 crew members', () => {
       const result = getMealCoverage([slot(spaghetti, 5)], [], MealType.DINNER);
@@ -204,20 +220,6 @@ describe('getMealCoverage', () => {
       expect(result.surplus).toBe(0);
     });
 
-    it('should feed member with empty tags (vacuously compatible)', () => {
-      const noTags = member('x');
-      const result = getMealCoverage([slot(spaghetti, 1)], [noTags], MealType.DINNER);
-      expect(result.unfed).toHaveLength(0);
-    });
-
-    it('should restrict multi-tag member by known tag but ignore unknown tag', () => {
-      const multiTag = member('x', 'vegetarian', 'halal');
-      const cantEatMeat = getMealCoverage([slot(spaghetti, 1)], [multiTag], MealType.DINNER);
-      expect(cantEatMeat.unfed).toHaveLength(1);
-      const canEatCheese = getMealCoverage([slot(pasta, 1)], [multiTag], MealType.DINNER);
-      expect(canEatCheese.unfed).toHaveLength(0);
-    });
-
     it('should leave member unfed when recipe has crewCount 0', () => {
       const result = getMealCoverage([slot(spaghetti, 0)], [omni('1')], MealType.DINNER);
       expect(result.unfed).toHaveLength(1);
@@ -237,7 +239,7 @@ describe('getMealCoverage', () => {
         MealType.DINNER
       );
       expect(result.unfed).toHaveLength(2);
-      expect(result.missingTagCounts.vegan).toBe(2);
+      expect(result.unfedCountByDiet.vegan).toBe(2);
     });
   });
 });
@@ -427,7 +429,7 @@ describe('getCruiseCoverage', () => {
 // ---------------------------------------------------------------------------
 
 describe('countCrewWithTag', () => {
-  it('should count members with specified tag', () => {
+  it('should count members with specified diet', () => {
     const cruise = makeCruise([omni('1'), omni('2'), vegan('3'), veg('4')]);
     expect(countCrewWithTag(cruise, 'omnivore')).toBe(2);
     expect(countCrewWithTag(cruise, 'vegan')).toBe(1);
@@ -441,7 +443,7 @@ describe('countCrewWithTag', () => {
 });
 
 describe('getActiveDietTags', () => {
-  it('should return only tags present in crew', () => {
+  it('should return only diets present in crew', () => {
     const cruise = makeCruise([omni('1'), vegan('2')]);
     const tags = getActiveDietTags(cruise);
     expect(tags).toContain('omnivore');
@@ -451,10 +453,5 @@ describe('getActiveDietTags', () => {
 
   it('should return empty array for empty crew', () => {
     expect(getActiveDietTags(makeCruise([]))).toEqual([]);
-  });
-
-  it('should return empty array when crew has only unknown tags', () => {
-    // halal not in DIET_TAGS → filtered out
-    expect(getActiveDietTags(makeCruise([halal('1')]))).toEqual([]);
   });
 });

@@ -2,7 +2,7 @@ import { Cruise, MealType } from '../types';
 import { getSupplyById } from '../model/supplyData';
 import { getDayCoverage, MealCoverage } from '../model/cruiseDietCoverage';
 import { declineUnit } from './polishDeclension';
-import { DIET_REGISTRY, DietTagId } from '../model/dietTags';
+import { Diet, DIET_REGISTRY } from '../model/crew';
 import { getRecipeById } from '../model/recipieData';
 
 const MEAL_SLOT_ORDER = [MealType.BREAKFAST, MealType.DINNER, MealType.SUPPER, MealType.SNACK];
@@ -51,7 +51,7 @@ export function generateMarkdown(cruise: Cruise): string {
             warnings.push(`- ${member.name}`);
           }
 
-          warnings.push(formatMissingTagLine(mealCoverage.missingTagCounts) ?? "");
+          warnings.push(formatMissingTagLine(mealCoverage.unfedCountByDiet) ?? "");
         }
 
         if (mealCoverage.surplus > 0) {
@@ -145,9 +145,9 @@ export function generateMarkdown(cruise: Cruise): string {
   return dayBlocks.join('\n\n');
 }
 
-function formatMissingTagLine(missingTagCounts: MealCoverage["missingTagCounts"]) {
-  const parts = (Object.entries(missingTagCounts) as [DietTagId, number][])
+function formatMissingTagLine(missingTagCounts: MealCoverage["unfedCountByDiet"]) {
+  const parts = (Object.entries(missingTagCounts) as [Diet, number][])
     .filter(([, n]) => n > 0)
-    .map(([id, n]) => `${DIET_REGISTRY[id].labelPl}: ${n}`);
+    .map(([id, n]) => `${DIET_REGISTRY[id].labelLong}: ${n}`);
   return parts.length > 0 ? "Brakuje " + parts.join(', ') : null;
 }

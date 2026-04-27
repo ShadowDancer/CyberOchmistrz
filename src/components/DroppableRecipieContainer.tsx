@@ -5,7 +5,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CrewMember, CruiseDayRecipe, MealType, Recipie } from '../types';
 import DraggableRecipeItem from './DraggableRecipeItem';
 import { getMealCoverage, MealCoverage } from '../model/cruiseDietCoverage';
-import { DIET_REGISTRY, DietTagId } from '../model/dietTags';
+import { Diet, DIET_REGISTRY } from '../model/crew';
 
 interface DroppableRecipieContainerProps {
   dayNumber: number;
@@ -184,15 +184,15 @@ interface CoverageDisplayProps {
   isSlotEmpty: boolean;
 }
 
-function formatMissingTagLine(missingTagCounts: MealCoverage['missingTagCounts']) {
-  const parts = (Object.entries(missingTagCounts) as [DietTagId, number][])
+function formatMissingTagLine(missingTagCounts: MealCoverage['unfedCountByDiet']) {
+  const parts = (Object.entries(missingTagCounts) as [Diet, number][])
     .filter(([, n]) => n > 0)
-    .map(([id, n]) => `${DIET_REGISTRY[id].labelPl}: ${n}`);
+    .map(([id, n]) => `${DIET_REGISTRY[id].labelLong}: ${n}`);
   return parts.length > 0 ? "Brakuje " + parts.join(', ') : null;
 }
 
 function CoverageDisplay({ coverage, isSlotEmpty }: CoverageDisplayProps) {
-  const { unfed, totalPortions, totalNeeded, surplus, missingTagCounts } =
+  const { unfed, totalPortions, totalNeeded, surplus, unfedCountByDiet: missingTagCounts } =
     coverage;
   const hasUnfed = unfed.length > 0;
   const missingTagsLine = formatMissingTagLine(missingTagCounts);

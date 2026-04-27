@@ -1,5 +1,6 @@
-import { Cruise, CrewMember, CruiseDayRecipe, MealType } from "../types";
-import { DIET_TAGS, DIET_REGISTRY, DietTagId } from "./dietTags";
+import { Cruise, CruiseDayRecipe, MealType, Recipie } from "../types";
+import { CrewMember, Diet } from "./crew";
+import { isRecipieVegan, isRecipieVegetarian } from "./recipieData";
 import { CrewRecipeAllocationChecker } from "../utils/maxFlow";
 
 // ---------------------------------------------------------------------------
@@ -18,7 +19,7 @@ export interface MealCoverage {
   totalPortions: number;
   totalNeeded: number;
   unfed: CrewMember[];
-  missingTagCounts: Record<DietTagId, number>;
+  unfedCountByDiet: Record<Diet, number>;
   surplus: number;
 }
 
@@ -86,11 +87,7 @@ export function getMealCoverage(
   }
 
   const allocationChecker = new CrewRecipeAllocationChecker(members, slotRecipes, (member, recipe) => {
-    return member.tags.every((tag) => {
-      const diet = DIET_REGISTRY[tag as DietTagId];
-      // Unknown tags are treated as non-restrictive
-      return diet === undefined || diet.satisfies(recipe.recipeData);
-    })
+    return canEat(member, recipe.recipeData);
   });
 
   const unfed = allocationChecker.getUnfedCrewMembers();
@@ -100,9 +97,17 @@ export function getMealCoverage(
     totalPortions,
     totalNeeded,
     unfed,
-    missingTagCounts: getMissingTagCounts(unfed),
+    unfedCountByDiet: getUnfedCountByDiet(unfed),
     surplus: Math.max(0, totalPortions - totalNeeded),
   };
+}
+
+export function canEat(member: CrewMember, recipe: Recipie): boolean {
+  switch (member.diet) {
+    case "omnivore":   return true;
+    case "vegetarian": return isRecipieVegetarian(recipe);
+    case "vegan":      return isRecipieVegan(recipe);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -115,35 +120,26 @@ function defaultMealCoverage(mealSlot: MealType, totalPortions: number): MealCov
     totalPortions,
     totalNeeded: 0,
     unfed: [],
-    missingTagCounts: Object.fromEntries(
-      DIET_TAGS.map((t) => [t, 0]),
-    ) as Record<DietTagId, number>,
+    unfedCountByDiet: { omnivore: 0, vegetarian: 0, vegan: 0 },
     surplus: totalPortions,
   };
 }
 
-function getMissingTagCounts(unfed: CrewMember[]): Record<DietTagId, number> {
-  const missingTagCounts = Object.fromEntries(
-    DIET_TAGS.map((t) => [t, 0]),
-  ) as Record<DietTagId, number>;
-
+function getUnfedCountByDiet(unfed: CrewMember[]): Record<Diet, number> {
+  const counts: Record<Diet, number> = { omnivore: 0, vegetarian: 0, vegan: 0 };
   for (const member of unfed) {
-    for (const tag of member.tags) {
-      if (tag in missingTagCounts) {
-        missingTagCounts[tag as DietTagId]++;
-      }
-    }
+    counts[member.diet]++;
   }
-
-  return missingTagCounts;
+  return counts;
 }
 
 export function countCrewWithTag(cruise: Cruise, tag: string): number {
-  return cruise.crewMembers.filter((m) => m.tags.includes(tag)).length;
+  return cruise.crewMembers.filter((m) => m.diet === tag).length;
 }
 
-export function getActiveDietTags(cruise: Cruise): DietTagId[] {
-  const present = new Set<string>();
-  cruise.crewMembers.forEach((m) => m.tags.forEach((t) => present.add(t)));
-  return DIET_TAGS.filter((t) => present.has(t));
+export function getActiveDietTags(cruise: Cruise): Diet[] {
+  const present = new Set<Diet>();
+  cruise.crewMembers.forEach((m) => present.add(m.diet));
+  const DIET_VALUES: Diet[] = ["omnivore", "vegetarian", "vegan"];
+  return DIET_VALUES.filter((t) => present.has(t));
 }

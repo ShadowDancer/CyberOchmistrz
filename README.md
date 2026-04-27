@@ -29,7 +29,7 @@ npm test             # Jest test suite
 1. **Cookbook** (`/przepisy`) — Browse, add, edit recipes with ingredients, difficulty ratings, meal types
 2. **Cruises** (`/rejsy`) — Create cruises (name, days, crew as tagged member list), assign recipes to each day via drag-and-drop with per-recipe portion count and meal slot, add extra supplies
 3. **Shopping list generation** — Aggregate all ingredients from assigned recipes (scaled by each recipe's `crewCount`) + additional supplies into a categorized shopping list with CSV export
-4. **Diet coverage check** — Per (day, mealSlot) max-flow analysis reports whether each meal feeds every crew member given their dietary tags (omnivore / vegetarian / vegan); extensible tag registry
+4. **Diet coverage check** — Per (day, mealSlot) max-flow analysis reports whether each meal feeds every crew member given their diet (omnivore / vegetarian / vegan)
 5. **Supplies catalog** (`/skladniki`) — Browse and add ingredients/supplies used in recipes
 
 Static data (recipes, supplies) ships in JSON. Cruises persisted in `localStorage`. Deployed as static site to GitHub Pages with PWA support.
@@ -60,7 +60,7 @@ CyberOchmistrz/
 │   │   ├── AGENTS.md          # Model layer rules for AI agents
 │   │   ├── cruiseData.ts      # Cruise CRUD, recipe assignment, shopping aggregation, CSV export
 │   │   ├── cruiseDietCoverage.ts  # Max-flow diet coverage (Dinic's algorithm), smart crewCount defaults
-│   │   ├── dietTags.ts        # Extensible diet tag registry (omnivore, vegetarian, vegan)
+│   │   ├── crew.ts            # CrewMember, Diet type, DIET_REGISTRY
 │   │   ├── recipieData.ts     # Recipe loading, ingredient resolution, veg checks
 │   │   └── supplyData.ts      # Supply loading, filtering, validation
 │   ├── types/                 # TypeScript interfaces and enums

@@ -1,27 +1,18 @@
 export interface CrewMember {
   id: string;
   name: string; // can be empty string
-  diet: Diet
+  diet: Diet;
 }
 
-type Diet = "omnivore" | "vegetarian" | "vegan";
+export type Diet = "omnivore" | "vegetarian" | "vegan";
 
 interface DietMetadata {
-  labelShort: string,
-  lableLong: string
+  labelShort: string;
+  labelLong: string;
 }
 
-const DIET_REGISTRY: Record<Diet, DietMetadata> = {
-  omnivore: {
-    labelShort: "wszystkoż.",
-    lableLong: "wszystkożerna"
-  },
-  vegetarian: {
-    labelShort: "weget.",
-    lableLong: "wegetariańska"
-  },
-  vegan: {
-    labelShort: "weg.",
-    lableLong: "wegańska"
-  }
-}
+export const DIET_REGISTRY: Record<Diet, DietMetadata> = {
+  omnivore:    { labelShort: "wszystkoż.", labelLong: "wszystkożerna" },
+  vegetarian:  { labelShort: "weget.",     labelLong: "wegetariańska" },
+  vegan:       { labelShort: "weg.",       labelLong: "wegańska" },
+};
