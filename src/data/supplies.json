@@ -392,6 +392,16 @@
     "isIngredient": false
   },
   {
+    "id": "woda",
+    "name": "Woda pitna",
+    "description": "",
+    "unit": "ml",
+    "category": "napoje",
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
+  },
+  {
     "id": "woda_butelkowana",
     "name": "Woda butelkowana niegazowana",
     "description": "1,5L/osobę/dzień",
