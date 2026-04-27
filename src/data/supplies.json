@@ -275,7 +275,7 @@
     "isIngredient": true
   },
   {
-    "id": "wędlina_prozniowo",
+    "id": "wedlina_prozniowo",
     "name": "Wędlina pakowana próżniowo",
     "unit": "gramy",
     "category": "mięso",
@@ -500,6 +500,15 @@
     "unit": "saszetki",
     "category": "przekąski",
     "isIngredient": false
+  },
+  {
+    "id": "orzechy_wloskie",
+    "name": "Orzechy włoskie",
+    "unit": "gramy",
+    "category": "przekąski",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
   },
   {
     "id": "orzeszki_solone",
