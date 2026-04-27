@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Cruise, CrewMember } from '../types';
+import { Cruise } from '../types';
+import { CrewMember } from '../model/crew';
 import {
   updateCruiseDetails,
   willLengthReductionRemoveRecipes,

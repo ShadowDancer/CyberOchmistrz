@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { createNewCruise, saveCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
-import { CrewMember } from '../types';
+import { CrewMember } from '../model/crew';
 import CrewEditor from './CrewEditor';
 
 export default function AddCruiseForm() {

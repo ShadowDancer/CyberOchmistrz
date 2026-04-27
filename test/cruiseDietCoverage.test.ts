@@ -81,6 +81,18 @@ describe('canEat', () => {
     expect(canEat(vegan('1'), tofu)).toBe(true);
     expect(canEat(vegan('1'), spaghetti)).toBe(false); // has meat
   });
+
+  it('omnivore blocked by excluded ingredient', () => {
+    const m = { ...omni('1'), excludedSupplies: ['meat'] };
+    expect(canEat(m, spaghetti)).toBe(false); // spaghetti has meat
+    expect(canEat(m, pasta)).toBe(true);      // pasta has no meat
+  });
+
+  it('omnivore not blocked when excluded ingredient absent from recipe', () => {
+    const m = { ...omni('1'), excludedSupplies: ['cheese'] };
+    expect(canEat(m, spaghetti)).toBe(true);  // spaghetti has no cheese
+    expect(canEat(m, tofu)).toBe(true);       // tofu has no cheese
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -112,7 +124,7 @@ describe('getMealCoverage', () => {
       const result = getMealCoverage([slot(spaghetti, 6)], crew, MealType.DINNER);
       expect(result.unfed).toHaveLength(1);
       expect(result.unfed[0].id).toBe('6');
-      expect(result.unfedCountByDiet.vegan).toBe(1);
+      expect(result.forbiddenIngredientCounts).toEqual({});
     });
 
     it('should cover 5 omni + 1 vegan with tofu ×6 (vegan recipe feeds omnis)', () => {
@@ -211,6 +223,33 @@ describe('getMealCoverage', () => {
     });
   });
 
+  describe('ingredient exclusions', () => {
+    it('member with exclusion blocked by matching ingredient', () => {
+      // omni normally eats spaghetti, but excludes meat → blocked
+      const m = { ...omni('1'), excludedSupplies: ['meat'] };
+      const result = getMealCoverage([slot(spaghetti, 1)], [m], MealType.DINNER);
+      expect(result.unfed).toHaveLength(1);
+      // meat appears in slot recipe and is excluded by the unfed member
+      expect(result.forbiddenIngredientCounts['meat']).toBe(1); // 1 unfed member excludes meat
+    });
+
+    it('member not blocked when excluded ingredient absent from recipe', () => {
+      const m = { ...omni('1'), excludedSupplies: ['cheese'] };
+      const result = getMealCoverage([slot(spaghetti, 1)], [m], MealType.DINNER);
+      expect(result.unfed).toHaveLength(0);
+      expect(result.forbiddenIngredientCounts).toEqual({});
+    });
+
+    it('member blocked by both diet and exclusion counted in forbiddenIngredientCounts', () => {
+      // vegan excludes pasta; spaghetti has meat (diet block) and pasta (exclusion)
+      const m = { ...vegan('1'), excludedSupplies: ['pasta'] };
+      const result = getMealCoverage([slot(spaghetti, 1)], [m], MealType.DINNER);
+      expect(result.unfed).toHaveLength(1);
+      // pasta is in the recipe and excluded by unfed member
+      expect(result.forbiddenIngredientCounts['pasta']).toBe(1); // 1 unfed member excludes pasta
+    });
+  });
+
   describe('edge cases', () => {
     it('should report all members unfed when no recipes given', () => {
       const crew = [omni('1'), vegan('2')];
@@ -239,7 +278,7 @@ describe('getMealCoverage', () => {
         MealType.DINNER
       );
       expect(result.unfed).toHaveLength(2);
-      expect(result.unfedCountByDiet.vegan).toBe(2);
+      expect(result.forbiddenIngredientCounts).toEqual({});
     });
   });
 });

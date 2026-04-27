@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Cruise, CrewMember } from '../types';
+import { Cruise } from '../types';
 import { deleteCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
-import { DIET_REGISTRY } from '../model/crew';
+import { DIET_REGISTRY, CrewMember } from '../model/crew';
+import { getSupplyById } from '../model/supplyData';
 
 interface CruiseInfoTabProps {
   cruise: Cruise;
@@ -115,5 +116,15 @@ export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
 
 function describeMember(member: CrewMember): string {
   const name = member.name?.trim() ?? '';
-  return `${name} — Dieta ${DIET_REGISTRY[member.diet].labelLong}`;
+  const dietLabel = `Dieta ${DIET_REGISTRY[member.diet].labelLong}`;
+
+  if (!member.excludedSupplies || member.excludedSupplies.length === 0) {
+    return `${name} — ${dietLabel}`;
+  }
+
+  const exclusionNames = member.excludedSupplies
+    .map(id => getSupplyById(id)?.name ?? id)
+    .join(', ');
+
+  return `${name} — ${dietLabel}, wykluczone składniki: ${exclusionNames}`;
 }

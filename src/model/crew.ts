@@ -2,6 +2,7 @@ export interface CrewMember {
   id: string;
   name: string; // can be empty string
   diet: Diet;
+  excludedSupplies?: string[];
 }
 
 export type Diet = "omnivore" | "vegetarian" | "vegan";

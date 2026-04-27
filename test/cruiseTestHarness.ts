@@ -44,8 +44,8 @@ export const getStoredCruises = (): Cruise[] => {
   return lastCall ? JSON.parse(lastCall[1]) : [];
 };
 
-import { Cruise, CrewMember, Recipie, MealType, IngredientAmount } from '../src/types';
-import { Diet } from '../src/model/crew';
+import { Cruise, Recipie, MealType, IngredientAmount } from '../src/types';
+import { Diet, CrewMember } from '../src/model/crew';
 import { createNewCruise } from '../src/model/cruiseData';
 import { createRecipie } from '../src/model/recipieData';
 
