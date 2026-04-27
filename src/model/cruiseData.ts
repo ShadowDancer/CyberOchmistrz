@@ -3,7 +3,6 @@ import {
 } from './recipieData';
 import {
   Cruise,
-  CrewMember,
   Recipie,
   MealType,
   AggregatedShoppingList,
@@ -15,6 +14,7 @@ import {
   AdditionalSupplyCategoryGroup, AdditionalSupplyItem, CruiseFormData, CruiseFormErrors
 } from '../types';
 import { getSupplyById } from './supplyData';
+import { CrewMember } from '../model/crew';
 
 const STORAGE_KEY = 'cyber-ochmistrz-cruises';
 
@@ -291,7 +291,7 @@ export function updateRecipeIngredientInCruise(
   if (!recipe || !recipe.recipeData) return;
 
   // Ensure ingredients array exists and the index is valid
-  if (!recipe.recipeData.ingredients || 
+  if (!recipe.recipeData.ingredients ||
     ingredientIndex < 0 ||
       ingredientIndex >= recipe.recipeData.ingredients.length) {
     return;
@@ -346,7 +346,7 @@ export function removeIngredientFromRecipeInCruise(
   if (!recipe || !recipe.recipeData) return;
 
   // Ensure ingredients array exists and the index is valid
-  if (!recipe.recipeData.ingredients || 
+  if (!recipe.recipeData.ingredients ||
     ingredientIndex < 0 ||
       ingredientIndex >= recipe.recipeData.ingredients.length) {
     return;

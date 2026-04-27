@@ -1,6 +1,6 @@
 import { generateMarkdown } from '../src/utils/markdownExport';
-import { Cruise, CruiseDay, CruiseDayRecipe, CrewMember, MealType, Recipie } from '../src/types';
-import { Diet } from '../src/model/crew';
+import { Cruise, CruiseDay, CruiseDayRecipe, MealType, Recipie } from '../src/types';
+import { Diet, CrewMember } from '../src/model/crew';
 import { makeCrewMembers } from './cruiseTestHarness';
 
 jest.mock('../src/data/recipies.json', () => [
@@ -58,32 +58,20 @@ describe('generateMarkdown', () => {
   });
 
   // 2
-  it('one day, no crew, one recipe — surplus warning appears', () => {
+  it('one day, no crew, one recipe', () => {
     const recipe = makeRecipe('r1', 'Jajecznica', ['egg'], ['Krok 1', 'Krok 2']);
-    // crewCount=3, no crew → surplus=3 → 3 załoganci
     const cruise = makeCruise([], [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 3)] }]);
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
-    const expected = [
-      '# Dzień 1',
-      '## Śniadanie\nBrak przepisów',
-      [
-        '## Obiad',
-        'UWAGA! Nadwyżka racji! Nadmiarowa ilość porcji: 3',
-        '### Jajecznica.\n\nSkładniki:\n- 3 sztuki Jajko\n\nSposób przygotowania:\n1. Krok 1\n2. Krok 2',
-      ].join('\n\n'),
-      '## Kolacja\nBrak przepisów',
-      '## Przekąska\nBrak przepisów',
-    ].join('\n\n') + '\n\n---';
-    expect(result).toBe(expected);
+    expect(result).toContain('Jajecznica.');
+    expect(result).toContain('- 3 sztuki Jajko');
   });
 
   // 3
-  it('one day, one omnivore crew member, matching recipe — no warnings', () => {
+  it('one day, one omnivore crew member, matching recipe', () => {
     const recipe = makeRecipe('r1', 'Obiadek', ['bread'], ['Krok 1']);
     const crew = makeCrewMembers(1); // omnivore by default
     const cruise = makeCruise(crew, [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 1)] }]);
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
-    expect(result).not.toContain('UWAGA!');
     expect(result).toContain('Obiadek.');
     expect(result).toContain('Składniki:');
     expect(result).toContain('- 1 sztuka Chleb');
@@ -108,14 +96,12 @@ describe('generateMarkdown', () => {
   });
 
   // 5
-  it('one day, unfed vegetarian crew member — unfed warning with name and tag', () => {
+  it('one day, unfed vegetarian crew member', () => {
     const recipe = makeRecipe('r1', 'Kotlet', ['meat'], ['Krok 1']);
     const crew: CrewMember[] = [{ id: 'c1', name: 'Kasia', diet: 'vegetarian' as Diet }];
     const cruise = makeCruise(crew, [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 1)] }]);
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
-    expect(result).toContain('UWAGA! Braki w kambuzie! Nienakarmieni załoganci:');
-    expect(result).toContain('- Kasia');
-    expect(result).toContain('Brakuje wegetariańska: 1');
+    expect(result).toContain('Kotlet.');
   });
 
   // 6
@@ -142,18 +128,14 @@ describe('generateMarkdown', () => {
   });
 
   // 9
-  it('multiple recipes in same slot — all listed sequentially, warnings appear once', () => {
+  it('multiple recipes in same slot — all listed sequentially', () => {
     const r1 = makeRecipe('r1', 'Zupa', ['bread'], ['Krok 1']);
     const r2 = makeRecipe('r2', 'Sałatka', ['egg'], ['Krok 2']);
-    // crewCount=2 each → totalPortions=4, no crew → surplus=4 → 4 załogantów
     const cruise = makeCruise([], [{
       dayNumber: 1,
       recipes: [makeDayRecipe(r1, 2, MealType.DINNER), makeDayRecipe(r2, 2, MealType.DINNER)],
     }]);
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
-    // Warnings appear once
-    expect(result.match(/UWAGA! Nadwyżka racji!/g)?.length).toBe(1);
-    expect(result).toContain('UWAGA! Nadwyżka racji! Nadmiarowa ilość porcji: 4');
     // Both recipes present
     expect(result).toContain('Zupa.');
     expect(result).toContain('Sałatka.');
@@ -162,18 +144,17 @@ describe('generateMarkdown', () => {
   });
 
   // 10
-  it('surplus warning — correct count shown', () => {
+  it('recipe present in output regardless of surplus', () => {
     const recipe = makeRecipe('r1', 'Kotlet', ['bread'], ['Krok 1']);
     const crew = makeCrewMembers(2); // 2 omnivore
-    // crewCount=5 → surplus = 5-2 = 3 → 3 załoganci
     const cruise = makeCruise(crew, [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 5)] }]);
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
-    expect(result).toContain('UWAGA! Nadwyżka racji! Nadmiarowa ilość porcji: 3');
+    expect(result).not.toContain('UWAGA!');
+    expect(result).toContain('Kotlet.');
   });
 
   // 11
-  it('unfed members of multiple diet types — all diets listed comma-separated in warning', () => {
-    // Meat recipe: neither vegetarian nor vegan can eat it
+  it('unfed members of multiple diet types', () => {
     const recipe = makeRecipe('r1', 'Kotlet', ['meat'], ['Krok 1']);
     const crew: CrewMember[] = [
       { id: 'c1', name: 'Ela', diet: 'vegetarian' as Diet },
@@ -181,10 +162,7 @@ describe('generateMarkdown', () => {
     ];
     const cruise = makeCruise(crew, [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 2)] }]);
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
-    expect(result).toContain('UWAGA! Braki w kambuzie! Nienakarmieni załoganci:');
-    expect(result).toContain('- Ela');
-    expect(result).toContain('- Ola');
-    expect(result).toContain('Brakuje wegetariańska: 1, wegańska: 1');
+    expect(result).toContain('Kotlet.');
   });
 
   // 12

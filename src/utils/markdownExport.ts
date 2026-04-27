@@ -1,8 +1,6 @@
 import { Cruise, MealType } from '../types';
 import { getSupplyById } from '../model/supplyData';
-import { getDayCoverage, MealCoverage } from '../model/cruiseDietCoverage';
 import { declineUnit } from './polishDeclension';
-import { Diet, DIET_REGISTRY } from '../model/crew';
 import { getRecipeById } from '../model/recipieData';
 
 const MEAL_SLOT_ORDER = [MealType.BREAKFAST, MealType.DINNER, MealType.SUPPER, MealType.SNACK];
@@ -28,8 +26,6 @@ export function generateMarkdown(cruise: Cruise): string {
     const blocks: string[] = [];
     blocks.push(formatDayHeader(cruise.startDate, day.dayNumber));
 
-    const dayCoverage = getDayCoverage(day.dayNumber, day.recipes, cruise.crewMembers);
-
     for (const mealType of MEAL_SLOT_ORDER) {
       const slotRecipes = day.recipes.filter(r => r.mealSlot === mealType);
       let slotContent = `## ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}`;
@@ -38,29 +34,6 @@ export function generateMarkdown(cruise: Cruise): string {
         slotContent += '\nBrak przepisów';
         blocks.push(slotContent);
         continue;
-      }
-
-      const mealCoverage = dayCoverage.meals.find(m => m.mealType === mealType);
-      if (mealCoverage) {
-        const warnings: string[] = [];
-
-        if (mealCoverage.unfed.length > 0) {
-          warnings.push("\nUWAGA! Braki w kambuzie! Nienakarmieni załoganci:")
-
-          for (const member of mealCoverage.unfed) {
-            warnings.push(`- ${member.name}`);
-          }
-
-          warnings.push(formatMissingTagLine(mealCoverage.unfedCountByDiet) ?? "");
-        }
-
-        if (mealCoverage.surplus > 0) {
-          warnings.push(`\nUWAGA! Nadwyżka racji! Nadmiarowa ilość porcji: ${mealCoverage.surplus}`);
-        }
-
-        if (warnings.length > 0) {
-          slotContent += '\n' + warnings.join('\n');
-        }
       }
 
       const groupOrder: string[] = [];
@@ -145,9 +118,3 @@ export function generateMarkdown(cruise: Cruise): string {
   return dayBlocks.join('\n\n');
 }
 
-function formatMissingTagLine(missingTagCounts: MealCoverage["unfedCountByDiet"]) {
-  const parts = (Object.entries(missingTagCounts) as [Diet, number][])
-    .filter(([, n]) => n > 0)
-    .map(([id, n]) => `${DIET_REGISTRY[id].labelLong}: ${n}`);
-  return parts.length > 0 ? "Brakuje " + parts.join(', ') : null;
-}

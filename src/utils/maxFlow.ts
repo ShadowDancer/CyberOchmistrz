@@ -1,4 +1,5 @@
-import { CrewMember, CruiseDayRecipe } from "@/types";
+import { CruiseDayRecipe } from "@/types";
+import { CrewMember } from '../model/crew'
 
 /**
  * Checks if all member are fed

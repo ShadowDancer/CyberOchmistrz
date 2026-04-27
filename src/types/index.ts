@@ -1,3 +1,5 @@
+import { CrewMember } from '../model/crew'
+
 export interface Supply {
   id: string;
   name: string;

@@ -19,7 +19,7 @@ export interface MealCoverage {
   totalPortions: number;
   totalNeeded: number;
   unfed: CrewMember[];
-  unfedCountByDiet: Record<Diet, number>;
+  forbiddenIngredientCounts: Record<string, number>;
   surplus: number;
 }
 
@@ -97,17 +97,26 @@ export function getMealCoverage(
     totalPortions,
     totalNeeded,
     unfed,
-    unfedCountByDiet: getUnfedCountByDiet(unfed),
+    forbiddenIngredientCounts: getForbiddenIngredientCounts(unfed, slotRecipes.map(r => r.recipeData)),
     surplus: Math.max(0, totalPortions - totalNeeded),
   };
 }
 
 export function canEat(member: CrewMember, recipe: Recipie): boolean {
+  return dietMatches(member, recipe)
+    && !hasExcludedIngredients(member, recipe);
+}
+
+function dietMatches(member: CrewMember, recipe: Recipie): boolean {
   switch (member.diet) {
     case "omnivore":   return true;
     case "vegetarian": return isRecipieVegetarian(recipe);
     case "vegan":      return isRecipieVegan(recipe);
   }
+}
+
+function hasExcludedIngredients(member: CrewMember, recipe: Recipie): boolean {
+  return recipe.ingredients.some(ing => member.excludedSupplies?.includes(ing.id));
 }
 
 // ---------------------------------------------------------------------------
@@ -120,15 +129,23 @@ function defaultMealCoverage(mealSlot: MealType, totalPortions: number): MealCov
     totalPortions,
     totalNeeded: 0,
     unfed: [],
-    unfedCountByDiet: { omnivore: 0, vegetarian: 0, vegan: 0 },
+    forbiddenIngredientCounts: {},
     surplus: totalPortions,
   };
 }
 
-function getUnfedCountByDiet(unfed: CrewMember[]): Record<Diet, number> {
-  const counts: Record<Diet, number> = { omnivore: 0, vegetarian: 0, vegan: 0 };
+function getForbiddenIngredientCounts(
+  unfed: CrewMember[],
+  slotRecipes: Recipie[],
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+  const slotIngredientIds = new Set(slotRecipes.flatMap(r => r.ingredients.map(i => i.id)));
   for (const member of unfed) {
-    counts[member.diet]++;
+    for (const id of member.excludedSupplies ?? []) {
+      if (slotIngredientIds.has(id)) {
+        counts[id] = (counts[id] ?? 0) + 1;
+      }
+    }
   }
   return counts;
 }

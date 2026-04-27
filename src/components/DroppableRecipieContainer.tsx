@@ -2,10 +2,12 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CrewMember, CruiseDayRecipe, MealType, Recipie } from '../types';
+import { CruiseDayRecipe, MealType, Recipie } from '../types';
 import DraggableRecipeItem from './DraggableRecipeItem';
 import { getMealCoverage, MealCoverage } from '../model/cruiseDietCoverage';
-import { Diet, DIET_REGISTRY } from '../model/crew';
+import { Diet, DIET_REGISTRY, CrewMember } from '../model/crew';
+import { getSupplyById } from '../model/supplyData';
+import { declineUnit } from '../utils/polishDeclension';
 
 interface DroppableRecipieContainerProps {
   dayNumber: number;
@@ -184,18 +186,9 @@ interface CoverageDisplayProps {
   isSlotEmpty: boolean;
 }
 
-function formatMissingTagLine(missingTagCounts: MealCoverage['unfedCountByDiet']) {
-  const parts = (Object.entries(missingTagCounts) as [Diet, number][])
-    .filter(([, n]) => n > 0)
-    .map(([id, n]) => `${DIET_REGISTRY[id].labelLong}: ${n}`);
-  return parts.length > 0 ? "Brakuje " + parts.join(', ') : null;
-}
-
 function CoverageDisplay({ coverage, isSlotEmpty }: CoverageDisplayProps) {
-  const { unfed, totalPortions, totalNeeded, surplus, unfedCountByDiet: missingTagCounts } =
-    coverage;
+  const { unfed, totalPortions, totalNeeded, surplus, forbiddenIngredientCounts } = coverage;
   const hasUnfed = unfed.length > 0;
-  const missingTagsLine = formatMissingTagLine(missingTagCounts);
 
   if (isSlotEmpty) {
     return (
@@ -218,6 +211,12 @@ function CoverageDisplay({ coverage, isSlotEmpty }: CoverageDisplayProps) {
     statusLabel = 'Nadwyżka racji';
   }
 
+  const dietCounts = new Map<Diet, number>();
+  for (const m of unfed) {
+    dietCounts.set(m.diet, (dietCounts.get(m.diet) ?? 0) + 1);
+  }
+  const exclusionEntries = Object.entries(forbiddenIngredientCounts);
+
   return (
     <div className="mt-2 px-2">
       <div className={`text-xs md:text-sm ${statusClass}`}>
@@ -225,12 +224,29 @@ function CoverageDisplay({ coverage, isSlotEmpty }: CoverageDisplayProps) {
       </div>
       {hasUnfed && (
         <div className="mt-1 text-xs text-red-700 dark:text-red-400">
-          <span className="font-medium">Nienakarmieni: </span>
-          {unfed.map((m) => m.name).join(', ')}
+          <div>
+            <span className="font-medium">Nienakarmieni załoganci: </span>
+            {unfed.map((m) => m.name).join(', ')}
+          </div>
+          <ul className="mt-0.5 pl-2">
+            {([...dietCounts.entries()] as [Diet, number][]).map(([diet, count]) => (
+              <li key={diet}>
+                Dieta {DIET_REGISTRY[diet].labelLong}: {count} {declineUnit('załogant', count)}
+              </li>
+            ))}
+            {exclusionEntries.length > 0 && (
+              <li>
+                Wykluczone składniki:{' '}
+                {exclusionEntries
+                  .map(([id, count]) => {
+                    const name = getSupplyById(id)?.name ?? id;
+                    return `${name} (${count} ${declineUnit('załogant', count)})`;
+                  })
+                  .join(', ')}
+              </li>
+            )}
+          </ul>
         </div>
-      )}
-      {missingTagsLine && (
-        <div className="mt-1 text-xs text-muted-light">{missingTagsLine}</div>
       )}
     </div>
   );
