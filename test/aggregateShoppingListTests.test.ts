@@ -135,7 +135,7 @@ describe('aggregateShoppingList', () => {
     new AdditionalSupplyAmountSource(p.base, p.perPerson, p.perDay);
 
   const makeCrewMembers = (count: number): CrewMember[] =>
-    Array.from({ length: count }, (_, i) => ({ id: `c${i}`, tags: ['omnivore'] }));
+    Array.from({ length: count }, (_, i) => ({ id: `c${i}`, name: '', diet: 'omnivore' as const }));
 
   const makeRecipe = (name: string, ingredients: IngredientAmount[]): Recipie =>
     createRecipie({

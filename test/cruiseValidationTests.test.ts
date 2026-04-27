@@ -3,7 +3,7 @@ import { CrewMember } from '../src/types';
 import theories from 'jest-theories';
 
 const makeCrewMembers = (count: number): CrewMember[] =>
-  Array.from({ length: count }, (_, i) => ({ id: `m-${i}`, tags: ['omnivore'] }));
+  Array.from({ length: count }, (_, i) => ({ id: `m-${i}`, name: '', diet: 'omnivore' as const }));
 
 describe('Cruise Form Validation', () => {
   describe('validateCruiseForm', () => {
@@ -90,7 +90,7 @@ describe('Cruise Form Validation', () => {
       },
       {
         name: 'anonymous omnivore crew member is valid',
-        input: { name: 'Test Cruise', length: 5, crewMembers: [{ id: 'm1', tags: ['omnivore'] }] },
+        input: { name: 'Test Cruise', length: 5, crewMembers: [{ id: 'm1', name: '', diet: 'omnivore' as const }] },
         expected: { name: '', length: '', crewMembers: '', startDate: '' }
       },
     ];

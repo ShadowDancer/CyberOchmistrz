@@ -45,12 +45,6 @@ export interface CruiseSupply {
   isPerDay: boolean;
 }
 
-export interface CrewMember {
-  id: string;
-  name: string; // can be empty string
-  tags: string[]; // string[] not DietTag[] so unknown tags round-trip safely
-}
-
 export interface CruiseDayRecipe {
   originalRecipeId: string;
   recipeData: Recipie; // required: snapshot taken at add-time

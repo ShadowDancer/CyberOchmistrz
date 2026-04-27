@@ -1,5 +1,6 @@
 import { generateMarkdown } from '../src/utils/markdownExport';
 import { Cruise, CruiseDay, CruiseDayRecipe, CrewMember, MealType, Recipie } from '../src/types';
+import { Diet } from '../src/model/crew';
 import { makeCrewMembers } from './cruiseTestHarness';
 
 jest.mock('../src/data/recipies.json', () => [
@@ -109,7 +110,7 @@ describe('generateMarkdown', () => {
   // 5
   it('one day, unfed vegetarian crew member — unfed warning with name and tag', () => {
     const recipe = makeRecipe('r1', 'Kotlet', ['meat'], ['Krok 1']);
-    const crew: CrewMember[] = [{ id: 'c1', name: 'Kasia', tags: ['vegetarian'] }];
+    const crew: CrewMember[] = [{ id: 'c1', name: 'Kasia', diet: 'vegetarian' as Diet }];
     const cruise = makeCruise(crew, [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 1)] }]);
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
     expect(result).toContain('UWAGA! Braki w kambuzie! Nienakarmieni załoganci:');
@@ -171,15 +172,18 @@ describe('generateMarkdown', () => {
   });
 
   // 11
-  it('member with multiple diet tags — all tags listed comma-separated in warning', () => {
-    // Egg recipe: vegetarian (isVegetarian=true) but not vegan (isVegan=false)
-    const recipe = makeRecipe('r1', 'Jajecznica', ['egg'], ['Krok 1']);
-    // Member has both vegetarian and vegan tags — vegan tag fails because egg is not vegan
-    const crew: CrewMember[] = [{ id: 'c1', name: 'Ela', tags: ['vegetarian', 'vegan'] }];
-    const cruise = makeCruise(crew, [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 1)] }]);
+  it('unfed members of multiple diet types — all diets listed comma-separated in warning', () => {
+    // Meat recipe: neither vegetarian nor vegan can eat it
+    const recipe = makeRecipe('r1', 'Kotlet', ['meat'], ['Krok 1']);
+    const crew: CrewMember[] = [
+      { id: 'c1', name: 'Ela', diet: 'vegetarian' as Diet },
+      { id: 'c2', name: 'Ola', diet: 'vegan' as Diet },
+    ];
+    const cruise = makeCruise(crew, [{ dayNumber: 1, recipes: [makeDayRecipe(recipe, 2)] }]);
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
     expect(result).toContain('UWAGA! Braki w kambuzie! Nienakarmieni załoganci:');
     expect(result).toContain('- Ela');
+    expect(result).toContain('- Ola');
     expect(result).toContain('Brakuje wegetariańska: 1, wegańska: 1');
   });
 

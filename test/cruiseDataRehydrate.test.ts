@@ -1,4 +1,5 @@
 import { Cruise, CrewMember, CruiseDayRecipe, MealType, Recipie } from '../src/types';
+import { Diet } from '../src/model/crew';
 import { createRecipie } from '../src/model/recipieData';
 
 const makeRecipe = (id: string): Recipie =>
@@ -12,7 +13,7 @@ const makeRecipe = (id: string): Recipie =>
     ingredients: [{ id: 'jajka', amount: 3 }],
   });
 
-const makeMember = (id: string): CrewMember => ({ id, name: `Member ${id}`, tags: ['omnivore'] });
+const makeMember = (id: string): CrewMember => ({ id, name: `Member ${id}`, diet: 'omnivore' as Diet });
 
 const makeRecipeEntry = (id: string, crewCount: number, mealSlot: MealType): CruiseDayRecipe => ({
   originalRecipeId: id,
@@ -56,11 +57,11 @@ describe('Cruise JSON round-trip (rehydration)', () => {
     expect(roundTripped.crewMembers).toHaveLength(originalCruise.crewMembers.length);
   });
 
-  it('should preserve crewMember id, name, and tags on each member', () => {
+  it('should preserve crewMember id, name, and diet on each member', () => {
     roundTripped.crewMembers.forEach((m, i) => {
       expect(m.id).toBe(originalCruise.crewMembers[i].id);
       expect(m.name).toBe(originalCruise.crewMembers[i].name);
-      expect(m.tags).toEqual(originalCruise.crewMembers[i].tags);
+      expect(m.diet).toBe(originalCruise.crewMembers[i].diet);
     });
   });
 
