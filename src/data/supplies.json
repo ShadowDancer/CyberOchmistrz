@@ -1108,5 +1108,23 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
+  },
+  {
+    "id": "jagody",
+    "name": "Jagody",
+    "unit": "gramy",
+    "category": "owoce",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "serek_waniliowy",
+    "name": "Serek waniliowy",
+    "unit": "gramy",
+    "category": "nabiał",
+    "isVegetarian": true,
+    "isVegan": false,
+    "isIngredient": true
   }
 ]
