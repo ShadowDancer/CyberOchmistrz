@@ -648,5 +648,31 @@
       "Przełóż do miseczki, udekoruj plasterkami banana i polej miodem."
     ],
     "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/owsianka-z-maslem-orzechowym"
+  },
+  {
+    "id": "tofucznica",
+    "name": "Tofucznica",
+    "description": "Wegańska alternatywa dla jajecznicy — jajecznica bez jajek. Idealna dla wegan, osób nietolerujących jajek i wszystkich szukających pysznego śniadania lub kolacji.",
+    "mealType": ["śniadanie", "kolacja"],
+    "difficulty": 2,
+    "ingredients": [
+      { "id": "tofu_naturalne", "amount": 150 },
+      { "id": "cebula", "amount": 1 },
+      { "id": "olej", "amount": 37.5 },
+      { "id": "mleko_roslinne", "amount": 25 },
+      { "id": "sol", "amount": 0.75 },
+      { "id": "papryka_slodka", "amount": 0.5 },
+      { "id": "oregano", "amount": 0.25 },
+      { "id": "pieprz", "amount": 0.25 },
+      { "id": "papryka_ostra", "amount": 0.25 },
+      { "id": "chleb", "amount": 0.3 }
+    ],
+    "instructions": [
+      "Na średniej patelni rozgrzej olej i smaż drobno pokrojoną cebulę na średnio-małym ogniu przez około 10 minut, aż stanie się szklista i lekko złota.",
+      "Pokrusz tofu bezpośrednio na patelnię, dodaj przyprawy (sól, paprykę słodką, oregano, pieprz, chili) i smaż mieszając przez 2-3 minuty.",
+      "Dodaj mleko roślinne, wymieszaj i smaż na małym ogniu przez 5 minut. Dopraw do smaku.",
+      "Podawaj jak tradycyjną jajecznicę — z pieczywem"
+    ],
+    "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/tofucznica"
   }
 ]

@@ -1081,5 +1081,32 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
+  },
+  {
+    "id": "tofu_naturalne",
+    "name": "Tofu naturalne",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "mleko_roslinne",
+    "name": "Mleko roślinne",
+    "unit": "mililitry",
+    "category": "nabiał",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "oregano",
+    "name": "Oregano",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
   }
 ]
