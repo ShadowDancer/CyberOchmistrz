@@ -8,6 +8,19 @@ import {
 import { CruiseSupply } from '../src/types';
 import { setupCruises, clearCruises, getStoredCruises, localStorageMock, makeCrewMembers } from './cruiseTestHarness';
 
+jest.mock('../src/data/supplies.json', () => [
+  { id: 'woda_butelkowana', name: 'Woda butelkowana', unit: 'litry', category: 'napoje', isIngredient: false },
+  { id: 'herbata', name: 'Herbata czarna', unit: 'torebka', category: 'napoje', isIngredient: false },
+  { id: 'kawa', name: 'Kawa', unit: 'gramy', category: 'napoje', isIngredient: false },
+  { id: 'mydło', name: 'Mydło', unit: 'sztuki', category: 'środki czystości', isIngredient: false },
+  { id: 'papier_toaletowy', name: 'Papier toaletowy', unit: 'rolki', category: 'środki czystości', isIngredient: false },
+  { id: 'płyn_do_naczyń', name: 'Płyn do naczyń', unit: 'sztuki', category: 'środki czystości', isIngredient: false },
+  { id: 'ręcznik_papierowy', name: 'Ręcznik papierowy', unit: 'rolki', category: 'środki czystości', isIngredient: false },
+  { id: 'worki_na_śmieci_120L', name: 'Worki na śmieci 120L', unit: 'sztuki', category: 'środki czystości', isIngredient: false },
+  { id: 'worki_na_śmieci_30L', name: 'Worki na śmieci 30L', unit: 'sztuki', category: 'środki czystości', isIngredient: false },
+  { id: 'zapalniczka', name: 'Zapalniczka', unit: 'sztuki', category: 'inne', isIngredient: false },
+]);
+
 describe('cruiseSupplies', () => {
   const supply = (id: string, amount: number, perPerson: boolean, perDay: boolean) =>
     expect.objectContaining({ id, amount, isPerPerson: perPerson, isPerDay: perDay });
