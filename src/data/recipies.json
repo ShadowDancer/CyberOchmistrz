@@ -696,5 +696,34 @@
       "Nałóż makaron na talerze, polej sosem jagodowo-śmietanowym, dodaj serek waniliowy lub twaróg i resztę świeżych jagód."
     ],
     "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/makaron-z-jagodami"
+  },
+  {
+    "id": "ubijana-feta",
+    "name": "Ubijana feta",
+    "description": "Kremowa i prosta pasta z sera feta, twarogu i gęstego jogurtu, z oliwą i przyprawami. Podawana z awokado, pomidorkami koktajlowymi i oliwkami.",
+    "mealType": ["śniadanie", "kolacja"],
+    "difficulty": 1,
+    "ingredients": [
+      { "id": "ser_feta",            "amount": 100 },
+      { "id": "twarog_polttlusty",   "amount": 50 },
+      { "id": "jogurt_grecki",       "amount": 75 },
+      { "id": "oliwa",               "amount": 37.5 },
+      { "id": "cytryna",             "amount": 0.25 },
+      { "id": "czosnek",             "amount": 0.5 },
+      { "id": "pieprz",              "amount": 0.25 },
+      { "id": "awokado",             "amount": 0.5 },
+      { "id": "pomidory_koktajlowe", "amount": 25 },
+      { "id": "oliwki_czarne",       "amount": 15 },
+      { "id": "szczypiorek",         "amount": 1.5 },
+      { "id": "bazylia",             "amount": 1 },
+      { "id": "papryka_ostra",       "amount": 0.15 },
+      { "id": "chleb",               "amount": 0.15 }
+    ],
+    "instructions": [
+      "Fetę i twaróg włóż do miski i rozgnieć widelcem lub zblenduj razem.",
+      "Dodaj jogurt, oliwę, posiekany czosnek, pieprz i sok z cytryny. Miksuj lub ubijaj mikserem ręcznym na puszystą masę.",
+      "Rozsmaruj pastę na talerzu. Na wierzchu ułóż pokrojone awokado, pomidorki koktajlowe i oliwki. Skrop oliwą, posyp pieprzem, chili, bazylią i szczypiorkiem. Podawaj od razu lub schłodź w lodówce."
+    ],
+    "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/ubijana-feta"
   }
 ]
