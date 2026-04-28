@@ -626,5 +626,27 @@
       "Propozycje połączeń: Klasyczna kanapka z masłem, szynką, serem i pomidorem. Wersja wegetariańska z serem, ogórkiem i cebulą. Kanapka na słodko z dżemem."
     ],
     "developedBy": "Na podstawie dostępnych składników"
+  },
+  {
+    "id": "owsianka-z-maslem-orzechowym",
+    "name": "Owsianka z masłem orzechowym",
+    "description": "Pożywne śniadanie lub kolacja łącząca płatki owsiane z masłem orzechowym i bananem. Prosty i sprawdzony przepis, przygotowany w sposób zapobiegający przypalaniu mleka.",
+    "mealType": ["śniadanie", "kolacja"],
+    "difficulty": 1,
+    "ingredients": [
+      { "id": "platki_owsiane", "amount": 40 },
+      { "id": "woda", "amount": 200 },
+      { "id": "mleko", "amount": 100 },
+      { "id": "maslo_orzechowe", "amount": 30 },
+      { "id": "miod", "amount": 10 },
+      { "id": "banany", "amount": 0.05 },
+      { "id": "sol", "amount": 1 }
+    ],
+    "instructions": [
+      "Płatki owsiane gotuj w wodzie w małym garnku na średnim ogniu, aż zgęstnieją (2-3 minuty), od czasu do czasu mieszając. Dodaj sól.",
+      "Wlej mleko i dodaj masło orzechowe. Wymieszaj, zagotuj, a następnie zdejmij z ognia.",
+      "Przełóż do miseczki, udekoruj plasterkami banana i polej miodem."
+    ],
+    "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/owsianka-z-maslem-orzechowym"
   }
 ]

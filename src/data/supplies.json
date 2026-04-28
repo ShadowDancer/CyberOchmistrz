@@ -1072,5 +1072,14 @@
     "isVegetarian": true,
     "isVegan": false,
     "isIngredient": true
+  },
+  {
+    "id": "maslo_orzechowe",
+    "name": "Masło orzechowe",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
   }
 ]
