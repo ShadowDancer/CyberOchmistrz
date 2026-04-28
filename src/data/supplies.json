@@ -26,51 +26,6 @@
     "description": "Ochrona przed słońcem."
   },
   {
-    "id": "lek_choroba_morska",
-    "name": "Lek na chorobę morską",
-    "unit": "opakowanie",
-    "category": "apteczka",
-    "isIngredient": false,
-    "description": "Niezbędny na rejsie."
-  },
-  {
-    "id": "leki_zoladkowe",
-    "name": "Leki na problemy żołądkowe",
-    "unit": "opakowanie",
-    "category": "apteczka",
-    "isIngredient": false,
-    "description": "Węgiel aktywowany, leki na biegunkę."
-  },
-  {
-    "id": "plastry",
-    "name": "Zestaw plastrów",
-    "unit": "opakowanie",
-    "category": "apteczka",
-    "isIngredient": false
-  },
-  {
-    "id": "srodek_do_dezynfekcji",
-    "name": "Środek do dezynfekcji ran",
-    "unit": "sztuki",
-    "category": "apteczka",
-    "isIngredient": false
-  },
-  {
-    "id": "srodek_przeciwbolowy",
-    "name": "Środek przeciwbólowy (np. Paracetamol)",
-    "unit": "opakowanie",
-    "category": "apteczka",
-    "isIngredient": false
-  },
-  {
-    "id": "wapno",
-    "name": "Wapno",
-    "unit": "opakowanie",
-    "category": "apteczka",
-    "isIngredient": false,
-    "description": "Na reakcje alergiczne."
-  },
-  {
     "id": "cukier",
     "name": "Cukier",
     "unit": "gramy",
@@ -402,20 +357,14 @@
     "isVegan": true
   },
   {
-    "id": "woda_butelkowana",
-    "name": "Woda butelkowana niegazowana",
-    "description": "1,5L/osobę/dzień",
-    "unit": "sztuki",
+    "id": "woda_gazowana",
+    "name": "Woda pitna gazowana",
+    "description": "",
+    "unit": "ml",
     "category": "napoje",
-    "isIngredient": false
-  },
-  {
-    "id": "woda_butelkowana_gazowana",
-    "name": "Woda butelkowana gazowana",
-    "description": "1,5L/osobę/dzień",
-    "unit": "sztuki",
-    "category": "napoje",
-    "isIngredient": false
+    "isIngredient": true,
+    "isVegetarian": true,
+    "isVegan": true
   },
   {
     "id": "awokado",
