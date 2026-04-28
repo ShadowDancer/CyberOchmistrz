@@ -24,6 +24,25 @@ From the fetched content extract:
 - Meal type hints (breakfast / lunch / dinner / dessert language)
 - Source URL (already known)
 
+## Step 2b — Detect implicit ingredients
+
+Scan the **full page content** beyond the ingredients list — including:
+- Step-by-step instructions
+- "Best served with", "serve alongside", "try with", "pair with" suggestions
+- Tips, notes, variations, and sidebar text
+
+Identify any food items or ingredients mentioned there that are **not already in the ingredients list**.
+
+For each implicit ingredient found, present it to the user with:
+- Where it appeared (quote the relevant phrase)
+- Whether it seems optional/serving suggestion vs. actually needed for the dish
+
+Ask the user: "Znalazłem składniki spoza listy składników. Które z nich dodać do przepisu?"
+
+List each one with a checkbox-style prompt (include / skip). Wait for the user's decision before proceeding. Add confirmed implicit ingredients to the ingredient list and carry them through all remaining steps.
+
+If no implicit ingredients are found, skip this step silently and proceed.
+
 ## Step 3 — Confirm serving size
 
 Show the user the **exact quote(s)** from the page that indicate serving count (e.g. "serves 4", "dla 6 osób"). Show your resolved N. Ask the user to confirm or correct N before proceeding. Do not continue until confirmed.
