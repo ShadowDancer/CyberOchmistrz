@@ -741,7 +741,7 @@
       "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
       "Podawaj razem - możesz też dorzucić jakieś dodatki"
     ],
-    "developedBy": "Radoslaw Kot & Mateusz Midor"
+    "developedBy": "Radoslaw Kot & mikele"
   },
   {
     "id": "danie-gotowe-z-dodatkiem-wegetarianskie",
@@ -758,7 +758,7 @@
       "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
       "Podawaj razem - możesz też dorzucić jakieś dodatki"
     ],
-    "developedBy": "Radoslaw Kot & Mateusz Midor"
+    "developedBy": "Radoslaw Kot & mikele"
   },
   {
     "id": "danie-gotowe-z-dodatkiem-weganskie",
@@ -775,6 +775,41 @@
       "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
       "Podawaj razem - możesz też dorzucić jakieś dodatki"
     ],
-    "developedBy": "Radoslaw Kot & Mateusz Midor"
+    "developedBy": "Radoslaw Kot & mikele"
+  },
+  {
+    "id": "leczo-jednogarnkowe",
+    "name": "Leczo jednogarnkowe",
+    "description": "Leczo na jachcie jest trybutem dla Madziarów który zbliża Węgry do inaczej nieosiągalnego morza.\nPrzepis na 5 osób.\nWymagany duży gar 3-4 litry.\nZamiast masła polecam smalec.\nKiełbase polecam wędzoną.",
+    "mealType": [
+      "obiad"
+    ],
+    "difficulty": 5,
+    "ingredients": [
+      { "id": "pomidory_krojone_puszka", "amount": 200 },
+      { "id": "papryka", "amount": 0.4 },
+      { "id": "cukinia", "amount": 0.4 },
+      { "id": "kielbasa","amount": 120 },
+      { "id": "cebula", "amount": 0.2 },
+      { "id": "maslo", "amount": 20 },
+      { "id": "koncentrat_pomidorowy", "amount": 40 },
+      { "id": "sol", "amount": 4 },
+      { "id": "papryka_slodka", "amount": 3 },
+      { "id": "papryka_ostra", "amount": 3 }
+    ],
+    "instructions": [
+      "odszukać największy gar na jachcie (polecam min 3 litrowy, a jak przechyły to 4 litry) i wyszorować przed użyciem; najlepiej jak do gara znajdzie się pokrywka bo będziemy gaz oszczędzać i dusić pod przykryciem",
+      "gar na gaz, do gara masło/smalec i roztopić",
+      "wrzucić cebule, zeszklić",
+      "wrzucić kiełbase pokrojoną w plasterki a nawet półplasterki, podsmażyć; musi puścić soki żeby całość miała smak.\nPrzemieszać",
+      "wrzucić paprykę i wszystko razem poddusić .\nPrzemieszać",
+      "wrzucić cukinię i wszystko dalej poddusić.\nPrzemieszać",
+      "wrzucić pomidory w puszcze i koncentrat.\nPrzemieszać",
+      "posolić, dodać mieloną papryke słodką lub ostrą lub obie.\nPrzemieszać",
+      "dusić aż warzywa będą miękkie",
+      "podawać z chlebem/ryżem"
+    ],
+    "developedBy": "mikele",
+    "modifiedBy": []
   }
 ]
