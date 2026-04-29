@@ -1212,5 +1212,32 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
+  },
+  {
+    "id": "soczewica",
+    "name": "Soczewica",
+    "unit": "gramy",
+    "category": "zboża",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "kostka_rosolowa_warzywna",
+    "name": "Kostka rosołowa warzywna",
+    "unit": "sztuki",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "mozzarella",
+    "name": "Mozzarella",
+    "unit": "gramy",
+    "category": "sery",
+    "isVegetarian": true,
+    "isVegan": false,
+    "isIngredient": true
   }
 ]
