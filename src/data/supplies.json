@@ -1192,5 +1192,25 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
+  },
+  {
+    "id": "ciecierzyca",
+    "name": "Ciecierzyca",
+    "description": "Dobrze zastąpi mięso w wielu przepisach, a jak jakiś załogant jest dostatecznie odważny to i hummus zrobi",
+    "unit": "gramy",
+    "category": "warzywa",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "tempeh",
+    "name": "Tempeh",
+    "description": "Wegańskie źródło białka dla znawców tematu. Czasem ciężko dostać",
+    "unit": "gramy",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
   }
 ]
