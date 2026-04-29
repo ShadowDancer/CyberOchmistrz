@@ -811,5 +811,45 @@
     ],
     "developedBy": "mikele",
     "modifiedBy": []
+  },
+  {
+    "id": "chili-sin-carne",
+    "name": "Chili sin carne",
+    "description": "Wegetariańska wersja chili con carne z soczewicą zamiast mięsa. Aromatyczne i pikantne danie pełne białka roślinnego.",
+    "mealType": ["obiad", "kolacja"],
+    "difficulty": 3,
+    "ingredients": [
+      { "id": "soczewica", "amount": 35 },
+      { "id": "olej", "amount": 6 },
+      { "id": "cebula", "amount": 0.2 },
+      { "id": "czosnek", "amount": 0.4 },
+      { "id": "papryka_slodka", "amount": 1.2 },
+      { "id": "kmin_rzymski", "amount": 0.8 },
+      { "id": "oregano", "amount": 0.4 },
+      { "id": "papryka_ostra", "amount": 0.14 },
+      { "id": "kostka_rosolowa_warzywna", "amount": 0.2 },
+      { "id": "woda", "amount": 100 },
+      { "id": "papryka", "amount": 0.1 },
+      { "id": "pomidory_suszone_oliwa", "amount": 7 },
+      { "id": "fasola_czerwona_puszka", "amount": 48 },
+      { "id": "kukurydza_puszka", "amount": 40 },
+      { "id": "pomidory_krojone_puszka", "amount": 80 },
+      { "id": "koncentrat_pomidorowy", "amount": 3 },
+      { "id": "sol", "amount": 1 },
+      { "id": "pieprz", "amount": 1 },
+      { "id": "mozzarella", "amount": 25 },
+      { "id": "limonka", "amount": 0.2 }
+    ],
+    "instructions": [
+      "Soczewicę przepłucz. Rozpuść kostkę rosołową w 500 ml gorącej wody — to będzie bulion.",
+      "Na oleju zeszklij drobno pokrojoną cebulę.",
+      "Dodaj soczewicę i przyprawy (paprykę słodką, kmin rzymski, oregano, chili); smaż 1-2 minuty.",
+      "Wlej bulion i gotuj na wolnym ogniu 15-30 minut w zależności od rodzaju soczewicy.",
+      "Dodaj pokrojoną paprykę i posiekane pomidory suszone; dołóż odsączoną fasolę i kukurydzę. Gotuj 2 minuty.",
+      "Wlej pomidory krojone z puszki i gotuj pod przykryciem 15 minut.",
+      "Wmieszaj koncentrat pomidorowy i gotuj bez przykrycia 1-2 minuty. Dopraw solą i pieprzem.",
+      "Podawaj posypane startą mozzarellą z ćwiartką limonki do skropienia."
+    ],
+    "developedBy": "Radoslaw Kot na podstawie przepisu https://www.kwestiasmaku.com/przepis/chili-sin-carne"
   }
 ]
