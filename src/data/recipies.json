@@ -725,5 +725,56 @@
       "Rozsmaruj pastę na talerzu. Na wierzchu ułóż pokrojone awokado, pomidorki koktajlowe i oliwki. Skrop oliwą, posyp pieprzem, chili, bazylią i szczypiorkiem. Podawaj od razu lub schłodź w lodówce."
     ],
     "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/ubijana-feta"
+  },
+  {
+    "id": "danie-gotowe-z-dodatkiem",
+    "name": "Danie gotowe z dodatkiem",
+    "description": "Danie (prawie) gotowe z dodatkiem (domyślnie ryżem)",
+    "mealType": ["obiad"],
+    "difficulty": 1,
+    "ingredients": [
+      { "id": "danie-gotowe", "amount": 1 },
+      { "id": "ryz", "amount": 80 }
+    ],
+    "instructions": [
+      "Ugotuj ryż",
+      "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
+      "Podawaj razem - możesz też dorzucić jakieś dodatki"
+    ],
+    "developedBy": "Radoslaw Kot & Mateusz Midor"
+  },
+  {
+    "id": "danie-gotowe-z-dodatkiem-wegetarianskie",
+    "name": "Danie gotowe wegetrianskie z dodatkiem",
+    "description": "Danie (prawie) gotowe z dodatkiem (domyślnie ryżem)",
+    "mealType": ["obiad"],
+    "difficulty": 1,
+    "ingredients": [
+      { "id": "danie-gotowe-wegetarianskie", "amount": 1 },
+      { "id": "ryz", "amount": 80 }
+    ],
+    "instructions": [
+      "Ugotuj ryż",
+      "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
+      "Podawaj razem - możesz też dorzucić jakieś dodatki"
+    ],
+    "developedBy": "Radoslaw Kot & Mateusz Midor"
+  },
+  {
+    "id": "danie-gotowe-z-dodatkiem-weganskie",
+    "name": "Danie gotowe wegańskie z dodatkiem",
+    "description": "Danie (prawie) gotowe z dodatkiem (domyślnie ryżem)",
+    "mealType": ["obiad"],
+    "difficulty": 1,
+    "ingredients": [
+      { "id": "danie-gotowe-weganskie", "amount": 1 },
+      { "id": "ryz", "amount": 80 }
+    ],
+    "instructions": [
+      "Ugotuj ryż",
+      "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
+      "Podawaj razem - możesz też dorzucić jakieś dodatki"
+    ],
+    "developedBy": "Radoslaw Kot & Mateusz Midor"
   }
 ]

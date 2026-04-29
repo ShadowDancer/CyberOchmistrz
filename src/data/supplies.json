@@ -1162,5 +1162,35 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
+  },
+  {
+    "id": "danie-gotowe",
+    "name": "Danie gotowe",
+    "unit": "sztuki",
+    "description": "Danie gotowe (weka, kupne) które można podawać z dodatkiem - ryż, makaron, itd.",
+    "category": "inne",
+    "isVegetarian": false,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "danie-gotowe-wegetarianskie",
+    "name": "Danie gotowe wegetarianskie",
+    "description": "Danie gotowe (weka, kupne) które można podawać z dodatkiem - ryż, makaron, itd.",
+    "unit": "sztuki",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": false,
+    "isIngredient": true
+  },
+  {
+    "id": "danie-gotowe-weganskie",
+    "name": "Danie gotowe weganskie",
+    "description": "Danie gotowe (weka, kupne) które można podawać z dodatkiem - ryż, makaron, itd.",
+    "unit": "sztuki",
+    "category": "inne",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
   }
 ]
