@@ -851,5 +851,34 @@
       "Podawaj posypane startą mozzarellą z ćwiartką limonki do skropienia."
     ],
     "developedBy": "Radoslaw Kot na podstawie przepisu https://www.kwestiasmaku.com/przepis/chili-sin-carne"
+  },
+  {
+    "id": "najprostszy-buddha-bowl",
+    "name": "Najprostszy Buddha Bowl",
+    "description": "Idealne danie na upalne dni — nie wymaga gotowania na kuchence i można je jeść na zimno. Ugotuj zboże lub ryż, pokrój warzywa w paski, pokrój tofu w kostkę i ułóż w misce. Sekret tkwi w sosie: kremowy, lekko słodki, odpowiednio słony i kwaśny.",
+    "mealType": ["obiad", "kolacja"],
+    "difficulty": 1,
+    "ingredients": [
+      { "id": "tofu_naturalne",  "amount": 90   },
+      { "id": "ryz",             "amount": 75   },
+      { "id": "ogorek",          "amount": 0.5  },
+      { "id": "marchewka",       "amount": 0.5  },
+      { "id": "papryka",         "amount": 0.5  },
+      { "id": "maslo_orzechowe", "amount": 15   },
+      { "id": "cytryna",         "amount": 0.25 },
+      { "id": "cukier",          "amount": 2    },
+      { "id": "czosnek",         "amount": 0.5  },
+      { "id": "woda",            "amount": 25   },
+      { "id": "sol",             "amount": 1    },
+      { "id": "sezam",           "amount": 5    },
+      { "id": "szczypiorek",     "amount": 5    },
+      { "id": "sriracha",        "amount": 5    }
+    ],
+    "instructions": [
+      "Ugotuj ryż lub zboże. Tofu pokrój w kostkę (opcjonalnie zamiast tofu można użyć tuńczyka z puszki). Marchewkę i ogórek obierz i pokrój w cienkie paski. Paprykę pokrój w cienkie kawałki.",
+      "Masło orzechowe wymieszaj z sokiem z cytryny lub limonki, cukrem (lub syropem klonowym), czosnkiem, wodą i solą na gładki sos — można blendować lub mieszać widelcem.",
+      "Ugotowane zboże, tofu i warzywa ułóż w miseczkach. Sos podaj osobno lub nim polej zawartość misek. Posyp ziołami i sezamem."
+    ],
+    "developedBy": "Radosław Kot na podstawie przepisu https://www.warzywizm.pl/najprostszy-buddha-bowl"
   }
 ]

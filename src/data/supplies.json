@@ -1239,5 +1239,23 @@
     "isVegetarian": true,
     "isVegan": false,
     "isIngredient": true
+  },
+  {
+    "id": "marchewka",
+    "name": "Marchewka",
+    "unit": "sztuki",
+    "category": "warzywa",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "sezam",
+    "name": "Sezam",
+    "unit": "gramy",
+    "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
   }
 ]
