@@ -1,17 +1,22 @@
 ---
 name: add-recipe
-description: Fetch a recipe from a URL, translate it to Polish, normalize ingredient amounts per person, check for similarity with existing recipes, and add new supplies and the recipe to src/data/supplies.json and src/data/recipies.json after user confirmation.
+description: Fetch a recipe from a URL or local text file, translate it to Polish, normalize ingredient amounts per person, check for similarity with existing recipes, and add new supplies and the recipe to src/data/supplies.json and src/data/recipies.json after user confirmation.
 ---
 
 You are adding a new recipe to the CyberOchmistrz project. Follow these steps in order. Do not skip steps or batch confirmations early — each step gates the next.
 
-## Step 0 — Get URL
+## Step 0 — Get source
 
-If the user invoked this skill without a URL argument, ask for the recipe URL now before doing anything else.
+If the user invoked this skill without an argument, ask: "Podaj URL przepisu lub ścieżkę do pliku tekstowego z przepisem."
 
-## Step 1 — Fetch recipe
+Determine the source type:
+- **URL**: argument starts with `http://` or `https://`
+- **Local file**: any other argument (treat as a file path)
 
-Use WebFetch to retrieve the URL. If fetch fails for any reason (blocked, JS-rendered, paywalled, 404), report the error clearly and stop. Do not attempt workarounds.
+## Step 1 — Read recipe
+
+- **URL**: Use WebFetch to retrieve the URL. If fetch fails for any reason (blocked, JS-rendered, paywalled, 404), report the error clearly and stop. Do not attempt workarounds.
+- **Local file**: Use the Read tool to read the file. If the file does not exist or cannot be read, report the error clearly and stop.
 
 ## Step 2 — Extract raw data
 
@@ -109,7 +114,9 @@ Propose values for all fields. Show the user the full proposed recipe and allow 
 1. Run `git config user.name` to get the committer name.
 2. If the command fails or returns empty, prompt the user for their name.
 3. Show the user the resolved name and ask for confirmation.
-4. Format: `"[Name] na podstawie przepisu [full URL]"`
+4. Format:
+   - If source was a URL: `"[Name] na podstawie przepisu [full URL]"`
+   - If source was a local file: `"[Name]"`
 
 ## Step 9 — Final confirmation
 
