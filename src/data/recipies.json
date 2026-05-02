@@ -3,7 +3,10 @@
     "id": "jajecznica",
     "name": "Jajecznica",
     "description": "Pyszna. Na jachcie może być konieczność robienia na 2 tury.",
-    "mealType": ["śniadanie", "kolacja"],
+    "mealType": [
+      "śniadanie",
+      "kolacja"
+    ],
     "difficulty": 3,
     "ingredients": [
       {
@@ -27,14 +30,19 @@
         "amount": 2
       }
     ],
-    "instructions": ["Każdy umie zrobić jajecznicę."],
+    "instructions": [
+      "Każdy umie zrobić jajecznicę."
+    ],
     "developedBy": "Przemysław Onak"
   },
   {
     "id": "jajecznica-z-kielbasa",
     "name": "Jajecznica z kiełbasą",
     "description": "Pożywna i klasyczna wersja jajecznicy, idealna na solidne śniadanie lub szybką kolację.",
-    "mealType": ["śniadanie", "kolacja"],
+    "mealType": [
+      "śniadanie",
+      "kolacja"
+    ],
     "difficulty": 2,
     "ingredients": [
       {
@@ -47,7 +55,7 @@
       },
       {
         "id": "cebula",
-        "amount": 0.25
+        "amount": 37.5
       },
       {
         "id": "maslo",
@@ -79,7 +87,9 @@
     "id": "pesto-z-tuczykiem",
     "name": "Pesto z tuńczykiem",
     "description": "Szybkie i dobre, łatwo zrobić nawet na fali. Zamiast zielonego pesto można użyć czerwonego.",
-    "mealType": ["obiad"],
+    "mealType": [
+      "obiad"
+    ],
     "difficulty": 2,
     "ingredients": [
       {
@@ -105,7 +115,9 @@
     "id": "pesto-z-tuczykiem-i-parmezanem",
     "name": "Pesto z tuńczykiem i parmezanem",
     "description": "Szybkie i dobre, łatwo zrobić nawet na fali. Zamiast zielonego pesto można użyć czerwonego. Zamiast Parmezanu można użyć Grana Padano lub innego startego sera.",
-    "mealType": ["obiad"],
+    "mealType": [
+      "obiad"
+    ],
     "difficulty": 2,
     "ingredients": [
       {
@@ -136,7 +148,9 @@
     "id": "carbonara",
     "name": "Spaghetti Carbonara",
     "description": "Klasyczny włoski przepis na kremowy makaron bez dodatku śmietany. Kluczem jest odpowiednie połączenie gorącego makaronu z masą jajeczną.",
-    "mealType": ["obiad"],
+    "mealType": [
+      "obiad"
+    ],
     "difficulty": 3,
     "ingredients": [
       {
@@ -179,7 +193,9 @@
     "id": "kurczak-curry",
     "name": "Kurczak w sosie curry z ryżem",
     "description": "Szybki i aromatyczny obiad w stylu indyjskim. Soczyste kawałki kurczaka w kremowym sosie z mleka kokosowego z pomidorami i przyprawami.",
-    "mealType": ["obiad"],
+    "mealType": [
+      "obiad"
+    ],
     "difficulty": 2,
     "ingredients": [
       {
@@ -200,7 +216,7 @@
       },
       {
         "id": "cebula",
-        "amount": 0.16
+        "amount": 24.0
       },
       {
         "id": "czosnek",
@@ -240,7 +256,10 @@
     "id": "chili-con-carne",
     "name": "Chili con carne",
     "description": "Klasyczne, sycące danie kuchni meksykańskiej. Aromatyczne, pikantne i rozgrzewające, idealne na obiad lub kolację.",
-    "mealType": ["obiad", "kolacja"],
+    "mealType": [
+      "obiad",
+      "kolacja"
+    ],
     "difficulty": 3,
     "ingredients": [
       {
@@ -261,11 +280,11 @@
       },
       {
         "id": "papryka",
-        "amount": 0.5
+        "amount": 125.0
       },
       {
         "id": "cebula",
-        "amount": 0.25
+        "amount": 37.5
       },
       {
         "id": "czosnek",
@@ -304,7 +323,10 @@
     "id": "makaron-szpinak-feta",
     "name": "Makaron ze szpinakiem i fetą",
     "description": "Szybkie i kremowe danie, które przygotujesz w czasie gotowania makaronu. Idealne na szybki obiad lub kolację.",
-    "mealType": ["obiad", "kolacja"],
+    "mealType": [
+      "obiad",
+      "kolacja"
+    ],
     "difficulty": 2,
     "ingredients": [
       {
@@ -355,7 +377,9 @@
     "id": "szakszuka",
     "name": "Szakszuka",
     "description": "Aromatyczne i sycące danie śniadaniowe prosto z Bliskiego Wschodu. Jajka gotowane w gęstym, pikantnym sosie pomidorowym z papryką.",
-    "mealType": ["śniadanie"],
+    "mealType": [
+      "śniadanie"
+    ],
     "difficulty": 2,
     "ingredients": [
       {
@@ -368,7 +392,7 @@
       },
       {
         "id": "cebula",
-        "amount": 0.25
+        "amount": 37.5
       },
       {
         "id": "czosnek",
@@ -413,7 +437,9 @@
     "id": "owsianka",
     "name": "Owsianka",
     "description": "Klasyczne, pożywne i zdrowe śniadanie. Idealny sposób na rozpoczęcie dnia, który można dowolnie modyfikować ulubionymi dodatkami.",
-    "mealType": ["śniadanie"],
+    "mealType": [
+      "śniadanie"
+    ],
     "difficulty": 1,
     "ingredients": [
       {
@@ -459,7 +485,9 @@
     "id": "risotto-kurczak-warzywa",
     "name": "Risotto z kurczakiem i warzywami",
     "description": "Kremowe i sycące risotto z kawałkami kurczaka, kolorową papryką i cukinią. Dodatek sera gorgonzola nadaje potrawie wyrazistego smaku.",
-    "mealType": ["obiad"],
+    "mealType": [
+      "obiad"
+    ],
     "difficulty": 4,
     "ingredients": [
       {
@@ -472,15 +500,15 @@
       },
       {
         "id": "papryka",
-        "amount": 0.5
+        "amount": 125.0
       },
       {
         "id": "cukinia",
-        "amount": 0.5
+        "amount": 175.0
       },
       {
         "id": "cebula",
-        "amount": 0.25
+        "amount": 37.5
       },
       {
         "id": "czosnek",
@@ -528,7 +556,11 @@
     "id": "nalesniki-z-dzemem",
     "name": "Naleśniki z dżemem",
     "description": "Klasyczne, cienkie naleśniki, idealne na słodki obiad, deser lub kolację. Proste do wykonania i zawsze smaczne.",
-    "mealType": ["obiad", "deser", "kolacja"],
+    "mealType": [
+      "obiad",
+      "deser",
+      "kolacja"
+    ],
     "difficulty": 2,
     "ingredients": [
       {
@@ -579,7 +611,9 @@
     "id": "szwedzki-stol-kanapki",
     "name": "Szwedzki stół / Kolacja kanapkowa",
     "description": "Zestaw składników do samodzielnego przygotowania kanapek. Idealne rozwiązanie na luźną, integracyjną kolację, gdzie każdy może skomponować coś dla siebie.",
-    "mealType": ["kolacja"],
+    "mealType": [
+      "kolacja"
+    ],
     "difficulty": 1,
     "ingredients": [
       {
@@ -600,15 +634,15 @@
       },
       {
         "id": "pomidor",
-        "amount": 1
+        "amount": 160.0
       },
       {
         "id": "ogorek",
-        "amount": 1
+        "amount": 225.0
       },
       {
         "id": "cebula",
-        "amount": 0.2
+        "amount": 30.0
       },
       {
         "id": "serek_topiony",
@@ -631,16 +665,40 @@
     "id": "owsianka-z-maslem-orzechowym",
     "name": "Owsianka z masłem orzechowym",
     "description": "Pożywne śniadanie lub kolacja łącząca płatki owsiane z masłem orzechowym i bananem. Prosty i sprawdzony przepis, przygotowany w sposób zapobiegający przypalaniu mleka.",
-    "mealType": ["śniadanie", "kolacja"],
+    "mealType": [
+      "śniadanie",
+      "kolacja"
+    ],
     "difficulty": 1,
     "ingredients": [
-      { "id": "platki_owsiane", "amount": 40 },
-      { "id": "woda", "amount": 200 },
-      { "id": "mleko", "amount": 100 },
-      { "id": "maslo_orzechowe", "amount": 30 },
-      { "id": "miod", "amount": 10 },
-      { "id": "banany", "amount": 0.05 },
-      { "id": "sol", "amount": 1 }
+      {
+        "id": "platki_owsiane",
+        "amount": 40
+      },
+      {
+        "id": "woda",
+        "amount": 200
+      },
+      {
+        "id": "mleko",
+        "amount": 100
+      },
+      {
+        "id": "maslo_orzechowe",
+        "amount": 30
+      },
+      {
+        "id": "miod",
+        "amount": 10
+      },
+      {
+        "id": "banany",
+        "amount": 0.05
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      }
     ],
     "instructions": [
       "Płatki owsiane gotuj w wodzie w małym garnku na średnim ogniu, aż zgęstnieją (2-3 minuty), od czasu do czasu mieszając. Dodaj sól.",
@@ -653,19 +711,52 @@
     "id": "tofucznica",
     "name": "Tofucznica",
     "description": "Wegańska alternatywa dla jajecznicy — jajecznica bez jajek. Idealna dla wegan, osób nietolerujących jajek i wszystkich szukających pysznego śniadania lub kolacji.",
-    "mealType": ["śniadanie", "kolacja"],
+    "mealType": [
+      "śniadanie",
+      "kolacja"
+    ],
     "difficulty": 2,
     "ingredients": [
-      { "id": "tofu_naturalne", "amount": 150 },
-      { "id": "cebula", "amount": 1 },
-      { "id": "olej", "amount": 37.5 },
-      { "id": "mleko_roslinne", "amount": 25 },
-      { "id": "sol", "amount": 0.75 },
-      { "id": "papryka_slodka", "amount": 0.5 },
-      { "id": "oregano", "amount": 0.25 },
-      { "id": "pieprz", "amount": 0.25 },
-      { "id": "papryka_ostra", "amount": 0.25 },
-      { "id": "chleb", "amount": 0.3 }
+      {
+        "id": "tofu_naturalne",
+        "amount": 150
+      },
+      {
+        "id": "cebula",
+        "amount": 150.0
+      },
+      {
+        "id": "olej",
+        "amount": 37.5
+      },
+      {
+        "id": "mleko_roslinne",
+        "amount": 25
+      },
+      {
+        "id": "sol",
+        "amount": 0.75
+      },
+      {
+        "id": "papryka_slodka",
+        "amount": 0.5
+      },
+      {
+        "id": "oregano",
+        "amount": 0.25
+      },
+      {
+        "id": "pieprz",
+        "amount": 0.25
+      },
+      {
+        "id": "papryka_ostra",
+        "amount": 0.25
+      },
+      {
+        "id": "chleb",
+        "amount": 0.3
+      }
     ],
     "instructions": [
       "Na średniej patelni rozgrzej olej i smaż drobno pokrojoną cebulę na średnio-małym ogniu przez około 10 minut, aż stanie się szklista i lekko złota.",
@@ -679,15 +770,36 @@
     "id": "makaron-z-jagodami",
     "name": "Makaron z jagodami",
     "description": "Przepis na makaron z jagodami to sposób na szybkie i aromatyczne lato na talerzu, które z pewnością pokocha cała rodzina.",
-    "mealType": ["śniadanie", "kolacja"],
+    "mealType": [
+      "śniadanie",
+      "kolacja"
+    ],
     "difficulty": 2,
     "ingredients": [
-      { "id": "makaron", "amount": 100 },
-      { "id": "jagody", "amount": 100 },
-      { "id": "cukier", "amount": 10 },
-      { "id": "smietana_30", "amount": 33 },
-      { "id": "cytryna", "amount": 0.25 },
-      { "id": "serek_waniliowy", "amount": 43.33 }
+      {
+        "id": "makaron",
+        "amount": 100
+      },
+      {
+        "id": "jagody",
+        "amount": 100
+      },
+      {
+        "id": "cukier",
+        "amount": 10
+      },
+      {
+        "id": "smietana_30",
+        "amount": 33
+      },
+      {
+        "id": "cytryna",
+        "amount": 0.25
+      },
+      {
+        "id": "serek_waniliowy",
+        "amount": 43.33
+      }
     ],
     "instructions": [
       "Makaron ugotuj al dente w osolonej wrzącej wodzie zgodnie z instrukcją na opakowaniu; odcedź.",
@@ -701,23 +813,68 @@
     "id": "ubijana-feta",
     "name": "Ubijana feta",
     "description": "Kremowa i prosta pasta z sera feta, twarogu i gęstego jogurtu, z oliwą i przyprawami. Podawana z awokado, pomidorkami koktajlowymi i oliwkami.",
-    "mealType": ["śniadanie", "kolacja"],
+    "mealType": [
+      "śniadanie",
+      "kolacja"
+    ],
     "difficulty": 1,
     "ingredients": [
-      { "id": "ser_feta",            "amount": 100 },
-      { "id": "twarog_polttlusty",   "amount": 50 },
-      { "id": "jogurt_grecki",       "amount": 75 },
-      { "id": "oliwa",               "amount": 37.5 },
-      { "id": "cytryna",             "amount": 0.25 },
-      { "id": "czosnek",             "amount": 0.5 },
-      { "id": "pieprz",              "amount": 0.25 },
-      { "id": "awokado",             "amount": 0.5 },
-      { "id": "pomidory_koktajlowe", "amount": 25 },
-      { "id": "oliwki_czarne",       "amount": 15 },
-      { "id": "szczypiorek",         "amount": 1.5 },
-      { "id": "bazylia",             "amount": 1 },
-      { "id": "papryka_ostra",       "amount": 0.15 },
-      { "id": "chleb",               "amount": 0.15 }
+      {
+        "id": "ser_feta",
+        "amount": 100
+      },
+      {
+        "id": "twarog_polttlusty",
+        "amount": 50
+      },
+      {
+        "id": "jogurt_grecki",
+        "amount": 75
+      },
+      {
+        "id": "oliwa",
+        "amount": 37.5
+      },
+      {
+        "id": "cytryna",
+        "amount": 0.25
+      },
+      {
+        "id": "czosnek",
+        "amount": 0.5
+      },
+      {
+        "id": "pieprz",
+        "amount": 0.25
+      },
+      {
+        "id": "awokado",
+        "amount": 0.5
+      },
+      {
+        "id": "pomidory_koktajlowe",
+        "amount": 25
+      },
+      {
+        "id": "oliwki_czarne",
+        "amount": 15
+      },
+      {
+        "id": "szczypiorek",
+        "amount": 1.5
+      },
+      {
+        "id": "bazylia",
+        "amount": 1
+      },
+      {
+        "id": "papryka_ostra",
+        "amount": 0.15
+      },
+      {
+        "id": "chleb",
+        "amount": 0.15
+      }
     ],
     "instructions": [
       "Fetę i twaróg włóż do miski i rozgnieć widelcem lub zblenduj razem.",
@@ -730,11 +887,19 @@
     "id": "danie-gotowe-z-dodatkiem",
     "name": "Danie gotowe z dodatkiem",
     "description": "Danie (prawie) gotowe z dodatkiem (domyślnie ryżem)",
-    "mealType": ["obiad"],
+    "mealType": [
+      "obiad"
+    ],
     "difficulty": 1,
     "ingredients": [
-      { "id": "danie-gotowe", "amount": 1 },
-      { "id": "ryz", "amount": 80 }
+      {
+        "id": "danie-gotowe",
+        "amount": 1
+      },
+      {
+        "id": "ryz",
+        "amount": 80
+      }
     ],
     "instructions": [
       "Ugotuj ryż",
@@ -747,11 +912,19 @@
     "id": "danie-gotowe-z-dodatkiem-wegetarianskie",
     "name": "Danie gotowe wegetrianskie z dodatkiem",
     "description": "Danie (prawie) gotowe z dodatkiem (domyślnie ryżem)",
-    "mealType": ["obiad"],
+    "mealType": [
+      "obiad"
+    ],
     "difficulty": 1,
     "ingredients": [
-      { "id": "danie-gotowe-wegetarianskie", "amount": 1 },
-      { "id": "ryz", "amount": 80 }
+      {
+        "id": "danie-gotowe-wegetarianskie",
+        "amount": 1
+      },
+      {
+        "id": "ryz",
+        "amount": 80
+      }
     ],
     "instructions": [
       "Ugotuj ryż",
@@ -764,11 +937,19 @@
     "id": "danie-gotowe-z-dodatkiem-weganskie",
     "name": "Danie gotowe wegańskie z dodatkiem",
     "description": "Danie (prawie) gotowe z dodatkiem (domyślnie ryżem)",
-    "mealType": ["obiad"],
+    "mealType": [
+      "obiad"
+    ],
     "difficulty": 1,
     "ingredients": [
-      { "id": "danie-gotowe-weganskie", "amount": 1 },
-      { "id": "ryz", "amount": 80 }
+      {
+        "id": "danie-gotowe-weganskie",
+        "amount": 1
+      },
+      {
+        "id": "ryz",
+        "amount": 80
+      }
     ],
     "instructions": [
       "Ugotuj ryż",
@@ -786,16 +967,46 @@
     ],
     "difficulty": 5,
     "ingredients": [
-      { "id": "pomidory_krojone_puszka", "amount": 200 },
-      { "id": "papryka", "amount": 0.4 },
-      { "id": "cukinia", "amount": 0.4 },
-      { "id": "kielbasa","amount": 120 },
-      { "id": "cebula", "amount": 0.2 },
-      { "id": "maslo", "amount": 20 },
-      { "id": "koncentrat_pomidorowy", "amount": 40 },
-      { "id": "sol", "amount": 4 },
-      { "id": "papryka_slodka", "amount": 3 },
-      { "id": "papryka_ostra", "amount": 3 }
+      {
+        "id": "pomidory_krojone_puszka",
+        "amount": 200
+      },
+      {
+        "id": "papryka",
+        "amount": 100.0
+      },
+      {
+        "id": "cukinia",
+        "amount": 140.0
+      },
+      {
+        "id": "kielbasa",
+        "amount": 120
+      },
+      {
+        "id": "cebula",
+        "amount": 30.0
+      },
+      {
+        "id": "maslo",
+        "amount": 20
+      },
+      {
+        "id": "koncentrat_pomidorowy",
+        "amount": 40
+      },
+      {
+        "id": "sol",
+        "amount": 4
+      },
+      {
+        "id": "papryka_slodka",
+        "amount": 3
+      },
+      {
+        "id": "papryka_ostra",
+        "amount": 3
+      }
     ],
     "instructions": [
       "odszukać największy gar na jachcie (polecam min 3 litrowy, a jak przechyły to 4 litry) i wyszorować przed użyciem; najlepiej jak do gara znajdzie się pokrywka bo będziemy gaz oszczędzać i dusić pod przykryciem",
@@ -816,29 +1027,92 @@
     "id": "chili-sin-carne",
     "name": "Chili sin carne",
     "description": "Wegetariańska wersja chili con carne z soczewicą zamiast mięsa. Aromatyczne i pikantne danie pełne białka roślinnego.",
-    "mealType": ["obiad", "kolacja"],
+    "mealType": [
+      "obiad",
+      "kolacja"
+    ],
     "difficulty": 3,
     "ingredients": [
-      { "id": "soczewica", "amount": 35 },
-      { "id": "olej", "amount": 6 },
-      { "id": "cebula", "amount": 0.2 },
-      { "id": "czosnek", "amount": 0.4 },
-      { "id": "papryka_slodka", "amount": 1.2 },
-      { "id": "kmin_rzymski", "amount": 0.8 },
-      { "id": "oregano", "amount": 0.4 },
-      { "id": "papryka_ostra", "amount": 0.14 },
-      { "id": "kostka_rosolowa_warzywna", "amount": 0.2 },
-      { "id": "woda", "amount": 100 },
-      { "id": "papryka", "amount": 0.1 },
-      { "id": "pomidory_suszone_oliwa", "amount": 7 },
-      { "id": "fasola_czerwona_puszka", "amount": 48 },
-      { "id": "kukurydza_puszka", "amount": 40 },
-      { "id": "pomidory_krojone_puszka", "amount": 80 },
-      { "id": "koncentrat_pomidorowy", "amount": 3 },
-      { "id": "sol", "amount": 1 },
-      { "id": "pieprz", "amount": 1 },
-      { "id": "mozzarella", "amount": 25 },
-      { "id": "limonka", "amount": 0.2 }
+      {
+        "id": "soczewica",
+        "amount": 35
+      },
+      {
+        "id": "olej",
+        "amount": 6
+      },
+      {
+        "id": "cebula",
+        "amount": 30.0
+      },
+      {
+        "id": "czosnek",
+        "amount": 0.4
+      },
+      {
+        "id": "papryka_slodka",
+        "amount": 1.2
+      },
+      {
+        "id": "kmin_rzymski",
+        "amount": 0.8
+      },
+      {
+        "id": "oregano",
+        "amount": 0.4
+      },
+      {
+        "id": "papryka_ostra",
+        "amount": 0.14
+      },
+      {
+        "id": "kostka_rosolowa_warzywna",
+        "amount": 0.2
+      },
+      {
+        "id": "woda",
+        "amount": 100
+      },
+      {
+        "id": "papryka",
+        "amount": 25.0
+      },
+      {
+        "id": "pomidory_suszone_oliwa",
+        "amount": 7
+      },
+      {
+        "id": "fasola_czerwona_puszka",
+        "amount": 48
+      },
+      {
+        "id": "kukurydza_puszka",
+        "amount": 40
+      },
+      {
+        "id": "pomidory_krojone_puszka",
+        "amount": 80
+      },
+      {
+        "id": "koncentrat_pomidorowy",
+        "amount": 3
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      },
+      {
+        "id": "pieprz",
+        "amount": 1
+      },
+      {
+        "id": "mozzarella",
+        "amount": 25
+      },
+      {
+        "id": "limonka",
+        "amount": 0.2
+      }
     ],
     "instructions": [
       "Soczewicę przepłucz. Rozpuść kostkę rosołową w 500 ml gorącej wody — to będzie bulion.",
@@ -856,23 +1130,68 @@
     "id": "najprostszy-buddha-bowl",
     "name": "Najprostszy Buddha Bowl",
     "description": "Idealne danie na upalne dni — nie wymaga gotowania na kuchence i można je jeść na zimno. Ugotuj zboże lub ryż, pokrój warzywa w paski, pokrój tofu w kostkę i ułóż w misce. Sekret tkwi w sosie: kremowy, lekko słodki, odpowiednio słony i kwaśny.",
-    "mealType": ["obiad", "kolacja"],
+    "mealType": [
+      "obiad",
+      "kolacja"
+    ],
     "difficulty": 1,
     "ingredients": [
-      { "id": "tofu_naturalne",  "amount": 90   },
-      { "id": "ryz",             "amount": 75   },
-      { "id": "ogorek",          "amount": 0.5  },
-      { "id": "marchewka",       "amount": 0.5  },
-      { "id": "papryka",         "amount": 0.5  },
-      { "id": "maslo_orzechowe", "amount": 15   },
-      { "id": "cytryna",         "amount": 0.25 },
-      { "id": "cukier",          "amount": 2    },
-      { "id": "czosnek",         "amount": 0.5  },
-      { "id": "woda",            "amount": 25   },
-      { "id": "sol",             "amount": 1    },
-      { "id": "sezam",           "amount": 5    },
-      { "id": "szczypiorek",     "amount": 5    },
-      { "id": "sriracha",        "amount": 5    }
+      {
+        "id": "tofu_naturalne",
+        "amount": 90
+      },
+      {
+        "id": "ryz",
+        "amount": 75
+      },
+      {
+        "id": "ogorek",
+        "amount": 112.5
+      },
+      {
+        "id": "marchewka",
+        "amount": 75.0
+      },
+      {
+        "id": "papryka",
+        "amount": 125.0
+      },
+      {
+        "id": "maslo_orzechowe",
+        "amount": 15
+      },
+      {
+        "id": "cytryna",
+        "amount": 0.25
+      },
+      {
+        "id": "cukier",
+        "amount": 2
+      },
+      {
+        "id": "czosnek",
+        "amount": 0.5
+      },
+      {
+        "id": "woda",
+        "amount": 25
+      },
+      {
+        "id": "sol",
+        "amount": 1
+      },
+      {
+        "id": "sezam",
+        "amount": 5
+      },
+      {
+        "id": "szczypiorek",
+        "amount": 5
+      },
+      {
+        "id": "sriracha",
+        "amount": 5
+      }
     ],
     "instructions": [
       "Ugotuj ryż lub zboże. Tofu pokrój w kostkę (opcjonalnie zamiast tofu można użyć tuńczyka z puszki). Marchewkę i ogórek obierz i pokrój w cienkie paski. Paprykę pokrój w cienkie kawałki.",
