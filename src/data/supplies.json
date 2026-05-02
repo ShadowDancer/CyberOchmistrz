@@ -773,11 +773,12 @@
   {
     "id": "cebula",
     "name": "Cebula",
-    "unit": "sztuki",
+    "unit": "gramy",
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "isIngredient": true
+    "isIngredient": true,
+    "description": "Średnia waga 1 sztuki: 150g"
   },
   {
     "id": "czosnek",
@@ -818,11 +819,12 @@
   {
     "id": "ogorek",
     "name": "Ogórek",
-    "unit": "sztuki",
+    "unit": "gramy",
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "isIngredient": true
+    "isIngredient": true,
+    "description": "Średnia waga 1 sztuki: 150g"
   },
   {
     "id": "oliwki_czarne",
@@ -845,11 +847,12 @@
   {
     "id": "papryka",
     "name": "Papryka",
-    "unit": "sztuki",
+    "unit": "gramy",
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "isIngredient": true
+    "isIngredient": true,
+    "description": "Średnia waga 1 sztuki: 200g"
   },
   {
     "id": "pieczarki_swieze",
@@ -863,11 +866,12 @@
   {
     "id": "pomidor",
     "name": "Pomidor",
-    "unit": "sztuki",
+    "unit": "gramy",
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "isIngredient": true
+    "isIngredient": true,
+    "description": "Średnia waga 1 sztuki: 150g"
   },
   {
     "id": "pomidory_krojone_puszka",
@@ -886,15 +890,6 @@
     "isIngredient": true,
     "isVegetarian": true,
     "isVegan": true
-  },
-  {
-    "id": "ziemniaki",
-    "name": "Ziemniaki",
-    "unit": "sztuki",
-    "category": "warzywa",
-    "isVegetarian": true,
-    "isVegan": true,
-    "isIngredient": true
   },
   {
     "id": "szpinak_mrozony",
@@ -1058,11 +1053,12 @@
   {
     "id": "cukinia",
     "name": "Cukinia",
-    "unit": "sztuki",
+    "unit": "gramy",
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "isIngredient": true
+    "isIngredient": true,
+    "description": "Średnia waga 1 sztuki: 300g"
   },
   {
     "id": "ser_gorgonzola",
@@ -1243,11 +1239,12 @@
   {
     "id": "marchewka",
     "name": "Marchewka",
-    "unit": "sztuki",
+    "unit": "gramy",
     "category": "warzywa",
     "isVegetarian": true,
     "isVegan": true,
-    "isIngredient": true
+    "isIngredient": true,
+    "description": "Średnia waga 1 sztuki: 150g"
   },
   {
     "id": "sezam",
