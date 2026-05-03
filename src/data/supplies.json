@@ -289,7 +289,7 @@
   {
     "id": "smietana_30",
     "name": "Śmietana 30%",
-    "unit": "litry",
+    "unit": "mililitry",
     "category": "nabiał",
     "isIngredient": true,
     "isVegetarian": true,
@@ -824,7 +824,7 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true,
-    "description": "Średnia waga 1 sztuki: 150g"
+    "description": "Średnia waga 1 sztuki: 225g"
   },
   {
     "id": "oliwki_czarne",
@@ -852,7 +852,7 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true,
-    "description": "Średnia waga 1 sztuki: 200g"
+    "description": "Średnia waga 1 sztuki: 250g"
   },
   {
     "id": "pieczarki_swieze",
@@ -1058,7 +1058,7 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true,
-    "description": "Średnia waga 1 sztuki: 300g"
+    "description": "Średnia waga 1 sztuki: 350g"
   },
   {
     "id": "ser_gorgonzola",
@@ -1251,6 +1251,15 @@
     "name": "Sezam",
     "unit": "gramy",
     "category": "przyprawy",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
+    "id": "tortilla",
+    "name": "Tortilla",
+    "unit": "sztuki",
+    "category": "pieczywo",
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
