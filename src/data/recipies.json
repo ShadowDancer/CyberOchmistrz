@@ -638,7 +638,7 @@
       },
       {
         "id": "ogorek",
-        "amount": 225.0
+        "amount": 90.0
       },
       {
         "id": "cebula",
@@ -1125,6 +1125,39 @@
       "Podawaj posypane startą mozzarellą z ćwiartką limonki do skropienia."
     ],
     "developedBy": "Radoslaw Kot na podstawie przepisu https://www.kwestiasmaku.com/przepis/chili-sin-carne"
+  },
+  {
+    "id": "quesadilla",
+    "name": "Quesadilla",
+    "description": "Super pyszne i niezwykle szybkie w przygotowaniu danie kuchni meksykańskiej z kurczakiem i kolorowymi warzywami.",
+    "mealType": ["kolacja", "obiad"],
+    "difficulty": 3,
+    "ingredients": [
+      { "id": "tortilla", "amount": 4 },
+      { "id": "kurczak_filety", "amount": 250 },
+      { "id": "olej", "amount": 44 },
+      { "id": "cebula", "amount": 30 },
+      { "id": "papryka", "amount": 100 },
+      { "id": "kukurydza_puszka", "amount": 100 },
+      { "id": "mozzarella", "amount": 300 },
+      { "id": "koncentrat_pomidorowy", "amount": 25 },
+      { "id": "oregano", "amount": 3 },
+      { "id": "sol", "amount": 3 },
+      { "id": "papryka_slodka", "amount": 1.5 },
+      { "id": "papryka_ostra", "amount": 1.5 },
+      { "id": "pieprz", "amount": 0.7 },
+      { "id": "kmin_rzymski", "amount": 0.7 }
+    ],
+    "instructions": [
+      "Kurczaka pokrój w kostkę i dopraw oregano, solą, papryką słodką i ostrą, pieprzem oraz kminem. Smaż na oleju przez ok. 10 minut, mieszając od czasu do czasu. Odstaw do przestygnięcia.",
+      "Cebulę pokrój w cienkie plasterki, paprykę w kostkę (~1,5 cm). Podsmaż na patelni przez 5 minut, aż lekko zbrązowieją, ale pozostaną chrupiące. Odstaw.",
+      "Na patelni rozgrzej olej. Połóż tortillę na małym/średnim ogniu i posyp połową sera.",
+      "Na serze ułóż kurczaka, podsmażone warzywa, kukurydzę i koncentrat pomidorowy",
+      "Posyp resztą sera i przykryj drugą tortillą.",
+      "Gdy spód się zarumieni, ostrożnie odwróć quesadillę (pomocny może być talerz). Przyrumień drugą stronę.",
+      "Przełóż na talerz i pokrój na 4 trójkąty."
+    ],
+    "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/quesadilla"
   },
   {
     "id": "najprostszy-buddha-bowl",
