@@ -609,13 +609,13 @@
       },
       {
         "id": "ryz",
-        "amount": 80
+        "amount": 100
       }
     ],
     "instructions": [
       "Ugotuj ryż",
       "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
-      "Podawaj razem - możesz też dorzucić jakieś dodatki"
+      "Podawaj razem - możesz też dorzucić jakieś dodatki - surówkę lub kiszonki"
     ],
     "developedBy": "Radoslaw Kot & mikele"
   },
@@ -634,13 +634,13 @@
       },
       {
         "id": "ryz",
-        "amount": 80
+        "amount": 100
       }
     ],
     "instructions": [
       "Ugotuj ryż",
       "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
-      "Podawaj razem - możesz też dorzucić jakieś dodatki"
+      "Podawaj razem - możesz też dorzucić jakieś dodatki - surówkę lub kiszonki"
     ],
     "developedBy": "Radoslaw Kot & mikele"
   },
@@ -659,13 +659,13 @@
       },
       {
         "id": "ryz",
-        "amount": 80
+        "amount": 100
       }
     ],
     "instructions": [
       "Ugotuj ryż",
       "Podgrzej danie gotowe - zgodnie z instrukcją lub Twoją ułańską fantazją, byle było ciepłe i czyste pod koniec",
-      "Podawaj razem - możesz też dorzucić jakieś dodatki"
+      "Podawaj razem - możesz też dorzucić jakieś dodatki - surówkę lub kiszonki"
     ],
     "developedBy": "Radoslaw Kot & mikele"
   },
