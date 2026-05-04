@@ -23,7 +23,7 @@
       },
       {
         "id": "chleb",
-        "amount": 0.15
+        "amount": 120
       },
       {
         "id": "maslo",
@@ -71,7 +71,7 @@
       },
       {
         "id": "chleb",
-        "amount": 0.3
+        "amount": 120
       }
     ],
     "instructions": [
@@ -618,7 +618,7 @@
     "ingredients": [
       {
         "id": "chleb",
-        "amount": 0.3
+        "amount": 200
       },
       {
         "id": "maslo",
@@ -755,7 +755,7 @@
       },
       {
         "id": "chleb",
-        "amount": 0.3
+        "amount": 120
       }
     ],
     "instructions": [
@@ -852,10 +852,6 @@
         "amount": 0.5
       },
       {
-        "id": "pomidory_koktajlowe",
-        "amount": 25
-      },
-      {
         "id": "oliwki_czarne",
         "amount": 15
       },
@@ -873,7 +869,7 @@
       },
       {
         "id": "chleb",
-        "amount": 0.15
+        "amount": 160
       }
     ],
     "instructions": [
