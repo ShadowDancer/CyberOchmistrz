@@ -1272,5 +1272,15 @@
     "isVegetarian": true,
     "isVegan": true,
     "isIngredient": true
+  },
+  {
+    "id": "szpinak_swiezy",
+    "name": "Szpinak świeży",
+    "unit": "gramy",
+    "category": "warzywa",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true,
+    "description": "Można zastąpić mrożnonym jeśli na jachcie jest zamrażarka"
   }
 ]
