@@ -90,7 +90,7 @@
   {
     "id": "passata_pomidorowa",
     "name": "Passata pomidorowa",
-    "unit": "litry",
+    "unit": "mililitry",
     "category": "inne",
     "isIngredient": true,
     "isVegetarian": true,
