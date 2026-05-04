@@ -501,7 +501,7 @@
     "category": "przekąski",
     "isVegetarian": true,
     "isVegan": true,
-    "isIngredient": false
+    "isIngredient": true
   },
   {
     "id": "zelki",
