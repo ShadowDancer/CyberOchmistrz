@@ -191,66 +191,33 @@
   },
   {
     "id": "kurczak-curry",
-    "name": "Kurczak w sosie curry z ryżem",
-    "description": "Szybki i aromatyczny obiad w stylu indyjskim. Soczyste kawałki kurczaka w kremowym sosie z mleka kokosowego z pomidorami i przyprawami.",
-    "mealType": [
-      "obiad"
-    ],
+    "name": "Kurczak curry",
+    "description": "Jedno z smaczniejszych dań kuchni indyjskiej — kawałki piersi z kurczaka w kremowym sosie curry z warzywami. Na jachcie potrafi wywołać ohy i achy",
+    "mealType": ["obiad"],
     "difficulty": 2,
     "ingredients": [
-      {
-        "id": "kurczak_filety",
-        "amount": 100
-      },
-      {
-        "id": "mleko_kokosowe",
-        "amount": 67
-      },
-      {
-        "id": "passata_pomidorowa",
-        "amount": 67
-      },
-      {
-        "id": "ryz",
-        "amount": 80
-      },
-      {
-        "id": "cebula",
-        "amount": 24.0
-      },
-      {
-        "id": "czosnek",
-        "amount": 0.5
-      },
-      {
-        "id": "curry",
-        "amount": 2
-      },
-      {
-        "id": "olej",
-        "amount": 5
-      },
-      {
-        "id": "sol",
-        "amount": 1
-      },
-      {
-        "id": "pieprz",
-        "amount": 1
-      }
+      { "id": "kurczak_filety", "amount": 185 },
+      { "id": "papryka", "amount": 80 },
+      { "id": "cebula", "amount": 70 },
+      { "id": "marchewka", "amount": 40 },
+      { "id": "czosnek", "amount": 1 },
+      { "id": "imbir_korzen", "amount": 0.25 },
+      { "id": "mleko_kokosowe", "amount": 70 },
+      { "id": "kostka_rosolowa_warzywna", "amount": 0.25 },
+      { "id": "oliwa", "amount": 20 },
+      { "id": "pasta_curry", "amount": 10 },
+      { "id": "curry", "amount": 2 },
+      { "id": "ryz", "amount": 100 }
     ],
     "instructions": [
-      "Ryż ugotuj w osolonej wodzie zgodnie z instrukcją na opakowaniu.",
-      "Pierś z kurczaka umyj, osusz i pokrój w kostkę.",
-      "Cebulę i czosnek drobno posiekaj.",
-      "Na patelni rozgrzej olej, zeszklij cebulę z czosnkiem.",
-      "Dodaj kurczaka i smaż przez około 3 minuty, aż się zarumieni.",
-      "Wsyp przyprawę curry i smaż jeszcze przez minutę, ciągle mieszając.",
-      "Dodaj pomidory (passatę), mleko kokosowe, sól i pieprz. Wymieszaj i zagotuj.",
-      "Gotuj na średnim ogniu bez przykrycia przez około 10-15 minut, aż sos lekko zgęstnieje.",
-      "Podawaj z ugotowanym ryżem."
+      "Pokrój kurczaka (lub wegetariański zamiennik) w kostkę ~2 cm; oprósz curry w proszku.",
+      "Na dużej patelni rozgrzej oliwę; podsmaż posiekaną cebulę przez 5 minut.",
+      "Dodaj pokrojoną marchewkę i paprykę; smaż 10 minut.",
+      "Dodaj kurczaka, starty imbir i pokrojony czosnek; smaż 5 minut.",
+      "Rozpuść kostkę rosołową warzywną w 500 ml wrzącej wody. Wlej bulion i mleko kokosowe; dodaj pastę curry.",
+      "Duś 5 minut; dopraw do smaku. Podawaj z ryżem."
     ],
-    "developedBy": "Na podstawie przepisu AniaGotuje.pl (https://aniagotuje.pl/przepis/kurczak-curry)"
+    "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/kurczak-curry"
   },
   {
     "id": "chili-con-carne",
