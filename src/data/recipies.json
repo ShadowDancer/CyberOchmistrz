@@ -943,28 +943,5 @@
       "Ugotowane zboże, tofu i warzywa ułóż w miseczkach. Sos podaj osobno lub nim polej zawartość misek. Posyp ziołami i sezamem."
     ],
     "developedBy": "Radosław Kot na podstawie przepisu https://www.warzywizm.pl/najprostszy-buddha-bowl"
-  },
-  {
-    "id": "wafle-ryzowe-z-nutella",
-    "name": "Wafle ryżowe z Nutellą",
-    "description": "Kiedy załoga jest skwaszona, zawsze poprawia jej to humor",
-    "mealType": [
-      "deser"
-    ],
-    "difficulty": 1,
-    "ingredients": [
-      {
-        "id": "wafle_ryzowe",
-        "amount": 1
-      },
-      {
-        "id": "nutella",
-        "amount": 30
-      }
-    ],
-    "instructions": [
-      "Posmaruj wafle nutellą. Najlepiej tylko z jednej strony."
-    ],
-    "developedBy": "Radosław Kot"
   }
 ]
