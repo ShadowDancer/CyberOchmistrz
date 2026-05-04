@@ -414,8 +414,8 @@
   {
     "id": "chleb",
     "name": "Chleb",
-    "unit": "sztuki",
-    "description": "Średni bochenek można pokroić na ~12-16 kromek",
+    "unit": "gramy",
+    "description": "Standardowy bochenek ~500g. Przyjęto wagę kromki ~40g.",
     "category": "pieczywo",
     "isVegetarian": true,
     "isVegan": true,
