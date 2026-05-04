@@ -1341,5 +1341,15 @@
     "isVegan": true,
     "isIngredient": true,
     "description": "Można zjeść albo użyć w Aperolu Spritz'ie"
+  },
+  {
+    "id": "kapusta",
+    "name": "Kapusta",
+    "unit": "kilogramy",
+    "category": "warzywa",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true,
+    "description": "Długo poleży, można drobno pociąć, posolić i zmięknie na tyle, że można użyć jako sałatki"
   }
 ]
