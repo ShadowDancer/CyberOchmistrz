@@ -333,6 +333,13 @@
     "isIngredient": false
   },
   {
+    "id": "herbata_miętowa",
+    "name": "Herbata miętowa",
+    "unit": "torebka",
+    "category": "napoje",
+    "isIngredient": false
+  },
+  {
     "id": "kawa",
     "name": "Kawa",
     "unit": "gramy",
