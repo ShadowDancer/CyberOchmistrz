@@ -403,6 +403,15 @@
     "isIngredient": true
   },
   {
+    "id": "gruszki",
+    "name": "Gruszki",
+    "unit": "kilogramy",
+    "category": "owoce",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true
+  },
+  {
     "id": "limonka",
     "name": "Limonka",
     "unit": "sztuki",
@@ -1282,5 +1291,55 @@
     "isVegan": true,
     "isIngredient": true,
     "description": "Można zastąpić mrożnonym jeśli na jachcie jest zamrażarka"
+  },
+  {
+    "id": "napoj_energetyczny",
+    "name": "Napoj energetyczny",
+    "unit": "sztuki",
+    "category": "napoje",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": false,
+    "description": "Do pobudzenia załogi zamiast kawy"
+  },
+  {
+    "id": "rum",
+    "name": "Rum",
+    "unit": "mililitry",
+    "category": "alkohol",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": false,
+    "description": "Niezbędnik każdego żeglarza. Trzeba także napoić nim Neptuna"
+  },
+  {
+    "id": "aperol",
+    "name": "Aperol",
+    "unit": "mililitry",
+    "category": "alkohol",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": false,
+    "description": "Można zmieszać z Prosecco"
+  },
+  {
+    "id": "prosecco",
+    "name": "Prosecco",
+    "unit": "mililitry",
+    "category": "alkohol",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": false,
+    "description": "Można zmieszać z Aperolem"
+  },
+  {
+    "id": "pomarancza",
+    "name": "Pomarańcza",
+    "unit": "gramy",
+    "category": "owoce",
+    "isVegetarian": true,
+    "isVegan": true,
+    "isIngredient": true,
+    "description": "Można zjeść albo użyć w Aperolu Spritz'ie"
   }
 ]
