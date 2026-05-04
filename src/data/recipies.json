@@ -361,6 +361,22 @@
     "developedBy": "Na podstawie dostępnych składników"
   },
   {
+    "id": "kanapki-z-maslem-orzechowym-i-dzemem",
+    "name": "Kanapki z masłem orzechowym i dżemem",
+    "description": "Szybkie i zdrowe drugie śniadanie z masłem orzechowym i dżemem — gotowe w 5 minut.",
+    "mealType": ["śniadanie"],
+    "difficulty": 1,
+    "ingredients": [
+      { "id": "chleb", "amount": 80 },
+      { "id": "maslo_orzechowe", "amount": 20 },
+      { "id": "dzem", "amount": 30 }
+    ],
+    "instructions": [
+      "Posmaruj masłem orzechowym i dżemem."
+    ],
+    "developedBy": "Radoslaw Kot na podstawie przepisu https://magazyn-kuchnia.pl/magazyn-kuchnia/7,182714,28368646,kanapki-z-maslem-orzechowym-i-dzemem.html?disableRedirects=true"
+  },
+  {
     "id": "owsianka-z-maslem-orzechowym",
     "name": "Owsianka z masłem orzechowym",
     "description": "Pożywne śniadanie lub kolacja łącząca płatki owsiane z masłem orzechowym i bananem. Prosty i sprawdzony przepis, przygotowany w sposób zapobiegający przypalaniu mleka.",
