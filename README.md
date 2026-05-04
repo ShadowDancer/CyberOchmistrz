@@ -66,7 +66,9 @@ CyberOchmistrz/
 │   ├── types/                 # TypeScript interfaces and enums
 │   │   └── index.ts           # Supply, Ingredient, Recipie, Cruise, shopping list types
 │   └── utils/
+│       ├── cruiseFileIO.ts      # Cruise JSON export (download) and import (parse file)
 │       ├── markdownExport.ts    # Markdown export for cruise menu (days, slots, recipes)
+│       ├── maxFlow.ts           # Dinic's max-flow algorithm used by diet coverage
 │       └── polishDeclension.ts  # Polish grammatical number for units
 ├── test/                      # Jest test suite (~18 test files)
 │   └── AGENTS.md              # Test conventions for AI agents
