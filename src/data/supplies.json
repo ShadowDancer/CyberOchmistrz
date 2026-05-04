@@ -56,8 +56,8 @@
     "name": "Hummus",
     "unit": "gramy",
     "category": "inne",
-    "isVegetarian": false,
-    "isVegan": false,
+    "isVegetarian": true,
+    "isVegan": true,
     "isIngredient": true
   },
   {
