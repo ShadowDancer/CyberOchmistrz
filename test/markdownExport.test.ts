@@ -188,15 +188,16 @@ describe('generateMarkdown', () => {
   // 13
   it('two versions same slot same originalRecipeId — grouped, instructions from catalog, note shown', () => {
     // v1: bigger crew (5), v2: smaller crew (3) — both share 'catalog-base'
+    // Both have 'egg' (common), v1 also has 'meat' (variant-specific), v2 also has 'bread' (variant-specific)
     const v1: CruiseDayRecipe = {
       originalRecipeId: 'catalog-base',
-      recipeData: makeRecipe('v1', 'Zupa z mięsem', ['meat'], ['Krok v1 — powinien być zignorowany']),
+      recipeData: makeRecipe('v1', 'Zupa z mięsem', ['meat', 'egg'], ['Krok v1 — powinien być zignorowany']),
       crewCount: 5,
       mealSlot: MealType.DINNER,
     };
     const v2: CruiseDayRecipe = {
       originalRecipeId: 'catalog-base',
-      recipeData: makeRecipe('v2', 'Zupa zwykła', ['bread'], ['Krok v2 — powinien być zignorowany']),
+      recipeData: makeRecipe('v2', 'Zupa zwykła', ['bread', 'egg'], ['Krok v2 — powinien być zignorowany']),
       crewCount: 3,
       mealSlot: MealType.DINNER,
     };
@@ -204,13 +205,21 @@ describe('generateMarkdown', () => {
     const result = generateMarkdown(cruise).replace(/\r\n/g, '\n');
     // Header: sorted desc → v1 first → names: ['Zupa z mięsem', 'Zupa zwykła']
     expect(result).toContain('### Zupa z mięsem / Zupa zwykła.');
-    // Ingredient headers with correct declension: 5 → osób, 3 → osoby
-    expect(result).toContain('Składniki (Zupa z mięsem, 5 osób):');
-    // 1 * 5 = 5 gramów Wołowina
+    // Variant-specific sections with correct declension: 5 → osób, 3 → osoby
+    expect(result).toContain('Składniki specyficzne dla wariantu (Zupa z mięsem, 5 osób):');
+    // 1 * 5 = 5 gramów Wołowina — only in v1 variant section, not common
     expect(result).toContain('- 5 gramów Wołowina');
-    expect(result).toContain('Składniki (Zupa zwykła, 3 osoby):');
-    // 1 * 3 = 3 sztuki Chleb
+    expect(result).toContain('Składniki specyficzne dla wariantu (Zupa zwykła, 3 osoby):');
+    // 1 * 3 = 3 sztuki Chleb — only in v2 variant section, not common
     expect(result).toContain('- 3 sztuki Chleb');
+    // Common ingredients section: egg appears in both → 1*5 + 1*3 = 8 sztuk Jajko
+    expect(result).toContain('Wspólne składniki:');
+    expect(result).toContain('- 8 sztuk Jajko');
+    // egg must not appear in variant-specific sections (it's common, not variant-specific)
+    const v1SectionEnd = result.indexOf('Składniki specyficzne dla wariantu (Zupa zwykła');
+    expect(result.substring(result.indexOf('Składniki specyficzne dla wariantu (Zupa z mięsem'), v1SectionEnd)).not.toContain('Jajko');
+    const commonSectionStart = result.indexOf('Wspólne składniki:');
+    expect(result.substring(result.indexOf('Składniki specyficzne dla wariantu (Zupa zwykła'), commonSectionStart)).not.toContain('Jajko');
     expect(result).toContain('Zmodyfikowana wersja przepisu wymaga od kuka okrętowego inwencji twórczej podczas gotowania!');
     // Instructions appear exactly once, from catalog
     expect(result.match(/Sposób przygotowania:/g)?.length).toBe(1);
@@ -251,11 +260,11 @@ describe('generateMarkdown', () => {
     // Note appears once per slot group — 2 total
     expect(result.match(/Zmodyfikowana wersja przepisu/g)?.length).toBe(2);
     // DINNER group has 5-person and 3-person headers
-    expect(result).toContain('Składniki (Obiad wersja A, 5 osób):');
-    expect(result).toContain('Składniki (Obiad wersja B, 3 osoby):');
+    expect(result).toContain('Składniki specyficzne dla wariantu (Obiad wersja A, 5 osób):');
+    expect(result).toContain('Składniki specyficzne dla wariantu (Obiad wersja B, 3 osoby):');
     // SUPPER group has 4-person and 2-person headers
-    expect(result).toContain('Składniki (Kolacja wersja A, 4 osoby):');
-    expect(result).toContain('Składniki (Kolacja wersja B, 2 osoby):');
+    expect(result).toContain('Składniki specyficzne dla wariantu (Kolacja wersja A, 4 osoby):');
+    expect(result).toContain('Składniki specyficzne dla wariantu (Kolacja wersja B, 2 osoby):');
     // DINNER slot appears before SUPPER slot
     expect(result.indexOf('## Obiad')).toBeLessThan(result.indexOf('## Kolacja'));
   });
@@ -288,9 +297,9 @@ describe('generateMarkdown', () => {
     // Sorted desc: 7,5,3 — first unique names in that order: ['Zupa','Zupa specjalna']
     expect(result).toContain('### Zupa / Zupa specjalna.');
     // Order in output: crewCount=7 before 5 before 3
-    const idx7 = result.indexOf('Składniki (Zupa, 7 osób):');
-    const idx5 = result.indexOf('Składniki (Zupa specjalna, 5 osób):');
-    const idx3 = result.indexOf('Składniki (Zupa, 3 osoby):');
+    const idx7 = result.indexOf('Składniki specyficzne dla wariantu (Zupa, 7 osób):');
+    const idx5 = result.indexOf('Składniki specyficzne dla wariantu (Zupa specjalna, 5 osób):');
+    const idx3 = result.indexOf('Składniki specyficzne dla wariantu (Zupa, 3 osoby):');
     expect(idx7).toBeLessThan(idx5);
     expect(idx5).toBeLessThan(idx3);
   });
