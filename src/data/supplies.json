@@ -351,6 +351,7 @@
     "name": "Sok owocowy",
     "unit": "litry",
     "category": "napoje",
+    "description": "Uwaga! Soki potrafią się bardzo różnić ceną w zależności od producenta i smaku. Oszczędny ochmistrz powinien zwrócić na to uwagę na zakupach.",
     "isIngredient": false
   },
   {
