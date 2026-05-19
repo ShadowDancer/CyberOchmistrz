@@ -629,7 +629,7 @@
   {
     "id": "leczo-jednogarnkowe",
     "name": "Leczo jednogarnkowe",
-    "description": "Leczo na jachcie jest trybutem dla Madziarów który zbliża Węgry do inaczej nieosiągalnego morza. Wymagany duży gar 3-4 litry. Zamiast masła polecam smalec. Kiełbase polecam wędzoną.",
+    "description": "Leczo na jachcie jest trybutem dla Madziarów który zbliża Węgry do inaczej nieosiągalnego morza. Wymagany duży gar 3-4 litry. Zamiast masła polecam smalec. Kiełbase polecam wędzoną. Długo się robi!",
     "mealType": [
       "obiad"
     ],
@@ -660,8 +660,12 @@
         "amount": 20
       },
       {
-        "id": "koncentrat_pomidorowy",
-        "amount": 40
+        "id": "marchewka",
+        "amount": 75
+      },
+      {
+        "id": "kostka_rosolowa_warzywna",
+        "amount": 0.2
       },
       {
         "id": "sol",
@@ -674,6 +678,10 @@
       {
         "id": "papryka_ostra",
         "amount": 3
+      },
+      {
+        "id": "chleb",
+        "amount": 80
       }
     ],
     "instructions": [
@@ -689,7 +697,7 @@
       "podawać z chlebem/ryżem"
     ],
     "developedBy": "mikele",
-    "modifiedBy": []
+    "modifiedBy": ["Radosław Kot", "Bernadette Van Laer"]
   },
   {
     "id": "chili-sin-carne",
