@@ -482,49 +482,6 @@
     "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/tofucznica"
   },
   {
-    "id": "makaron-z-jagodami",
-    "name": "Makaron z jagodami",
-    "description": "Przepis na makaron z jagodami to sposób na szybkie i aromatyczne lato na talerzu, które z pewnością pokocha cała rodzina.",
-    "mealType": [
-      "śniadanie",
-      "kolacja"
-    ],
-    "difficulty": 2,
-    "ingredients": [
-      {
-        "id": "makaron",
-        "amount": 100
-      },
-      {
-        "id": "jagody",
-        "amount": 100
-      },
-      {
-        "id": "cukier",
-        "amount": 10
-      },
-      {
-        "id": "smietana_30",
-        "amount": 30
-      },
-      {
-        "id": "cytryna",
-        "amount": 0.25
-      },
-      {
-        "id": "serek_waniliowy",
-        "amount": 40
-      }
-    ],
-    "instructions": [
-      "Makaron ugotuj al dente w osolonej wrzącej wodzie zgodnie z instrukcją na opakowaniu; odcedź.",
-      "Na patelni podsmaż 2/3 jagód z cukrem i sokiem z cytryny lub limonki na średnim ogniu przez kilka minut.",
-      "Dodaj śmietanę, wymieszaj i zagotuj, a następnie zdejmij z ognia.",
-      "Nałóż makaron na talerze, polej sosem jagodowo-śmietanowym, dodaj serek waniliowy lub twaróg i resztę świeżych jagód."
-    ],
-    "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/makaron-z-jagodami"
-  },
-  {
     "id": "ubijana-feta",
     "name": "Ubijana feta",
     "description": "Kremowa i prosta pasta z sera feta, twarogu i gęstego jogurtu, z oliwą i przyprawami. Podawana z awokado, pomidorkami koktajlowymi i oliwkami.",
