@@ -392,7 +392,7 @@
       },
       {
         "id": "woda",
-        "amount": 200
+        "amount": 150
       },
       {
         "id": "mleko",
@@ -418,7 +418,7 @@
     "instructions": [
       "Płatki owsiane gotuj w wodzie w małym garnku na średnim ogniu, aż zgęstnieją (2-3 minuty), od czasu do czasu mieszając. Dodaj sól.",
       "Wlej mleko i dodaj masło orzechowe. Wymieszaj, zagotuj, a następnie zdejmij z ognia.",
-      "Przełóż do miseczki, udekoruj plasterkami banana i polej miodem."
+      "Przełóż do miseczki, udekoruj plasterkami banana i polej miodem. Można dodatkowo posypać solą do smaku na talerzu"
     ],
     "developedBy": "Radoslaw Kot na podstawie przepisu https://aniagotuje.pl/przepis/owsianka-z-maslem-orzechowym"
   },
