@@ -434,11 +434,11 @@
     "ingredients": [
       {
         "id": "tofu_naturalne",
-        "amount": 150
+        "amount": 175
       },
       {
         "id": "cebula",
-        "amount": 150.0
+        "amount": 175
       },
       {
         "id": "olej",
