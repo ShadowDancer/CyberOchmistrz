@@ -226,9 +226,9 @@
     "mealType": ["obiad", "kolacja"],
     "difficulty": 2,
     "ingredients": [
-      { "id": "makaron", "amount": 100 },
-      { "id": "ser_feta", "amount": 100 },
-      { "id": "szpinak_swiezy", "amount": 150 },
+      { "id": "makaron", "amount": 115 },
+      { "id": "ser_feta", "amount": 115 },
+      { "id": "szpinak_mrozony", "amount": 165 },
       { "id": "oliwki_czarne", "amount": 15 },
       { "id": "pomidory_suszone_oliwa", "amount": 15 },
       { "id": "maslo", "amount": 30 },
