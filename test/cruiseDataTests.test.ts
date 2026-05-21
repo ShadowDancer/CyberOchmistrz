@@ -1,5 +1,5 @@
 import { getCruises, getCruiseById, saveCruise, deleteCruise, createNewCruise } from '../src/model/cruiseData';
-import { Cruise, CrewMember } from '../src/types';
+import { Cruise } from '../src/types';
 import { setupCruises, clearCruises, getStoredCruises, localStorageMock, makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseData', () => {

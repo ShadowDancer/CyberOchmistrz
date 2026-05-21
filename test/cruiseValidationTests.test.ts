@@ -1,5 +1,5 @@
 import { validateCruiseForm, isCruiseFormValid } from '../src/model/cruiseData';
-import { CrewMember } from '../src/types';
+import { CrewMember } from '../src/model/crew';
 import theories from 'jest-theories';
 
 const makeCrewMembers = (count: number): CrewMember[] =>

@@ -1,5 +1,5 @@
-import { Cruise, CrewMember, CruiseDayRecipe, MealType, Recipie } from '../src/types';
-import { Diet } from '../src/model/crew';
+import { Cruise, CruiseDayRecipe, MealType, Recipie } from '../src/types';
+import { Diet, CrewMember } from '../src/model/crew';
 import { createRecipie } from '../src/model/recipieData';
 
 const makeRecipe = (id: string): Recipie =>
