@@ -1,4 +1,4 @@
-import { MealType } from '@/model/recipe';
+import { MealType } from '../src/model/recipe';
 import { createNewCruise, updateCruiseDetails, willLengthReductionRemoveRecipes, addRecipeToCruiseDay, saveCruise, getCruiseById } from '../src/model/cruiseData';
 import { clearCruises, makeCrewMembers, createTestRecipe } from './cruiseTestHarness';
 

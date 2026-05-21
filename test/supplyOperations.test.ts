@@ -1,4 +1,4 @@
-import { Supply, Ingredient } from '@/model/supply';
+import { Supply, Ingredient } from '../src/model/supply';
 import { getAllSupplies, getIngredients, getNonIngredients, getSupplyById, getIngredientById, getSuppliesByType } from '../src/model/supplyData';
 
 // Mocked data for testing

@@ -1,8 +1,8 @@
 import { generateMarkdown } from '../src/utils/markdownExport';
 import { Diet, CrewMember } from '../src/model/crew';
 import { makeCrewMembers } from './cruiseTestHarness';
-import { CruiseDayRecipe, CruiseDay, Cruise } from '@/model/cruise';
-import { Recipie, MealType } from '@/model/recipe';
+import { CruiseDayRecipe, CruiseDay, Cruise } from '../src/model/cruise';
+import { Recipie, MealType } from '../src/model/recipe';
 
 jest.mock('../src/data/recipies.json', () => [
   { id: 'catalog-base', name: 'Zupa bazowa', ingredients: [{ id: 'bread', amount: 1 }], description: '', mealType: ['obiad'], difficulty: 1, instructions: ['Krok katalogowy 1', 'Krok katalogowy 2'] },

@@ -1,4 +1,4 @@
-import { CruiseSupply } from '@/model/cruise';
+import { CruiseSupply } from '../src/model/cruise';
 import {
   createNewCruise,
   addAdditionalSupplyToCruise,

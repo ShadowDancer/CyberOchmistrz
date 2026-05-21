@@ -63,7 +63,7 @@ jest.mock('../src/data/supplies.json', () => [
   }
 ]);
 
-import { Recipie, MealType, IngredientAmount } from '@/model/recipe';
+import { Recipie, MealType, IngredientAmount } from '../src/model/recipe';
 import { getRecipies, getRecipeById, getIngredients, getIngredientById, getRecipieIngredients, isRecipieVegetarian, isRecipieVegan, createRecipie } from '../src/model/recipieData';
 
 describe('recipieData', () => {

@@ -1,8 +1,8 @@
 import { getMealCoverage, getDayCoverage, getCruiseCoverage, countCrewWithTag, getActiveDietTags, canEat } from '../src/model/cruiseDietCoverage';
 import { createRecipie } from '../src/model/recipieData';
 import { Diet, CrewMember } from '../src/model/crew';
-import { CruiseDayRecipe, Cruise } from '@/model/cruise';
-import { MealType, Recipie } from '@/model/recipe';
+import { CruiseDayRecipe, Cruise } from '../src/model/cruise';
+import { MealType, Recipie } from '../src/model/recipe';
 
 // Mock supplies so isRecipieVegan/isRecipieVegetarian work deterministically
 jest.mock('../src/data/supplies.json', () => [

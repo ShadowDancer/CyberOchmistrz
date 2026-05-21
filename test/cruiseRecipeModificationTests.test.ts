@@ -1,4 +1,4 @@
-import { Recipie, MealType } from '@/model/recipe';
+import { Recipie, MealType } from '../src/model/recipe';
 import {
   updateRecipeIngredientInCruise,
   addIngredientToRecipeInCruise,
