@@ -2,12 +2,13 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CruiseDayRecipe, MealType, Recipie } from '../types';
 import DraggableRecipeItem from './DraggableRecipeItem';
 import { getMealCoverage, MealCoverage } from '../model/cruiseDietCoverage';
 import { Diet, DIET_REGISTRY, CrewMember } from '../model/crew';
 import { getSupplyById } from '../model/supplyData';
 import { declineUnit } from '../utils/polishDeclension';
+import { CruiseDayRecipe } from '@/model/cruise';
+import { Recipie, MealType } from '@/model/recipe';
 
 interface DroppableRecipieContainerProps {
   dayNumber: number;

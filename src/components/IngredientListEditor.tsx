@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Supply } from '../types';
 import IngredientAmountEditor from './IngredientAmountEditor';
+import { Supply } from '@/model/supply';
 
 interface IngredientListEditorProps {
   ingredients: Array<{ id: string; amount: number }>;

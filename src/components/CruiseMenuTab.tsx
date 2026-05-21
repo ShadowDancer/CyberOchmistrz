@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, Recipie, MealType } from '../types';
 import {
   addRecipeToCruiseDay,
   removeRecipeFromCruiseDay,
@@ -33,6 +32,8 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import DroppableDayItem from './DroppableDayItem';
+import { Cruise } from '@/model/cruise';
+import { Recipie, MealType } from '@/model/recipe';
 
 interface CruisePlanTabProps {
   cruise: Cruise;

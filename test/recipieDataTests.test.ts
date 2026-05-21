@@ -63,8 +63,8 @@ jest.mock('../src/data/supplies.json', () => [
   }
 ]);
 
+import { Recipie, MealType, IngredientAmount } from '@/model/recipe';
 import { getRecipies, getRecipeById, getIngredients, getIngredientById, getRecipieIngredients, isRecipieVegetarian, isRecipieVegan, createRecipie } from '../src/model/recipieData';
-import { Recipie, IngredientAmount, MealType } from '../src/types';
 
 describe('recipieData', () => {
   /** Builds raw Recipie data for tests that need to bypass createRecipie (e.g. diet function defense-in-depth). */

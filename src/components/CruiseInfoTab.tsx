@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Cruise } from '../types';
 import { deleteCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import { DIET_REGISTRY, CrewMember } from '../model/crew';
 import { getSupplyById } from '../model/supplyData';
+import { Cruise } from '@/model/cruise';
 
 interface CruiseInfoTabProps {
   cruise: Cruise;

@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import RecipeList from '@/components/RecipeList';
 import RecipeDetail from '@/components/RecipeDetail';
-import { Recipie } from '@/types';
 import { getRecipies } from '@/model/recipieData';
+import { Recipie } from '@/model/recipe';
 
 export default function RecipesPage() {
   const [selectedDish, setSelectedDish] = useState<Recipie | null>(null);
@@ -39,7 +39,7 @@ export default function RecipesPage() {
           Nowy przepis
         </Link>
       </div>
-      
+
       {/* Mobile View Controls */}
       <div className="md:hidden flex mb-4">
         <div className="flex justify-between w-full">
@@ -62,7 +62,7 @@ export default function RecipesPage() {
           </button>
         </div>
       </div>
-      
+
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 flex-grow overflow-hidden">
         {/* Recipe List - Hidden on mobile when in detail view */}
         <div className={`w-full md:w-1/3 border rounded-lg bg-white dark:bg-gray-800 shadow-sm flex-grow md:flex-grow-0 overflow-hidden ${
@@ -73,7 +73,7 @@ export default function RecipesPage() {
             selectedRecipieId={selectedDish?.id || null}
           />
         </div>
-        
+
         {/* Recipe Detail - Hidden on mobile when in list view */}
         <div className={`w-full md:w-2/3 border rounded-lg bg-white shadow-sm flex-grow md:flex-grow-0 overflow-hidden ${
           mobileView === 'list' ? 'hidden md:block' : ''

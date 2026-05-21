@@ -1,6 +1,7 @@
-import { Recipie, Ingredient, IngredientAmount, Supply } from '../types';
 import recipies from '../data/recipies.json';
 import suppliesData from '../data/supplies.json';
+import { Recipie, IngredientAmount } from './recipe';
+import { Ingredient, Supply } from './supply';
 
 export function createRecipie(data: Recipie): Recipie {
   if (data.ingredients.length === 0) {

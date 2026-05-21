@@ -3,9 +3,9 @@
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Recipie } from '@/types';
 import NewRecipeForm from '@/components/NewRecipeForm';
 import { getRecipeById } from '@/model/recipieData';
+import { Recipie } from '@/model/recipe';
 
 function EditRecipeForm(){
   const searchParams = useSearchParams();

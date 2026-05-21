@@ -1,7 +1,8 @@
-import { Cruise, CruiseDayRecipe, MealType, Recipie } from "../types";
 import { CrewMember, Diet } from "./crew";
 import { isRecipieVegan, isRecipieVegetarian } from "./recipieData";
 import { CrewRecipeAllocationChecker } from "../utils/maxFlow";
+import { Cruise, CruiseDayRecipe } from "./cruise";
+import { MealType, Recipie } from "./recipe";
 
 // ---------------------------------------------------------------------------
 // Report types

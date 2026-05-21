@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, AggregatedShoppingList, AggregatedItem, RecipeAmountSource, AdditionalSupplyAmountSource } from '../types';
 import { aggregateShoppingList, generateShoppingListCSV } from '../model/cruiseData';
 import { declineUnit } from '../utils/polishDeclension';
+import { Cruise } from '@/model/cruise';
+import { AggregatedShoppingList, AggregatedItem, RecipeAmountSource, AdditionalSupplyAmountSource } from '@/model/shoppingList';
 
 interface ShoppingListTabProps {
   cruise: Cruise;

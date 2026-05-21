@@ -1,4 +1,5 @@
-import { Cruise, CruiseDayRecipe, MealType, Recipie } from '../src/types';
+import { CruiseDayRecipe, Cruise } from '@/model/cruise';
+import { Recipie, MealType } from '@/model/recipe';
 import { Diet, CrewMember } from '../src/model/crew';
 import { createRecipie } from '../src/model/recipieData';
 

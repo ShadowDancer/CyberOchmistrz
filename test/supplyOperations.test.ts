@@ -1,5 +1,5 @@
+import { Supply, Ingredient } from '@/model/supply';
 import { getAllSupplies, getIngredients, getNonIngredients, getSupplyById, getIngredientById, getSuppliesByType } from '../src/model/supplyData';
-import { Supply, Ingredient } from '../src/types';
 
 // Mocked data for testing
 const mockedSupplies: Supply[] = [
@@ -95,7 +95,7 @@ describe('supplyData functions', () => {
       expect(supply).toBeDefined();
       expect(supply?.isIngredient).toBe(true);
       expect(supply).toHaveProperty('isVegan');
-      expect((supply as any)?.isVegan).toBe(true);
+      expect((supply as Ingredient)?.isVegan).toBe(true);
     });
 
     it('should return undefined for non-existing id', () => {

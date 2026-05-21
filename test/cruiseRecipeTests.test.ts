@@ -1,5 +1,5 @@
+import { MealType } from '@/model/recipe';
 import { createNewCruise, addRecipeToCruiseDay, removeRecipeFromCruiseDay } from '../src/model/cruiseData';
-import { MealType } from '../src/types';
 import { setupCruises, clearCruises, getStoredCruises, localStorageMock, createTestRecipe, createCruiseWithRecipes, makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseRecipeData', () => {

@@ -1,11 +1,9 @@
+import { Recipie, MealType } from '@/model/recipe';
 import {
-  createNewCruise,
-  addRecipeToCruiseDay,
   updateRecipeIngredientInCruise,
   addIngredientToRecipeInCruise,
   removeIngredientFromRecipeInCruise
 } from '../src/model/cruiseData';
-import { Recipie, MealType } from '../src/types';
 import { setupCruises, clearCruises, getStoredCruises, localStorageMock, createCruiseWithRecipes, makeCrewMembers } from './cruiseTestHarness';
 
 const realisticJajecznicaRecipe: Recipie = {

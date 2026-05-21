@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Cruise } from '../types';
 import { CrewMember } from '../model/crew';
 import {
   updateCruiseDetails,
@@ -9,6 +8,7 @@ import {
 } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import CrewEditor from './CrewEditor';
+import { Cruise } from '@/model/cruise';
 
 interface EditCruiseFormProps {
   cruise: Cruise;

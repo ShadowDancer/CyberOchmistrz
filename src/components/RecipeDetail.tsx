@@ -1,10 +1,10 @@
 "use client";
 
-import { Recipie } from '@/types';
 import { getRecipieIngredients, isRecipieVegetarian, isRecipieVegan } from '@/model/recipieData';
 import Link from 'next/link';
 import StarRating from './StarRating';
 import { declineUnit } from '../utils/polishDeclension';
+import { Recipie } from '@/model/recipe';
 
 interface RecipeDetailProps {
   dish: Recipie | null;
@@ -75,7 +75,7 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
   const recipieIngredients = getRecipieIngredients(recipie.ingredients);
   const isVegetarian = isRecipieVegetarian(recipie);
   const isVegan = isRecipieVegan(recipie);
-  
+
   // Group ingredients by category
   const ingredientsByCategory = recipieIngredients.reduce((acc, ingredient) => {
     if (!acc[ingredient.category]) {
@@ -84,7 +84,7 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
     acc[ingredient.category].push(ingredient);
     return acc;
   }, {} as Record<string, typeof recipieIngredients>);
-  
+
   return (
     <div className="h-full flex flex-col overflow-hidden bg-white dark:bg-gray-800">
       <div className="sticky top-0 bg-white dark:bg-gray-800 p-3 z-10">
@@ -104,7 +104,7 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
           </div>
         </div>
       </div>
-      
+
       <div className="overflow-y-auto flex-grow p-3 md:p-4">
         <div className="flex justify-between items-center mb-4">
           <p className="text-sm md:text-base text-muted-dark">{recipie.description}</p>
@@ -115,7 +115,7 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
             Edytuj
           </Link>
         </div>
-        
+
         <div className="mb-5 md:mb-6">
           <h3 className="text-md md:text-lg font-medium mb-2">Składniki</h3>
           {Object.entries(ingredientsByCategory).map(([category, ingredients]) => (
@@ -131,7 +131,7 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
             </div>
           ))}
         </div>
-        
+
         {recipie.instructions && recipie.instructions.length > 0 && (
           <div className="mb-5 md:mb-6">
             <h3 className="text-md md:text-lg font-medium mb-2">Sposób przygotowania</h3>
@@ -144,7 +144,7 @@ export default function RecipeDetail({ dish: recipie }: RecipeDetailProps) {
             </ol>
           </div>
         )}
-        
+
         {/* Author Information */}
         {(recipie.developedBy || (recipie.modifiedBy && recipie.modifiedBy.length > 0)) && (
           <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">

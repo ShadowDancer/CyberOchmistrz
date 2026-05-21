@@ -1,3 +1,4 @@
+import { CruiseSupply } from '@/model/cruise';
 import {
   createNewCruise,
   addAdditionalSupplyToCruise,
@@ -5,7 +6,6 @@ import {
   removeAdditionalSupplyFromCruise,
   groupAdditionalSuppliesByCategory
 } from '../src/model/cruiseData';
-import { CruiseSupply } from '../src/types';
 import { setupCruises, clearCruises, getStoredCruises, localStorageMock, makeCrewMembers } from './cruiseTestHarness';
 
 jest.mock('../src/data/supplies.json', () => [
@@ -278,7 +278,7 @@ describe('cruiseSupplies', () => {
         { id: 'herbata', amount: 20, isPerPerson: false, isPerDay: false },
         { id: 'kawa', amount: 200, isPerPerson: false, isPerDay: false },
       ];
-      let storage: { [key: string]: string } = {};
+      const storage: { [key: string]: string } = {};
       storage['cyber-ochmistrz-cruises'] = JSON.stringify([cruise]);
       localStorageMock.getItem.mockImplementation((key: string) => storage[key] || null);
       localStorageMock.setItem.mockImplementation((key: string, value: string) => {

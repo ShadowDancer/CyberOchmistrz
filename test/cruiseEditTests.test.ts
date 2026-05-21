@@ -1,5 +1,5 @@
-import { createNewCruise, updateCruiseDetails, willLengthReductionRemoveRecipes, addRecipeToCruiseDay, saveCruise } from '../src/model/cruiseData';
-import { MealType } from '../src/types';
+import { MealType } from '@/model/recipe';
+import { createNewCruise, updateCruiseDetails, willLengthReductionRemoveRecipes, addRecipeToCruiseDay, saveCruise, getCruiseById } from '../src/model/cruiseData';
 import { clearCruises, makeCrewMembers, createTestRecipe } from './cruiseTestHarness';
 
 describe('cruise edit functionality', () => {
@@ -14,7 +14,6 @@ describe('cruise edit functionality', () => {
       saveCruise(cruise);
       updateCruiseDetails(cruise.id, 'Updated Cruise', 7, makeCrewMembers(6));
 
-      const { getCruiseById } = require('../src/model/cruiseData');
       const updatedCruise = getCruiseById(cruise.id);
 
       expect(updatedCruise?.name).toBe('Updated Cruise');
@@ -28,7 +27,6 @@ describe('cruise edit functionality', () => {
       saveCruise(cruise);
       updateCruiseDetails(cruise.id, 'Test Cruise', 5, makeCrewMembers(4));
 
-      const { getCruiseById } = require('../src/model/cruiseData');
       const updatedCruise = getCruiseById(cruise.id);
 
       expect(updatedCruise?.days).toHaveLength(5);
@@ -42,7 +40,6 @@ describe('cruise edit functionality', () => {
       saveCruise(cruise);
       updateCruiseDetails(cruise.id, 'Test Cruise', 3, makeCrewMembers(4));
 
-      const { getCruiseById } = require('../src/model/cruiseData');
       const updatedCruise = getCruiseById(cruise.id);
 
       expect(updatedCruise?.days).toHaveLength(3);

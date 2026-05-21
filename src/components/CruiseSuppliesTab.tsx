@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, AdditionalSupplyCategoryGroup } from '../types';
 import {
   addAdditionalSupplyToCruise,
   updateAdditionalSupplyAmount,
@@ -12,25 +11,26 @@ import {
   groupAdditionalSuppliesByCategory
 } from '../model/cruiseData';
 import { getSuppliesByType, groupSuppliesByCategory } from '../model/supplyData';
-import { CategoryGroup } from '../types';
 import { declineUnit } from '../utils/polishDeclension';
 import IngredientAmountEditor from './IngredientAmountEditor';
+import { Cruise } from '@/model/cruise';
+import { AdditionalSupplyCategoryGroup, CategoryGroup } from '@/model/supply';
 
 interface CruiseSuppliesTabProps {
   cruise: Cruise;
   onSupplyChange: (updatedCruise: Cruise) => void;
 }
 
-export default function CruiseSuppliesTab({ 
-  cruise, 
-  onSupplyChange 
+export default function CruiseSuppliesTab({
+  cruise,
+  onSupplyChange
 }: CruiseSuppliesTabProps) {
   const [showIngredients, setShowIngredients] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [suppliesByCategory, setSuppliesByCategory] = useState<CategoryGroup[]>([]);
   const [shoppingListByCategory, setShoppingListByCategory] = useState<AdditionalSupplyCategoryGroup[]>([]);
-  
+
   // Load supplies directly, filtered by isIngredient flag
   useEffect(() => {
     const allSupplies = getSuppliesByType(showIngredients);
@@ -42,18 +42,18 @@ export default function CruiseSuppliesTab({
     // Reset category filter when changing ingredient type
     setSelectedCategory('');
   }, [showIngredients]);
-  
+
   // Group shopping list items by category using domain function
   useEffect(() => {
     const groupedShoppingList = groupAdditionalSuppliesByCategory(cruise.id);
     setShoppingListByCategory(groupedShoppingList);
   }, [cruise.additionalSupplies, cruise.id]);
-  
+
   const handleAddSupply = (supplyId: string) => {
     if (!cruise) return;
 
     addAdditionalSupplyToCruise(cruise.id, supplyId, 1, false, false);
-    
+
     const updatedCruise = getCruiseById(cruise.id);
     if (updatedCruise) {
       onSupplyChange(updatedCruise);
@@ -103,12 +103,12 @@ export default function CruiseSuppliesTab({
       onSupplyChange(updatedCruise);
     }
   };
-  
+
   const toggleShowIngredients = () => {
     setShowIngredients(!showIngredients);
     setFilterText('');
   };
-  
+
   const filteredSupplies = suppliesByCategory
     .filter(categoryGroup => !selectedCategory || categoryGroup.category === selectedCategory)
     .map(categoryGroup => ({
@@ -120,7 +120,7 @@ export default function CruiseSuppliesTab({
     .filter(categoryGroup => categoryGroup.supplies.length > 0);
 
   const availableCategories = suppliesByCategory.map(group => group.category).sort();
-  
+
   return (
     <div className="content-padding">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -171,7 +171,7 @@ export default function CruiseSuppliesTab({
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-4 max-h-[60vh] overflow-y-auto">
             {filteredSupplies.length === 0 ? (
               <p className="text-muted-light italic py-4">Brak produktów do wyświetlenia.</p>
@@ -208,7 +208,7 @@ export default function CruiseSuppliesTab({
             )}
           </div>
         </div>
-        
+
         {/* Right column - Additional supplies to buy */}
         <div>
           <h2 className="heading-secondary">Lista zakupów</h2>

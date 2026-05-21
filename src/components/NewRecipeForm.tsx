@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Recipie, MealType, IngredientAmount } from '@/types';
 import { getIngredients, getRecipies } from '@/model/recipieData';
 import IngredientListEditor from './IngredientListEditor';
+import { Recipie, MealType, IngredientAmount } from '@/model/recipe';
 
 interface NewRecipeFormProps {
   recipe?: Recipie;

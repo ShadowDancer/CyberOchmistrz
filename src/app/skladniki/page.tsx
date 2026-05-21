@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import suppliesData from '@/data/supplies.json';
-import { Supply, Ingredient } from '@/types';
+import { Ingredient, Supply } from '@/model/supply';
 
 export default function SuppliesPage() {
   const [searchText, setSearchText] = useState<string>('');

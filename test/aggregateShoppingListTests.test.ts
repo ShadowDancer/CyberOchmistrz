@@ -1,7 +1,9 @@
 import { aggregateShoppingList } from '../src/model/cruiseData';
 import { createRecipie } from '../src/model/recipieData';
-import { Cruise, CruiseDay, CruiseSupply, Recipie, IngredientAmount, AmountSource, RecipeAmountSource, AdditionalSupplyAmountSource, MealType, CruiseDayRecipe } from '../src/types';
 import { CrewMember } from '../src/model/crew';
+import { CruiseDayRecipe, CruiseDay, CruiseSupply, Cruise } from '@/model/cruise';
+import { IngredientAmount, Recipie, MealType } from '@/model/recipe';
+import { AmountSource, RecipeAmountSource, AdditionalSupplyAmountSource } from '@/model/shoppingList';
 
 // Mock the supplies data
 jest.mock('../src/data/supplies.json', () => [

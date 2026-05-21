@@ -3,8 +3,9 @@
 import { useDroppable } from '@dnd-kit/core';
 import { getRecipeById } from '../model/recipieData';
 import { getMealCoverage, MealCoverage } from '../model/cruiseDietCoverage';
-import { CruiseDayRecipe, MealType } from '../types';
 import { CrewMember } from '../model/crew'
+import { CruiseDayRecipe } from '@/model/cruise';
+import { MealType } from '@/model/recipe';
 
 const MEAL_SLOT_DOTS: { slot: MealType; label: string }[] = [
   { slot: MealType.BREAKFAST, label: 'Śniadanie' },

@@ -1,4 +1,5 @@
-import { AggregatedShoppingList, AggregatedItem, Supply } from '../src/types';
+import { AggregatedItem, AggregatedShoppingList } from '@/model/shoppingList';
+import { Supply } from '@/model/supply';
 import { generateShoppingListCSV } from '../src/model/cruiseData';
 
 describe('generateShoppingListCSV', () => {

@@ -1,7 +1,8 @@
-import { Cruise, CruiseDayRecipe, MealType } from '../types';
 import { getSupplyById } from '../model/supplyData';
 import { declineUnit } from './polishDeclension';
 import { getRecipeById } from '../model/recipieData';
+import { CruiseDayRecipe, Cruise } from '@/model/cruise';
+import { MealType } from '@/model/recipe';
 
 const MEAL_SLOT_ORDER = [MealType.BREAKFAST, MealType.DINNER, MealType.SUPPER, MealType.SNACK];
 
@@ -145,4 +146,3 @@ export function generateMarkdown(cruise: Cruise): string {
 
   return dayBlocks.join('\n\n');
 }
-

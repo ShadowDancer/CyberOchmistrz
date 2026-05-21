@@ -1,20 +1,15 @@
 import {
   createRecipie,
-} from './recipieData';
+} from '../model/recipieData';
 import {
-  Cruise,
-  Recipie,
-  MealType,
-  AggregatedShoppingList,
-  AggregatedItem,
-  AmountSource,
-  Supply,
-  RecipeAmountSource,
-  AdditionalSupplyAmountSource,
-  AdditionalSupplyCategoryGroup, AdditionalSupplyItem, CruiseFormData, CruiseFormErrors
+  CruiseFormData, CruiseFormErrors
 } from '../types';
-import { getSupplyById } from './supplyData';
+import { getSupplyById } from '../model/supplyData';
 import { CrewMember } from '../model/crew';
+import { Cruise } from './cruise';
+import { Recipie, MealType } from './recipe';
+import { AggregatedShoppingList, AmountSource, RecipeAmountSource, AdditionalSupplyAmountSource, AggregatedItem } from './shoppingList';
+import { AdditionalSupplyCategoryGroup, AdditionalSupplyItem, Supply } from './supply';
 
 const STORAGE_KEY = 'cyber-ochmistrz-cruises';
 

@@ -1,10 +1,10 @@
+import { CruiseSupply } from '@/model/cruise';
 import {
   createNewCruise,
   addAdditionalSupplyToCruise,
   updateAdditionalSupplyAmount,
   removeAdditionalSupplyFromCruise
 } from '../src/model/cruiseData';
-import { CruiseSupply } from '../src/types';
 import { setupCruises, clearCruises, getStoredCruises, makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseAdditionalSuppliesFlags', () => {

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise } from '../types';
 import { getCruiseById } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import CruiseSuppliesTab from './CruiseSuppliesTab';
 import ShoppingListTab from './ShoppingListTab';
 import CruiseMenuTab from './CruiseMenuTab';
 import CruiseInfoTab from './CruiseInfoTab';
+import { Cruise } from '@/model/cruise';
 
 interface CruiseDetailProps {
   id: string;
@@ -118,7 +118,7 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
         )}
 
         {activeTab === 'plan' && (
-          <CruiseMenuTab 
+          <CruiseMenuTab
             cruise={cruise}
             onCruiseChange={handleCruiseChange}
           />

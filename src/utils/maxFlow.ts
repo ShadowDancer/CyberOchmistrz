@@ -1,4 +1,4 @@
-import { CruiseDayRecipe } from "@/types";
+import { CruiseDayRecipe } from '@/model/cruise';
 import { CrewMember } from '../model/crew'
 
 /**
