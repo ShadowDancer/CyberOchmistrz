@@ -1,13 +1,13 @@
 export interface Recipie {
-  id: string;
-  name: string;
-  ingredients: IngredientAmount[];
-  description: string;
-  mealType: MealType[];
-  difficulty: number; // 1-5 stars
-  instructions: string[]; // array of preparation steps
-  developedBy?: string; // Author of the recipe
-  modifiedBy?: string[]; // Array of people who modified the recipe
+  readonly id: string;
+  readonly name: string;
+  readonly ingredients: readonly IngredientAmount[];
+  readonly description: string;
+  readonly mealType: readonly MealType[];
+  readonly difficulty: number; // 1-5 stars
+  readonly instructions: readonly string[]; // array of preparation steps
+  readonly developedBy?: string; // Author of the recipe
+  readonly modifiedBy?: readonly string[]; // Array of people who modified the recipe
 }
 
 export enum MealType {
@@ -18,6 +18,6 @@ export enum MealType {
 }
 
 export interface IngredientAmount {
-  id: string;
-  amount: number;
+  readonly id: string;
+  readonly amount: number;
 }

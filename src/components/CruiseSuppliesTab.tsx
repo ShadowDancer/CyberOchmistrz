@@ -1,15 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  addAdditionalSupplyToCruise,
-  updateAdditionalSupplyAmount,
-  removeAdditionalSupplyFromCruise,
-  getCruiseById,
-  hasAdditionalSupply,
-  getAdditionalSupplyAmount,
-  groupAdditionalSuppliesByCategory
-} from '../model/cruiseData';
+import { getCruiseById, saveCruise } from '../model/cruiseData';
 import { getSuppliesByType, groupSuppliesByCategory } from '../model/supplyData';
 import { declineUnit } from '../utils/polishDeclension';
 import IngredientAmountEditor from './IngredientAmountEditor';
@@ -45,14 +37,15 @@ export default function CruiseSuppliesTab({
 
   // Group shopping list items by category using domain function
   useEffect(() => {
-    const groupedShoppingList = groupAdditionalSuppliesByCategory(cruise.id);
+    const groupedShoppingList = cruise.groupAdditionalSuppliesByCategory();
     setShoppingListByCategory(groupedShoppingList);
-  }, [cruise.additionalSupplies, cruise.id]);
+  }, [cruise]);
 
   const handleAddSupply = (supplyId: string) => {
     if (!cruise) return;
 
-    addAdditionalSupplyToCruise(cruise.id, supplyId, 1, false, false);
+    cruise.upsertAdditionalSupply({ id: supplyId, amount: 1, isPerDay: false, isPerPerson: false });
+    saveCruise(cruise);
 
     const updatedCruise = getCruiseById(cruise.id);
     if (updatedCruise) {

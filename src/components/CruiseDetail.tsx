@@ -1,31 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getCruiseById } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import CruiseSuppliesTab from './CruiseSuppliesTab';
 import ShoppingListTab from './ShoppingListTab';
 import CruiseMenuTab from './CruiseMenuTab';
 import CruiseInfoTab from './CruiseInfoTab';
-import { Cruise } from '@/model/cruise';
+import { useCruise } from '@/app/rejsy/CruiseProvider';
 
-interface CruiseDetailProps {
-  id: string;
-}
-
-export default function CruiseDetail({ id }: CruiseDetailProps) {
+export default function CruiseDetail() {
   const router = useRouter();
-  const [cruise, setCruise] = useState<Cruise | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { cruise, setCruise } = useCruise();
   const [activeTab, setActiveTab] = useState<'info' | 'plan' | 'supplies' | 'shopping'>('info');
-
-  useEffect(() => {
-    const cruiseData = getCruiseById(id);
-    if (cruiseData) {
-      setCruise(cruiseData);
-    }
-    setLoading(false);
-  }, [id]);
 
   const handleCruiseChange = () => {
     // Refresh cruise data
@@ -34,10 +21,6 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
       setCruise(updatedCruise);
     }
   };
-
-  if (loading) {
-    return <div className="loading-state">Ładowanie...</div>;
-  }
 
   if (!cruise) {
     return (
@@ -120,14 +103,14 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
         {activeTab === 'plan' && (
           <CruiseMenuTab
             cruise={cruise}
-            onCruiseChange={handleCruiseChange}
+            onCruiseChange={setCruise}
           />
         )}
 
         {activeTab === 'supplies' && (
           <CruiseSuppliesTab
             cruise={cruise}
-            onSupplyChange={handleCruiseChange}
+            onSupplyChange={setCruise}
           />
         )}
 

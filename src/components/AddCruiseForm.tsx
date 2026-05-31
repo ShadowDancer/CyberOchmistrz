@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { createNewCruise, saveCruise } from '../model/cruiseData';
+import { saveCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import { CrewMember } from '../model/crew';
+import { Cruise } from '../model/cruise'
 import CrewEditor from './CrewEditor';
 
 export default function AddCruiseForm() {
@@ -80,7 +81,7 @@ export default function AddCruiseForm() {
       return;
     }
 
-    const newCruise = createNewCruise(
+    const newCruise = Cruise.createNew(
       formData.name,
       formData.length,
       formData.crewMembers,
