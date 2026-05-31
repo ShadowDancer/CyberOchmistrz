@@ -26,9 +26,11 @@ import {
 } from '@dnd-kit/core';
 import DroppableDayItem from './DroppableDayItem';
 import { Recipie, MealType } from '@/model/recipe';
+import { useCruise } from '@/app/rejsy/CruiseProvider';
 
 export default function CruiseMenuTab() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const { cruise, setCruise } = useCruise();
   const [mobileView, setMobileView] = useState<'days' | 'details' | 'recipes'>('days');
   const [editingRecipe, setEditingRecipe] = useState<{ dayNumber: number; recipeIndex: number; recipe: Recipie } | null>(null);
 
@@ -71,8 +73,7 @@ export default function CruiseMenuTab() {
     recipeIndex: number,
   ) => {
     if (!cruise) return;
-    cruise.removeRecipe(dayNumber, recipe.originalRecipeId, recipeIndex)
-    onCruiseChange();
+    setCruise(cruise.removeRecipe(dayNumber, recipe.originalRecipeId, recipeIndex));
   };
 
   const handleEditIngredients = (
@@ -95,10 +96,9 @@ export default function CruiseMenuTab() {
     crewCount: number,
   ) => {
     if (!cruise) return;
-    cruise.updateCruiseDayRecipe(dayNumber, recipeIndex, (recipe) => {
-      recipe.crewCount = crewCount;
-    })
-    onCruiseChange();
+    setCruise(cruise.updateCruiseDayRecipe(dayNumber, recipeIndex, {
+      crewCount: crewCount
+    }));
   };
 
   const handleSaveRecipeEdits = (
@@ -108,11 +108,10 @@ export default function CruiseMenuTab() {
     ingredients: Array<{ id: string; amount: number }>,
   ) => {
     if (!cruise) return;
-    cruise.updateCruiseDayRecipe(dayNumber, recipeIndex, (recipe) => {
-      recipe.recipeData.name = name;
-      recipe.recipeData.ingredients = ingredients;
-    })
-    onCruiseChange();
+    setCruise(cruise.updateRecipe(dayNumber, recipeIndex, {
+      name: name,
+      ingredients: ingredients
+    }));
   };
 
   const closeIngredientEditor = () => {
@@ -176,13 +175,12 @@ export default function CruiseMenuTab() {
       if (!fullRecipe) return;
 
       const recipeSnapshot = JSON.parse(JSON.stringify(fullRecipe));
-      cruise.insertRecipe(targetDay, {
+      setCruise(cruise.insertRecipe(targetDay, {
         crewCount: Math.max(1, cruise.crewMembers.length),
         mealSlot: targetSlot,
         originalRecipeId: recipeId,
         recipeData: recipeSnapshot
-      })
-      onCruiseChange();
+      }));
       return;
     }
 
@@ -218,20 +216,18 @@ export default function CruiseMenuTab() {
 
     if (sourceDayNumber === targetDayNumber) {
       if (sourceMealSlot !== targetMealSlot) {
-        cruise.updateCruiseDayRecipe(sourceDayNumber, sourceIndex, (recipe) => {
-          recipe.mealSlot = targetMealSlot;
-        })
-        onCruiseChange();
+        setCruise(cruise.updateCruiseDayRecipe(sourceDayNumber, sourceIndex, {
+          mealSlot: targetMealSlot
+        }));
         return;
       }
       if (targetIndex !== undefined && sourceIndex !== targetIndex) {
-        cruise.reorderRecipes(sourceDayNumber, sourceIndex, targetIndex)
-        onCruiseChange();
+        setCruise(cruise.reorderRecipes(sourceDayNumber, sourceIndex, targetIndex));
       }
       return;
     }
 
-    cruise.moveRecipeBetweenDays(sourceDayNumber, targetDayNumber, sourceIndex, targetIndex)
+    setCruise(cruise.moveRecipeBetweenDays(sourceDayNumber, targetDayNumber, sourceIndex, targetIndex));
 
     if (sourceMealSlot !== targetMealSlot) {
       const updatedCruise = getCruiseById(cruise.id);
@@ -243,13 +239,12 @@ export default function CruiseMenuTab() {
               ? targetIndex
               : targetDay.recipes.length - 1;
 
-          cruise.updateCruiseDayRecipe(targetDayNumber, insertedIndex, (recipe) => {
-            recipe.mealSlot = targetMealSlot;
-          });
+          setCruise(cruise.updateCruiseDayRecipe(targetDayNumber, insertedIndex, {
+            mealSlot: targetMealSlot
+          }));
         }
       }
     }
-    onCruiseChange();
   };
 
   const getActiveRecipe = () => {

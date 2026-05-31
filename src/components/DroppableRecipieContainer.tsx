@@ -12,8 +12,8 @@ import { Recipie, MealType } from '@/model/recipe';
 
 interface DroppableRecipieContainerProps {
   dayNumber: number;
-  recipes: CruiseDayRecipe[];
-  crewMembers: CrewMember[];
+  recipes: readonly CruiseDayRecipe[];
+  crewMembers: readonly CrewMember[];
   onEditIngredients: (
     dayNumber: number,
     recipe: { originalRecipeId: string; recipeData?: Recipie },
@@ -85,7 +85,7 @@ interface SlotSectionProps {
   slot: MealType;
   dayNumber: number;
   slotRecipes: { recipe: CruiseDayRecipe; originalIndex: number }[];
-  crewMembers: CrewMember[];
+  crewMembers: readonly CrewMember[];
   isDragging: boolean;
   onEditIngredients: DroppableRecipieContainerProps['onEditIngredients'];
   onRemoveRecipe: DroppableRecipieContainerProps['onRemoveRecipe'];

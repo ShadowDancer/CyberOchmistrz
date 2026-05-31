@@ -32,7 +32,7 @@ export class CrewRecipeAllocationChecker {
   private readonly source = 0;
   private readonly sink;
 
-  constructor(private people: CrewMember[], private resources: CruiseDayRecipe[], compatibilityPredicate: (arg1: CrewMember, arg2: CruiseDayRecipe) => boolean) {
+  constructor(private people: readonly CrewMember[], private resources: readonly CruiseDayRecipe[], compatibilityPredicate: (arg1: CrewMember, arg2: CruiseDayRecipe) => boolean) {
     const domainNodes = people.length + resources.length;
     const sinkAndSource = 2;
 

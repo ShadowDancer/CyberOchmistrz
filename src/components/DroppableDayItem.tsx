@@ -15,8 +15,8 @@ const MEAL_SLOT_DOTS: { slot: MealType; label: string }[] = [
 
 interface DroppableDayItemProps {
   dayNumber: number;
-  recipes: CruiseDayRecipe[];
-  crewMembers: CrewMember[];
+  recipes: readonly CruiseDayRecipe[];
+  crewMembers: readonly CrewMember[];
   isSelected: boolean;
   isOver: boolean;
   onClick: () => void;

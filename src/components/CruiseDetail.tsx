@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { getCruiseById } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import CruiseSuppliesTab from './CruiseSuppliesTab';
 import ShoppingListTab from './ShoppingListTab';
@@ -13,14 +12,6 @@ export default function CruiseDetail() {
   const router = useRouter();
   const { cruise, setCruise } = useCruise();
   const [activeTab, setActiveTab] = useState<'info' | 'plan' | 'supplies' | 'shopping'>('info');
-
-  const handleCruiseChange = () => {
-    // Refresh cruise data
-    const updatedCruise = getCruiseById(id);
-    if (updatedCruise) {
-      setCruise(updatedCruise);
-    }
-  };
 
   if (!cruise) {
     return (
@@ -101,10 +92,7 @@ export default function CruiseDetail() {
         )}
 
         {activeTab === 'plan' && (
-          <CruiseMenuTab
-            cruise={cruise}
-            onCruiseChange={setCruise}
-          />
+          <CruiseMenuTab/>
         )}
 
         {activeTab === 'supplies' && (

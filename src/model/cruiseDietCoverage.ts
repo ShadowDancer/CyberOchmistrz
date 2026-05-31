@@ -76,8 +76,8 @@ export function getDayCoverage(
 }
 
 export function getMealCoverage(
-  slotRecipes: CruiseDayRecipe[],
-  members: CrewMember[],
+  slotRecipes: readonly CruiseDayRecipe[],
+  members: readonly CrewMember[],
   mealSlot: MealType,
 ): MealCoverage {
   const totalNeeded = members.length;
