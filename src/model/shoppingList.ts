@@ -108,7 +108,7 @@ export function aggregateShoppingList(cruise: Cruise): AggregatedShoppingList {
       }
       // Calculate scaled amount based on flags
       const crewMultiplier = item.isPerPerson ? cruise.crewMembers.length : 1;
-      const dayMultiplier = item.isPerDay ? cruise.length : 1;
+      const dayMultiplier = item.isPerDay ? cruise.days.length : 1;
       const scaledAmount = item.amount * crewMultiplier * dayMultiplier;
       const source = new AdditionalSupplyAmountSource(item.amount, item.isPerPerson, item.isPerDay);
 

@@ -27,7 +27,7 @@ function EditCruiseContent() {
         );
     }
 
-    return <EditCruiseForm cruise={cruise}/>;
+    return <EditCruiseForm />;
 }
 
 export default function EditCruisePage() {

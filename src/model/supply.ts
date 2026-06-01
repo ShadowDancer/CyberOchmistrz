@@ -1,32 +1,32 @@
 export interface Supply {
-  id: string;
-  name: string;
-  unit: string;
-  description?: string;
-  isIngredient: boolean;
-  category: string;
-  defaultAmount?: number;
+  readonly id: string;
+  readonly name: string;
+  readonly unit: string;
+  readonly description?: string;
+  readonly isIngredient: boolean;
+  readonly category: string;
+  readonly defaultAmount?: number;
 }
 
 export interface Ingredient extends Supply {
-  category: 'nabiał' | 'mięso' | 'warzywa' | 'owoce' | 'pieczywo' | 'zboża' | 'przyprawy' | 'tłuszcze' | 'napoje' | 'środki czystości' | 'inne';
-  isVegetarian: boolean;
-  isVegan: boolean;
+  readonly category: 'nabiał' | 'mięso' | 'warzywa' | 'owoce' | 'pieczywo' | 'zboża' | 'przyprawy' | 'tłuszcze' | 'napoje' | 'środki czystości' | 'inne';
+  readonly isVegetarian: boolean;
+  readonly isVegan: boolean;
 }
 
 export interface CategoryGroup {
-  category: string;
-  supplies: Supply[];
+  readonly category: string;
+  readonly supplies: Supply[];
 }
 
 export interface AdditionalSupplyItem {
-  supply: Supply;
-  amount: number;
-  isPerPerson: boolean;
-  isPerDay: boolean;
+  readonly supply: Supply;
+  readonly amount: number;
+  readonly isPerPerson: boolean;
+  readonly isPerDay: boolean;
 }
 
 export interface AdditionalSupplyCategoryGroup {
-  category: string;
-  supplies: AdditionalSupplyItem[];
+  readonly category: string;
+  readonly supplies: AdditionalSupplyItem[];
 }

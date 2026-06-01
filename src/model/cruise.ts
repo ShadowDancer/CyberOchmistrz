@@ -183,75 +183,6 @@ export class Cruise {
     return this.days.slice(newLength - 1).some((day) => day.recipes.length > 0);
   }
 
-  // additional supplies
-
-  public upsertAdditionalSupply(supply: CruiseSupply): Cruise {
-    return this.with({
-      additionalSupplies: produce(this.additionalSupplies, additionalSupplies => {
-        const existingSupplyIndex = additionalSupplies.findIndex(
-          (s) =>
-            s.id === supply.id &&
-            s.isPerPerson === supply.isPerPerson &&
-            s.isPerDay === supply.isPerDay,
-        );
-
-        if (existingSupplyIndex >= 0) {
-          additionalSupplies[existingSupplyIndex].amount += supply.amount;
-        } else {
-          additionalSupplies.push(supply);
-        }
-      })
-    });
-  }
-
-  public removeAdditionalSupply(
-    supplyId: string,
-    isPerPerson: boolean,
-    isPerDay: boolean,
-  ): Cruise {
-    return this.with({
-      additionalSupplies: produce(this.additionalSupplies, additionalSupplies => {
-        const existingSupplyIndex = additionalSupplies.findIndex(
-          (s) =>
-            s.id === supplyId &&
-            s.isPerPerson === isPerPerson &&
-            s.isPerDay === isPerDay,
-        );
-        if (existingSupplyIndex >= 0) {
-          additionalSupplies.splice(existingSupplyIndex, 1);
-        }
-      })
-    });
-  }
-
-  public hasAdditionalSupply(
-    supplyId: string,
-    isPerPerson: boolean,
-    isPerDay: boolean,
-  ): boolean {
-    return this.additionalSupplies.some(
-      (item) =>
-        item.id === supplyId &&
-        item.isPerPerson === isPerPerson &&
-        item.isPerDay === isPerDay,
-    );
-  }
-
-  public getAdditionalSupplyAmount(
-    supplyId: string,
-    isPerPerson: boolean,
-    isPerDay: boolean,
-  ): number | null {
-    const item = this.additionalSupplies.find(
-      (item) =>
-        item.id === supplyId &&
-        item.isPerPerson === isPerPerson &&
-        item.isPerDay === isPerDay,
-    );
-
-    return item ? item.amount : null;
-  }
-
   public moveRecipeBetweenDays(
     fromDayNumber: number,
     toDayNumber: number,
@@ -286,6 +217,54 @@ export class Cruise {
         toRecipes.splice(insertIndex, 0, movedRecipe);
       })
     })
+  }
+
+  // additional supplies
+
+  public upsertAdditionalSupply(supply: CruiseSupply): Cruise {
+    return this.with({
+      additionalSupplies: produce(this.additionalSupplies, additionalSupplies => {
+        const existingSupplyIndex = additionalSupplies.findIndex((s) => idsEqual(s, supply));
+        if (existingSupplyIndex >= 0) {
+          additionalSupplies[existingSupplyIndex].amount = supply.amount;
+        } else {
+          additionalSupplies.push(supply);
+        }
+      })
+    });
+  }
+
+  public removeAdditionalSupply(
+    supplyId: string,
+    isPerPerson: boolean,
+    isPerDay: boolean,
+  ): Cruise {
+    return this.with({
+      additionalSupplies: produce(this.additionalSupplies, additionalSupplies => {
+        const existingSupplyIndex = additionalSupplies.findIndex((s) => idsEqual(s, { id: supplyId, isPerDay, isPerPerson }));
+        if (existingSupplyIndex >= 0) {
+          additionalSupplies.splice(existingSupplyIndex, 1);
+        }
+      })
+    });
+  }
+
+  public hasAdditionalSupply(
+    supplyId: string,
+    isPerPerson: boolean,
+    isPerDay: boolean,
+  ): boolean {
+    return this.additionalSupplies.some((s) => idsEqual(s, { id: supplyId, isPerDay, isPerPerson }));
+  }
+
+  public getAdditionalSupplyAmount(
+    supplyId: string,
+    isPerPerson: boolean,
+    isPerDay: boolean,
+  ): number | null {
+    const item = this.additionalSupplies.find((s) => idsEqual(s, { id: supplyId, isPerDay, isPerPerson }));
+
+    return item ? item.amount : null;
   }
 
   public groupAdditionalSuppliesByCategory(): AdditionalSupplyCategoryGroup[] {
@@ -347,6 +326,12 @@ export interface CruiseSupply {
   readonly amount: number;
   readonly isPerPerson: boolean;
   readonly isPerDay: boolean;
+}
+
+type CruiseSupplyKey = Pick<CruiseSupply, "id" | "isPerDay" | "isPerPerson">;
+
+function idsEqual(a: CruiseSupplyKey, b: CruiseSupplyKey): boolean {
+  return a.id === b.id && a.isPerDay === b.isPerDay && a.isPerPerson === b.isPerPerson;
 }
 
 export interface CruiseDayRecipe {

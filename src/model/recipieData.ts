@@ -26,7 +26,7 @@ export function getIngredientById(id: string): Ingredient | undefined {
   return getIngredients().find(ingredient => ingredient.id === id);
 }
 
-export function getRecipieIngredients(ingredients: IngredientAmount[]): (IngredientAmount & Ingredient)[] {
+export function getRecipieIngredients(ingredients: readonly IngredientAmount[]): (IngredientAmount & Ingredient)[] {
 
   return ingredients.map(ing => {
     const ingredient = getIngredientById(ing.id);

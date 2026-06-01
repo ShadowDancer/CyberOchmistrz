@@ -2,20 +2,14 @@
 
 import { useState } from 'react';
 import { CrewMember } from '../model/crew';
-import {
-  updateCruiseDetails,
-  willLengthReductionRemoveRecipes,
-} from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import CrewEditor from './CrewEditor';
-import { Cruise } from '@/model/cruise';
+import { useCruise } from '@/app/rejsy/CruiseProvider';
 
-interface EditCruiseFormProps {
-  cruise: Cruise;
-}
-
-export default function EditCruiseForm({ cruise }: EditCruiseFormProps) {
+export default function EditCruiseForm() {
   const router = useRouter();
+  const { cruise, setCruise } = useCruise();
+
   const [formData, setFormData] = useState<{
     name: string;
     length: number;
@@ -23,8 +17,8 @@ export default function EditCruiseForm({ cruise }: EditCruiseFormProps) {
     startDate: string;
   }>({
     name: cruise.name,
-    length: cruise.length,
-    crewMembers: cruise.crewMembers,
+    length: cruise.days.length,
+    crewMembers: cruise.crewMembers.slice(),
     startDate: cruise.startDate || '',
   });
   const [errors, setErrors] = useState({
@@ -80,8 +74,8 @@ export default function EditCruiseForm({ cruise }: EditCruiseFormProps) {
     }
 
     if (
-      formData.length < cruise.length &&
-      willLengthReductionRemoveRecipes(cruise.id, formData.length)
+      formData.length < cruise.days.length &&
+      cruise.willLengthReductionRemoveRecipes(formData.length)
     ) {
       const confirmed = confirm(
         'Zmniejszenie długości rejsu spowoduje usunięcie przepisów z usuniętych dni. Czy chcesz kontynuować?',
@@ -91,13 +85,13 @@ export default function EditCruiseForm({ cruise }: EditCruiseFormProps) {
       }
     }
 
-    updateCruiseDetails(
-      cruise.id,
+    setCruise(cruise.updateCruiseDetails(
       formData.name,
       formData.length,
       formData.crewMembers,
       formData.startDate || undefined,
-    );
+    ));
+
     router.push(`/rejsy?id=${cruise.id}`);
   };
 

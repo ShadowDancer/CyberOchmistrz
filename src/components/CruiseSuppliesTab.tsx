@@ -1,27 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getCruiseById, saveCruise } from '../model/cruiseData';
 import { getSuppliesByType, groupSuppliesByCategory } from '../model/supplyData';
 import { declineUnit } from '../utils/polishDeclension';
 import IngredientAmountEditor from './IngredientAmountEditor';
-import { Cruise } from '@/model/cruise';
 import { AdditionalSupplyCategoryGroup, CategoryGroup } from '@/model/supply';
+import { useCruise } from '@/app/rejsy/CruiseProvider';
 
-interface CruiseSuppliesTabProps {
-  cruise: Cruise;
-  onSupplyChange: (updatedCruise: Cruise) => void;
-}
-
-export default function CruiseSuppliesTab({
-  cruise,
-  onSupplyChange
-}: CruiseSuppliesTabProps) {
+export default function CruiseSuppliesTab() {
   const [showIngredients, setShowIngredients] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [suppliesByCategory, setSuppliesByCategory] = useState<CategoryGroup[]>([]);
   const [shoppingListByCategory, setShoppingListByCategory] = useState<AdditionalSupplyCategoryGroup[]>([]);
+  const { cruise, setCruise } = useCruise();
 
   // Load supplies directly, filtered by isIngredient flag
   useEffect(() => {
@@ -42,44 +34,21 @@ export default function CruiseSuppliesTab({
   }, [cruise]);
 
   const handleAddSupply = (supplyId: string) => {
-    if (!cruise) return;
-
-    cruise.upsertAdditionalSupply({ id: supplyId, amount: 1, isPerDay: false, isPerPerson: false });
-    saveCruise(cruise);
-
-    const updatedCruise = getCruiseById(cruise.id);
-    if (updatedCruise) {
-      onSupplyChange(updatedCruise);
-    }
+     setCruise(cruise.upsertAdditionalSupply({ id: supplyId, amount: 1, isPerDay: false, isPerPerson: false }));
   };
 
   const handleUpdateAmount = (supplyId: string, amount: number, isPerPerson: boolean, isPerDay: boolean) => {
-    if (!cruise || amount < 0) return;
-
-    updateAdditionalSupplyAmount(cruise.id, supplyId, amount, isPerPerson, isPerDay);
-
-    const updatedCruise = getCruiseById(cruise.id);
-    if (updatedCruise) {
-      onSupplyChange(updatedCruise);
-    }
+    if (amount < 0) return;
+    setCruise(cruise.upsertAdditionalSupply({ id: supplyId, amount, isPerPerson, isPerDay }));
   };
 
   const handleRemoveSupply = (supplyId: string, isPerPerson: boolean, isPerDay: boolean) => {
-    if (!cruise) return;
-
-    removeAdditionalSupplyFromCruise(cruise.id, supplyId, isPerPerson, isPerDay);
-
-    const updatedCruise = getCruiseById(cruise.id);
-    if (updatedCruise) {
-      onSupplyChange(updatedCruise);
-    }
+    setCruise(cruise.removeAdditionalSupply(supplyId, isPerPerson, isPerDay));
   };
 
   const handleUpdateFlags = (supplyId: string, oldIsPerPerson: boolean, oldIsPerDay: boolean, newIsPerPerson: boolean, newIsPerDay: boolean, amount: number) => {
-    if (!cruise) return;
-
-    if (hasAdditionalSupply(cruise.id, supplyId, newIsPerPerson, newIsPerDay)) {
-      const existingAmount = getAdditionalSupplyAmount(cruise.id, supplyId, newIsPerPerson, newIsPerDay);
+    if (cruise.hasAdditionalSupply(supplyId, newIsPerPerson, newIsPerDay)) {
+      const existingAmount = cruise.getAdditionalSupplyAmount(supplyId, newIsPerPerson, newIsPerDay);
       if (existingAmount !== null) {
         const confirmed = window.confirm(
           `Zmiana flag spowoduje połączenie z istniejącym wpisem (${existingAmount} ${declineUnit('sztuki', existingAmount)}). Czy chcesz kontynuować?`
@@ -88,13 +57,11 @@ export default function CruiseSuppliesTab({
       }
     }
 
-    removeAdditionalSupplyFromCruise(cruise.id, supplyId, oldIsPerPerson, oldIsPerDay);
-    addAdditionalSupplyToCruise(cruise.id, supplyId, amount, newIsPerPerson, newIsPerDay);
+    const updatedCruise = cruise
+      .removeAdditionalSupply(supplyId, oldIsPerPerson, oldIsPerDay)
+      .upsertAdditionalSupply({ id: supplyId, amount, isPerPerson: newIsPerPerson, isPerDay: newIsPerDay });
 
-    const updatedCruise = getCruiseById(cruise.id);
-    if (updatedCruise) {
-      onSupplyChange(updatedCruise);
-    }
+    setCruise(updatedCruise);
   };
 
   const toggleShowIngredients = () => {

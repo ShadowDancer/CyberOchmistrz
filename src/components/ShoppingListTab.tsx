@@ -1,18 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { aggregateShoppingList, generateShoppingListCSV } from '../model/cruiseData';
+import { aggregateShoppingList, generateShoppingListCSV } from '../model/shoppingList';
 import { declineUnit } from '../utils/polishDeclension';
-import { Cruise } from '@/model/cruise';
 import { AggregatedShoppingList, AggregatedItem, RecipeAmountSource, AdditionalSupplyAmountSource } from '@/model/shoppingList';
+import { useCruise } from '@/app/rejsy/CruiseProvider';
 
-interface ShoppingListTabProps {
-  cruise: Cruise;
-}
-
-export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
+export default function ShoppingListTab() {
   const [aggregatedList, setAggregatedList] = useState<AggregatedShoppingList>({});
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const { cruise } = useCruise();
 
   useEffect(() => {
     const groupedItems = aggregateShoppingList(cruise);
@@ -70,11 +67,11 @@ export default function ShoppingListTab({ cruise }: ShoppingListTabProps) {
       tooltipContent += `Z dodatkowych zakupów:\n`;
       additionalSources.forEach(source => {
         const crewMultiplier = source.isPerPerson ? cruise.crewMembers.length : 1;
-        const dayMultiplier = source.isPerDay ? cruise.length : 1;
+        const dayMultiplier = source.isPerDay ? cruise.days.length : 1;
         const scaledAmount = source.amount * crewMultiplier * dayMultiplier;
         let calculation = `${source.amount} ${declineUnit(item.supply.unit, source.amount)}`;
         if (source.isPerPerson) calculation += ` × ${cruise.crewMembers.length} ${declineUnit('załogant', cruise.crewMembers.length)}`;
-        if (source.isPerDay) calculation += ` × ${cruise.length} dni`;
+        if (source.isPerDay) calculation += ` × ${cruise.days.length} dni`;
         if (source.isPerPerson || source.isPerDay){
           calculation += ` = ${scaledAmount} ${declineUnit(item.supply.unit, scaledAmount)}`;
         }

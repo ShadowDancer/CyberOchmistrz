@@ -38,8 +38,8 @@ export function getCruiseCoverage(cruise: Cruise): DayCoverageReport[] {
 
 export function getDayCoverage(
   dayNumber: number,
-  recipes: CruiseDayRecipe[],
-  members: CrewMember[],
+  recipes: readonly CruiseDayRecipe[],
+  members: readonly CrewMember[],
 ): DayCoverageReport {
   // Group non-snack recipes by mealSlot
   const bySlot = new Map<MealType, CruiseDayRecipe[]>();

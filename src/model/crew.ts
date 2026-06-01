@@ -1,15 +1,15 @@
 export interface CrewMember {
-  id: string;
-  name: string; // can be empty string
-  diet: Diet;
-  excludedSupplies?: readonly string[];
+  readonly id: string;
+  readonly name: string; // can be empty string
+  readonly diet: Diet;
+  readonly excludedSupplies?: readonly string[];
 }
 
 export type Diet = "omnivore" | "vegetarian" | "vegan";
 
 interface DietMetadata {
-  labelShort: string;
-  labelLong: string;
+  readonly labelShort: string;
+  readonly labelLong: string;
 }
 
 export const DIET_REGISTRY: Record<Diet, DietMetadata> = {

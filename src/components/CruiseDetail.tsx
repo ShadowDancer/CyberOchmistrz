@@ -10,7 +10,7 @@ import { useCruise } from '@/app/rejsy/CruiseProvider';
 
 export default function CruiseDetail() {
   const router = useRouter();
-  const { cruise, setCruise } = useCruise();
+  const { cruise } = useCruise();
   const [activeTab, setActiveTab] = useState<'info' | 'plan' | 'supplies' | 'shopping'>('info');
 
   if (!cruise) {
@@ -88,22 +88,19 @@ export default function CruiseDetail() {
 
       <div className="flex-grow overflow-auto">
         {activeTab === 'info' && (
-          <CruiseInfoTab cruise={cruise} />
+          <CruiseInfoTab />
         )}
 
         {activeTab === 'plan' && (
-          <CruiseMenuTab/>
+          <CruiseMenuTab />
         )}
 
         {activeTab === 'supplies' && (
-          <CruiseSuppliesTab
-            cruise={cruise}
-            onSupplyChange={setCruise}
-          />
+          <CruiseSuppliesTab />
         )}
 
         {activeTab === 'shopping' && (
-          <ShoppingListTab cruise={cruise} />
+          <ShoppingListTab />
         )}
       </div>
     </div>

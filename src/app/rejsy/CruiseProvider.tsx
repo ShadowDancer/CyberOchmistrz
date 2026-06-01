@@ -7,9 +7,14 @@ type CruiseContextValue = {
   setCruise: (cruise: Cruise) => void
 }
 
+type CruiseProviderProps = {
+  cruiseId: string,
+  children: ReactNode
+}
+
 const CruiseContext = createContext<CruiseContextValue>(null!);
 
-export function CruiseProvider({ cruiseId, children }: { cruiseId: string, children: ReactNode }) {
+export function CruiseProvider({ cruiseId, children }: CruiseProviderProps) {
   const initialCruise = getCruiseById(cruiseId);
   if (initialCruise === undefined) {
     throw new Error(`could not find cruise ${cruiseId}`);
@@ -18,10 +23,8 @@ export function CruiseProvider({ cruiseId, children }: { cruiseId: string, child
   const [cruise, setCruiseState] = useState<Cruise>(initialCruise);
 
   const setCruise = (cruise: Cruise) => {
+    saveCruise(cruise);
     setCruiseState(cruise);
-    if (cruise !== null) {
-      saveCruise(cruise);
-    }
   }
 
   const value: CruiseContextValue = {cruise, setCruise};
