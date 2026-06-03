@@ -1,5 +1,5 @@
 import { CrewMember } from "./crew";
-import { Recipie, MealType } from "./recipe";
+import { Recipie, MealType, IngredientAmount } from "./recipe";
 import { AdditionalSupplyCategoryGroup, AdditionalSupplyItem } from "./supply";
 import { getSupplyById } from './supplyData';
 import { produce, castDraft } from 'immer';
@@ -22,11 +22,17 @@ export class Cruise {
     name: string,
     length: number,
     crewMembers: CrewMember[],
+    predefinedDays?: CruiseDay[],
+    predefinedAdditionalSupplies?: CruiseSupply[],
     startDate?: string,
   ): Cruise {
+    if (predefinedDays && length != predefinedDays.length) {
+      throw new Error("when inserting days directly, length must match exactly")
+    }
+
     const now = new Date().toISOString();
 
-    const days = Array.from({ length }, (_, i) => ({
+    const days = predefinedDays ?? Array.from({ length }, (_, i) => ({
       dayNumber: i + 1,
       recipes: [],
     }));
@@ -38,7 +44,7 @@ export class Cruise {
       now,
       crewMembers,
       days,
-      [],
+      predefinedAdditionalSupplies ?? [],
       startDate,
     );
   }

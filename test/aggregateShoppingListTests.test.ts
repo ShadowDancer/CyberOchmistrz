@@ -1,4 +1,4 @@
-import { aggregateShoppingList } from '../src/model/cruiseData';
+import { aggregateShoppingList } from '../src/model/shoppingList';
 import { createRecipie } from '../src/model/recipieData';
 import { CrewMember } from '../src/model/crew';
 import { CruiseDayRecipe, CruiseDay, CruiseSupply, Cruise } from '../src/model/cruise';
@@ -158,16 +158,10 @@ describe('aggregateShoppingList', () => {
     mealSlot: MealType.DINNER,
   });
 
-  const makeCruise = (p: { length: number; crewCount: number; days: CruiseDay[]; additionalSupplies?: CruiseSupply[] }): Cruise => ({
-    id: 'test-cruise',
-    name: 'Test Cruise',
-    dateCreated: '2023-01-01T00:00:00.000Z',
-    dateModified: '2023-01-01T00:00:00.000Z',
-    length: p.length,
-    crewMembers: makeCrewMembers(p.crewCount),
-    days: p.days,
-    additionalSupplies: p.additionalSupplies,
-  });
+  const makeCruise = (p: { length: number; crewCount: number; days: CruiseDay[]; additionalSupplies?: CruiseSupply[] }): Cruise => {
+    return Cruise
+      .createNew('Test Cruise', length, makeCrewMembers(p.crewCount), p.days, p.additionalSupplies)
+  };
 
   it('should return empty list for cruise with no recipes or additional supplies', () => {
     const result = aggregateShoppingList(makeCruise({
@@ -485,20 +479,16 @@ describe('aggregateShoppingList', () => {
 
   it('should handle original and modified versions of same recipe with independent crewCount', () => {
     const original = makeRecipe('Bolognese', [{ id: 'tunczyk_w_sosie_wlasnym', amount: 100 }]);
-    const modified = makeRecipe('Bolognese', [{ id: 'pesto', amount: 50 }]);
-    modified.id = 'Bolognese-modified';
+    const modified = { ...makeRecipe('Bolognese', [{ id: 'pesto', amount: 50 }]), ...{ id: 'Bolognese-modified' } };
 
     const recipes: CruiseDayRecipe[] = [
       { originalRecipeId: 'Bolognese', recipeData: original, crewCount: 3, mealSlot: MealType.DINNER },
       { originalRecipeId: 'Bolognese', recipeData: modified, crewCount: 2, mealSlot: MealType.DINNER },
     ];
 
-    const result = aggregateShoppingList({
-      id: 'c', name: 'c', dateCreated: '', dateModified: '',
-      length: 1,
-      crewMembers: makeCrewMembers(5),
-      days: [{ dayNumber: 1, recipes }],
-    });
+
+    const cruise = Cruise.createNew('c', 1, makeCrewMembers(5), [{ dayNumber: 1, recipes }]);
+    const result = aggregateShoppingList(cruise);
 
     expect(result['ryby']).toEqual(expect.arrayContaining([item('tunczyk_w_sosie_wlasnym', 300, 'gramy')]));
     expect(result['inne']).toEqual(expect.arrayContaining([item('pesto', 100, 'gramy')]));

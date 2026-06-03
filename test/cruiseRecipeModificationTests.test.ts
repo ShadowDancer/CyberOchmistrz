@@ -1,9 +1,5 @@
+import { Cruise } from '@/model/cruise';
 import { Recipie, MealType } from '../src/model/recipe';
-import {
-  updateRecipeIngredientInCruise,
-  addIngredientToRecipeInCruise,
-  removeIngredientFromRecipeInCruise
-} from '../src/model/cruiseData';
 import { setupCruises, clearCruises, getStoredCruises, localStorageMock, createCruiseWithRecipes, makeCrewMembers } from './cruiseTestHarness';
 
 const realisticJajecznicaRecipe: Recipie = {
@@ -52,6 +48,24 @@ describe('cruiseRecipeModification', () => {
   const setupPesto = (day = 2) =>
     createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, { [day]: [{ recipeId: 'pesto-z-tuczykiem', recipeData: realisticPestoRecipe }] }, makeCrewMembers(4));
 
+  const updateRecipe = (cruise: Cruise, dayNumber: number, recipeIndex: number, updates: { [id: string]: number }): Cruise => {
+    const recipe = cruise.days[dayNumber].recipes[recipeIndex];
+    let ingredients = recipe.recipeData.ingredients;
+    for (const [id, value] of Object.entries(updates)) {
+      const idx = ingredients.findIndex((e) => e.id === id);
+
+      if (idx < 0) {
+        ingredients = ingredients.concat({id: id, amount: value});
+      } else {
+        ingredients = ingredients.with(idx, { id: id, amount: value });
+      }
+    }
+
+    const updatedRecipe = { ...recipe, ingredients: ingredients }
+
+    return cruise.updateRecipe(dayNumber, recipeIndex, updatedRecipe);
+  }
+
   beforeEach(() => {
     jest.clearAllMocks();
     clearCruises();
@@ -59,57 +73,58 @@ describe('cruiseRecipeModification', () => {
 
   describe('updateRecipeIngredientInCruise', () => {
     it('should update ingredient amount in a cruise recipe', () => {
-      setupCruises([setupJajecznica()]);
+      const cruise = setupJajecznica();
 
-      updateRecipeIngredientInCruise(ID, 1, 0, 0, 6);
+      const updatedCruise = updateRecipe(cruise, 0, 0, { "jajka": 6 });
 
-      const recipe = getUpdatedCruise().days[0].recipes[0].recipeData!;
+      const recipe = updatedCruise.days[0].recipes[0].recipeData!;
       expect(recipe.ingredients[0]).toEqual(expect.objectContaining({ id: 'jajka', amount: 6 }));
       expect(recipe.ingredients[1].amount).toBe(1);
     });
 
     it('should not modify the original recipe data', () => {
       const originalRecipe = { ...realisticJajecznicaRecipe };
-      setupCruises([setupJajecznica()]);
+      const cruise = setupJajecznica();
 
-      updateRecipeIngredientInCruise(ID, 1, 0, 0, 8);
+      const updatedCruise = updateRecipe(cruise, 0, 0, { "jajka": 8 });
 
+      expect(updatedCruise.days[0].recipes[0].recipeData!.ingredients[0].amount).toBe(8);
       expect(originalRecipe.ingredients[0].amount).toBe(3);
       expect(realisticJajecznicaRecipe.ingredients[0].amount).toBe(3);
     });
 
-    it('should do nothing if cruise does not exist', () => {
-      setupCruises([]);
-      updateRecipeIngredientInCruise(ID, 1, 0, 0, 6);
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
-    });
-
     it('should do nothing if day number is invalid', () => {
-      setupCruises([setupJajecznica()]);
-      updateRecipeIngredientInCruise(ID, 10, 0, 0, 6);
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
+      const cruise = setupJajecznica();
+
+      const updatedCruise = updateRecipe(cruise, 10, 0, { "jajka": 6 });
+
+      expect(cruise).toBe(updatedCruise);
     });
 
     it('should do nothing if recipe index is invalid', () => {
-      setupCruises([setupJajecznica()]);
-      updateRecipeIngredientInCruise(ID, 1, 5, 0, 6);
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
+      const cruise = setupJajecznica();
+
+      const updatedCruise = updateRecipe(cruise, 1, 5, { "jajka": 6 });
+
+      expect(cruise).toBe(updatedCruise);
     });
 
-    it('should do nothing if ingredient index is invalid', () => {
-      setupCruises([setupJajecznica()]);
-      updateRecipeIngredientInCruise(ID, 1, 0, 10, 6);
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
+    it('should do nothing if ingredient name is invalid', () => {
+      const cruise = setupJajecznica();
+
+      const updatedCruise = updateRecipe(cruise, 1, 0, { "notYourDroids": 6 });
+
+      expect(cruise).toBe(updatedCruise);
     });
   });
 
   describe('addIngredientToRecipeInCruise', () => {
     it('should add a new ingredient to a cruise recipe', () => {
-      setupCruises([setupPesto()]);
+      const cruise = setupPesto();
 
-      addIngredientToRecipeInCruise(ID, 2, 0, 'parmezan', 20);
+      const updatedCruise = updateRecipe(cruise, 2, 0, { "parmezan": 20 });
 
-      const recipe = getUpdatedCruise().days[1].recipes[0].recipeData!;
+      const recipe = updatedCruise.days[1].recipes[0].recipeData!;
       expect(recipe.ingredients).toHaveLength(4);
       expect(recipe.ingredients[3]).toEqual(expect.objectContaining({ id: 'parmezan', amount: 20 }));
     });
@@ -118,29 +133,30 @@ describe('cruiseRecipeModification', () => {
       const cruise = createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, {
         1: [{ recipeId: 'jajecznica' }]
       }, makeCrewMembers(4));
-      setupCruises([cruise]);
 
-      addIngredientToRecipeInCruise(ID, 1, 0, 'parmezan', 20);
+      const updatedCruise = updateRecipe(cruise, 1, 0, { "parmezan": 20 });
 
-      const recipe = getStoredCruises()[0].days[0].recipes[0].recipeData;
+      const recipe = updatedCruise.days[0].recipes[0].recipeData;
       expect(recipe).toBeDefined();
       expect(recipe.ingredients.find(i => i.id === 'parmezan')).toEqual(expect.objectContaining({ id: 'parmezan', amount: 20 }));
     });
 
     it('should not modify the original recipe data', () => {
-      const originalRecipe = { ...realisticPestoRecipe };
-      setupCruises([setupPesto()]);
+      const cruise = setupPesto(2);
 
-      addIngredientToRecipeInCruise(ID, 2, 0, 'cebula', 50);
+      const updatedCruise = updateRecipe(cruise, 2, 0, { "cebula": 50 });
 
-      expect(originalRecipe.ingredients).toHaveLength(3);
+      expect(cruise.days[2].recipes[0].recipeData.ingredients).toHaveLength(3);
       expect(realisticPestoRecipe.ingredients).toHaveLength(3);
+      expect(updatedCruise.days[2].recipes[0].recipeData.ingredients).toHaveLength(4);
     });
   });
 
   describe('removeIngredientFromRecipeInCruise', () => {
     it('should remove an ingredient from a cruise recipe', () => {
-      setupCruises([setupJajecznica()]);
+      const cruise = setupJajecznica();
+
+      cruise.re
 
       removeIngredientFromRecipeInCruise(ID, 1, 0, 3);
 
@@ -164,35 +180,6 @@ describe('cruiseRecipeModification', () => {
       setupCruises([setupJajecznica()]);
       removeIngredientFromRecipeInCruise(ID, 1, 0, 10);
       expect(localStorageMock.setItem).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('recipe isolation - original recipes remain unchanged', () => {
-    it('should keep original recipes intact when modifying cruise versions', () => {
-      const originalJajecznica = JSON.parse(JSON.stringify(realisticJajecznicaRecipe));
-      const originalPesto = JSON.parse(JSON.stringify(realisticPestoRecipe));
-
-      const cruise = createCruiseWithRecipes(ID, 'Rejs na Mazury 2024', 7, {
-        1: [{ recipeId: 'jajecznica', recipeData: realisticJajecznicaRecipe }],
-        2: [{ recipeId: 'pesto-z-tuczykiem', recipeData: realisticPestoRecipe }]
-      }, makeCrewMembers(4));
-      setupCruises([cruise]);
-
-      updateRecipeIngredientInCruise(ID, 1, 0, 0, 12);
-      addIngredientToRecipeInCruise(ID, 2, 0, 'parmezan', 25);
-      removeIngredientFromRecipeInCruise(ID, 1, 0, 3);
-
-      expect(realisticJajecznicaRecipe).toEqual(originalJajecznica);
-      expect(realisticPestoRecipe).toEqual(originalPesto);
-
-      const updated = getUpdatedCruise();
-      const jajInCruise = updated.days[0].recipes[0].recipeData!;
-      const pestoInCruise = updated.days[1].recipes[0].recipeData!;
-
-      expect(jajInCruise.ingredients[0].amount).toBe(12);
-      expect(jajInCruise.ingredients).toHaveLength(4);
-      expect(pestoInCruise.ingredients).toHaveLength(4);
-      expect(pestoInCruise.ingredients[3].id).toBe('parmezan');
     });
   });
 });

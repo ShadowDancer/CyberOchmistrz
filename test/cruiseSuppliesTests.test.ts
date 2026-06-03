@@ -1,11 +1,4 @@
 import { CruiseSupply } from '../src/model/cruise';
-import {
-  createNewCruise,
-  addAdditionalSupplyToCruise,
-  updateAdditionalSupplyAmount,
-  removeAdditionalSupplyFromCruise,
-  groupAdditionalSuppliesByCategory
-} from '../src/model/cruiseData';
 import { setupCruises, clearCruises, getStoredCruises, localStorageMock, makeCrewMembers } from './cruiseTestHarness';
 
 jest.mock('../src/data/supplies.json', () => [

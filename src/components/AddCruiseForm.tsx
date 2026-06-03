@@ -85,6 +85,8 @@ export default function AddCruiseForm() {
       formData.name,
       formData.length,
       formData.crewMembers,
+      undefined,
+      undefined,
       formData.startDate || undefined,
     );
 
