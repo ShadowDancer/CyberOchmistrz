@@ -21,6 +21,8 @@ export function saveCruise(cruise: Cruise): void {
 
   if (existingIndex < 0) {
     cruises.push(cruise);
+  } else {
+    cruises[existingIndex] = cruise;
   }
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cruises));

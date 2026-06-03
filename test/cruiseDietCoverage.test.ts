@@ -420,7 +420,7 @@ describe('getCruiseCoverage', () => {
     const crew = [omni('1'), omni('2'), vegan('3')];
     const cruise: Cruise = Cruise.createNew(
       'Test',
-      1,
+      3,
       crew,
       [
         {

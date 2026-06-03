@@ -50,17 +50,37 @@ export class Cruise {
   }
 
   private with(modifiedValues: Partial<Omit<Cruise, 'id' | 'dateCreated'>>): Cruise {
+    const name = modifiedValues.name ?? this.name;
+    const crewMembers = modifiedValues.crewMembers ?? this.crewMembers;
+    const days = modifiedValues.days ?? this.days;
+    const additionalSupplies = modifiedValues.additionalSupplies ?? this.additionalSupplies;
+    const startDate = modifiedValues.startDate ?? this.startDate;
+
+    // No-op: nothing changed, so keep the same instance. immer returns the same
+    // array reference when a producer mutates nothing, so this catches no-op
+    // updates (e.g. out-of-bounds reorder). Avoids a needless dateModified bump,
+    // lets React skip re-render and saveCruise skip a redundant write.
+    if (
+      name === this.name &&
+      crewMembers === this.crewMembers &&
+      days === this.days &&
+      additionalSupplies === this.additionalSupplies &&
+      startDate === this.startDate
+    ) {
+      return this;
+    }
+
     const now = new Date().toISOString()
 
     return new Cruise(
       this.id,
-      modifiedValues.name ?? this.name,
+      name,
       this.dateCreated,
       now,
-      modifiedValues.crewMembers ?? this.crewMembers,
-      modifiedValues.days ?? this.days,
-      modifiedValues.additionalSupplies ?? this.additionalSupplies,
-      modifiedValues.startDate ?? this.startDate
+      crewMembers,
+      days,
+      additionalSupplies,
+      startDate,
     )
   }
 
@@ -70,9 +90,11 @@ export class Cruise {
     crewMembers: CrewMember[],
     startDate?: string,
   ): Cruise {
-    const newDays = length >= this.days.length
-      ? this.days.concat(Array.from({ length: length - this.days.length }, (_, i) => ({ dayNumber: i + this.days.length + 1, recipes: [] })))
-      : this.days.filter((day) => day.dayNumber <= length);
+    const newDays = length === this.days.length
+      ? this.days // unchanged length: reuse ref so an otherwise no-op edit can return `this`
+      : length > this.days.length
+        ? this.days.concat(Array.from({ length: length - this.days.length }, (_, i) => ({ dayNumber: i + this.days.length + 1, recipes: [] })))
+        : this.days.filter((day) => day.dayNumber <= length);
 
     return this.with({
       name: name,
@@ -175,10 +197,8 @@ export class Cruise {
           return;
         }
 
-        [recipes[fromIndex], recipes[toIndex]] = [
-          recipes[toIndex],
-          recipes[fromIndex],
-        ];
+        const [moved] = recipes.splice(fromIndex, 1);
+        recipes.splice(toIndex, 0, moved);
       })
     });
   }

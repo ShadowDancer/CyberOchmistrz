@@ -3,13 +3,19 @@ import { getCruises, getCruiseById, saveCruise, deleteCruise } from '../src/mode
 import { setupCruises, clearCruises, getStoredCruises, localStorageMock, makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseData', () => {
-  const makeCruise = (overrides?: Partial<Cruise>) => Cruise.createNew(
-    'Test Cruise',
-    3,
-    overrides?.crewMembers?.slice() ?? makeCrewMembers(2),
-    overrides?.days?.slice() ?? [],
-    overrides?.additionalSupplies?.slice(),
-    '2030-06-01');
+  // createNew auto-generates id/dates; spread overrides on top so tests can pin a
+  // deterministic id (default 'test-cruise-1'). The result is a plain Cruise-shaped
+  // object, matching how cruises come back from localStorage (JSON, no methods).
+  const makeCruise = (overrides?: Partial<Cruise>): Cruise => {
+    const base = Cruise.createNew(
+      overrides?.name ?? 'Test Cruise',
+      overrides?.days?.length ?? 3,
+      overrides?.crewMembers?.slice() ?? makeCrewMembers(2),
+      overrides?.days?.slice(),
+      overrides?.additionalSupplies?.slice(),
+      '2030-06-01');
+    return { ...base, id: 'test-cruise-1', ...overrides } as Cruise;
+  };
 
   const expectCruisesStored = (expectedCruises: Cruise[]) => {
     expect(localStorageMock.setItem).toHaveBeenCalledWith(
@@ -23,6 +29,10 @@ describe('cruiseData', () => {
     clearCruises();
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   describe('createNewCruise', () => {
     it('should create a new cruise with correct properties', () => {
       const crew = makeCrewMembers(4);
@@ -30,7 +40,6 @@ describe('cruiseData', () => {
 
       expect(cruise).toEqual(expect.objectContaining({
         name: 'Test Cruise',
-        length: 5,
         crewMembers: crew,
       }));
       expect(cruise.id).toBeDefined();
@@ -58,16 +67,16 @@ describe('cruiseData', () => {
     });
 
     it('should update an existing cruise and modify dateModified', () => {
-      const initialCruise = makeCruise({
-        name: 'Original Name',
-        days: [
-          { dayNumber: 1, recipes: [] },
-          { dayNumber: 2, recipes: [] },
-          { dayNumber: 3, recipes: [] },
-        ],
-      });
+      // Fake timers so dateModified provably advances between create and update
+      // (both calls would otherwise land in the same millisecond).
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2030-06-01T00:00:00.000Z'));
+
+      // Real instance (not makeCruise) because this test calls updateCruiseDetails.
+      const initialCruise = Cruise.createNew('Original Name', 3, makeCrewMembers(2), undefined, undefined, '2030-06-01');
       setupCruises([initialCruise]);
 
+      jest.setSystemTime(new Date('2030-06-01T00:00:01.000Z')); // +1s
       const updatedCruise = initialCruise.updateCruiseDetails('Updated Name', initialCruise.days.length, initialCruise.crewMembers.slice());
       saveCruise(updatedCruise);
 

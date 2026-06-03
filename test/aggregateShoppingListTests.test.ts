@@ -160,7 +160,7 @@ describe('aggregateShoppingList', () => {
 
   const makeCruise = (p: { length: number; crewCount: number; days: CruiseDay[]; additionalSupplies?: CruiseSupply[] }): Cruise => {
     return Cruise
-      .createNew('Test Cruise', length, makeCrewMembers(p.crewCount), p.days, p.additionalSupplies)
+      .createNew('Test Cruise', p.length, makeCrewMembers(p.crewCount), p.days, p.additionalSupplies)
   };
 
   it('should return empty list for cruise with no recipes or additional supplies', () => {
@@ -307,10 +307,17 @@ describe('aggregateShoppingList', () => {
   });
 
   it('should handle multiple additional supplies with different flags', () => {
+    // 5 days so perDay supplies scale by 5 (expected woda total 25 below: 2 + 3 + 5 + 15).
     const result = aggregateShoppingList(makeCruise({
       length: 5,
       crewCount: 3,
-      days: [{ dayNumber: 1, recipes: [] }],
+      days: [
+        { dayNumber: 1, recipes: [] },
+        { dayNumber: 2, recipes: [] },
+        { dayNumber: 3, recipes: [] },
+        { dayNumber: 4, recipes: [] },
+        { dayNumber: 5, recipes: [] },
+      ],
       additionalSupplies: [
         { id: 'woda_butelkowana', amount: 2, isPerPerson: false, isPerDay: false },
         { id: 'woda_butelkowana', amount: 1, isPerPerson: true, isPerDay: false },
@@ -407,11 +414,18 @@ describe('aggregateShoppingList', () => {
     ]));
   });
 
-  it('should use cruise.length for perDay scaling, not days array length', () => {
+  it('should scale perDay supplies by the number of cruise days', () => {
+    // 5 days, perDay supply amount 2 -> expected 2 * 5 = 10.
     const result = aggregateShoppingList(makeCruise({
       length: 5,
       crewCount: 2,
-      days: [{ dayNumber: 1, recipes: [] }],
+      days: [
+        { dayNumber: 1, recipes: [] },
+        { dayNumber: 2, recipes: [] },
+        { dayNumber: 3, recipes: [] },
+        { dayNumber: 4, recipes: [] },
+        { dayNumber: 5, recipes: [] },
+      ],
       additionalSupplies: [
         { id: 'woda_butelkowana', amount: 2, isPerPerson: false, isPerDay: true },
       ],

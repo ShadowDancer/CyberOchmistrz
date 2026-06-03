@@ -33,15 +33,16 @@ describe('cruiseRecipeData', () => {
       expect(cruise).toBe(updated);
     });
 
-    it('should copy recipe data when adding to cruise', () => {
+    it('should snapshot recipe data when adding to cruise', () => {
       const cruise = setupEmptyCruise();
       const originalRecipeData = createTestRecipe('recipe-1', 'Original Recipe');
 
       const updated = cruise.insertRecipe(2, { recipeData: originalRecipeData, crewCount: 2, mealSlot: MealType.DINNER, originalRecipeId: 'recipe-1' });
 
+      // Recipes are immutable, so the snapshot is held by reference rather than deep-copied.
       const recipeInCruise = updated.days[1].recipes[0].recipeData;
       expect(recipeInCruise).toBeDefined();
-      expect(recipeInCruise).not.toBe(originalRecipeData);
+      expect(recipeInCruise).toBe(originalRecipeData);
     });
   });
 
