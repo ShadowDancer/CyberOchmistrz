@@ -1,4 +1,4 @@
-import { Cruise } from '../types';
+import { Cruise } from "@/model/cruise";
 
 export function exportCruise(cruise: Cruise): void {
   const json = JSON.stringify(cruise, null, 2);

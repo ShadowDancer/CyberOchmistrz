@@ -7,10 +7,10 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_auto] items-center justify-items-center min-h-screen p-4 md:p-8 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-6 md:gap-8 row-start-2 items-center">
-        <Image 
-            src={logo} 
+        <Image
+            src={logo}
             alt="Cyber Ochmistrz Logo"
-            className="rounded-lg shadow-md w-2/3 md:w-1/2 h-auto" 
+            className="rounded-lg shadow-md w-2/3 md:w-1/2 h-auto"
         />
         <div className="flex items-center gap-4">
           <h1 className="text-2xl md:text-3xl font-bold">Cyber Ochmistrz</h1>
@@ -42,10 +42,10 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <div className="bg-gray-800 rounded-full p-1.5 w-8 h-8 flex items-center justify-center">
-            <Image 
-              src={githubLogo} 
-              alt="GitHub" 
-              width={20} 
+            <Image
+              src={githubLogo}
+              alt="GitHub"
+              width={20}
               height={20}
             />
           </div>

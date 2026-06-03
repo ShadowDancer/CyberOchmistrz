@@ -1,5 +1,6 @@
-import { Cruise, CrewMember, CruiseDayRecipe, MealType, Recipie } from '../src/types';
-import { Diet } from '../src/model/crew';
+import { CruiseDayRecipe, Cruise } from '../src/model/cruise';
+import { Recipie, MealType } from '../src/model/recipe';
+import { Diet, CrewMember } from '../src/model/crew';
 import { createRecipie } from '../src/model/recipieData';
 
 const makeRecipe = (id: string): Recipie =>
@@ -22,29 +23,21 @@ const makeRecipeEntry = (id: string, crewCount: number, mealSlot: MealType): Cru
   mealSlot,
 });
 
-const originalCruise: Cruise = {
-  id: 'test-id',
-  name: 'Test Cruise',
-  dateCreated: '2024-01-01T00:00:00.000Z',
-  dateModified: '2024-01-02T00:00:00.000Z',
-  length: 2,
-  crewMembers: [makeMember('m1'), makeMember('m2'), makeMember('m3')],
-  days: [
-    {
-      dayNumber: 1,
-      recipes: [
-        makeRecipeEntry('jajecznica', 3, MealType.BREAKFAST),
-        makeRecipeEntry('spaghetti', 3, MealType.DINNER),
-      ],
-    },
-    {
-      dayNumber: 2,
-      recipes: [makeRecipeEntry('pesto', 2, MealType.DINNER)],
-    },
-  ],
-  additionalSupplies: [{ id: 'woda', amount: 10, isPerPerson: false, isPerDay: true }],
-  startDate: '2024-06-01',
-};
+const originalCruise: Cruise = Cruise.createNew('Test Cruise', 2,
+  [makeMember('m1'), makeMember('m2'), makeMember('m3')], [
+  {
+    dayNumber: 1,
+    recipes: [
+      makeRecipeEntry('jajecznica', 3, MealType.BREAKFAST),
+      makeRecipeEntry('spaghetti', 3, MealType.DINNER),
+    ],
+  },
+  {
+    dayNumber: 2,
+    recipes: [makeRecipeEntry('pesto', 2, MealType.DINNER)],
+  },
+], [{ id: 'woda', amount: 10, isPerPerson: false, isPerDay: true }],
+  '2030-06-01');
 
 describe('Cruise JSON round-trip (rehydration)', () => {
   let roundTripped: Cruise;
@@ -96,7 +89,7 @@ describe('Cruise JSON round-trip (rehydration)', () => {
   it('should preserve top-level cruise fields', () => {
     expect(roundTripped.id).toBe(originalCruise.id);
     expect(roundTripped.name).toBe(originalCruise.name);
-    expect(roundTripped.length).toBe(originalCruise.length);
+    expect(roundTripped.days.length).toBe(originalCruise.days.length);
     expect(roundTripped.startDate).toBe(originalCruise.startDate);
   });
 

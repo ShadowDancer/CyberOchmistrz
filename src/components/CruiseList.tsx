@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Cruise } from '../types';
 import { getCruises, saveCruise } from '../model/cruiseData';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { exportCruise, importCruiseFromFile } from '../utils/cruiseFileIO';
+import { Cruise } from '@/model/cruise';
 
 export default function CruiseList() {
   const [cruises, setCruises] = useState<Cruise[]>([]);
@@ -118,7 +118,7 @@ export default function CruiseList() {
                   </div>
                 )}
                 <div>
-                  <span className="font-medium">Długość:</span> {cruise.length} dni
+                  <span className="font-medium">Długość:</span> {cruise.days.length} dni
                 </div>
                 <div>
                   <span className="font-medium">Załoga:</span> {cruise.crewMembers.length} osób

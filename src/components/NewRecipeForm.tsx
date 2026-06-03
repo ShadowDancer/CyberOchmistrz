@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Recipie, MealType, IngredientAmount } from '@/types';
 import { getIngredients, getRecipies } from '@/model/recipieData';
 import IngredientListEditor from './IngredientListEditor';
+import { Recipie, MealType, IngredientAmount } from '@/model/recipe';
 
 interface NewRecipeFormProps {
   recipe?: Recipie;
@@ -30,13 +30,13 @@ export default function NewRecipeForm({ recipe }: NewRecipeFormProps) {
     if (recipe) {
       setRecipeName(recipe.name);
       setDescription(recipe.description);
-      setSelectedMealTypes(recipe.mealType);
+      setSelectedMealTypes(recipe.mealType.slice());
       setDifficulty(recipe.difficulty);
-      setIngredients(recipe.ingredients.length > 0 ? recipe.ingredients : [{ id: '', amount: 0 }]);
-      setInstructions(recipe.instructions.length > 0 ? recipe.instructions : ['']);
+      setIngredients(recipe.ingredients.length > 0 ? recipe.ingredients.slice() : [{ id: '', amount: 0 }]);
+      setInstructions(recipe.instructions.length > 0 ? recipe.instructions.slice() : ['']);
       setRecipeId(recipe.id);
       setDevelopedBy(recipe.developedBy || '');
-      setModifiedBy(recipe.modifiedBy || []);
+      setModifiedBy(recipe.modifiedBy?.slice() || []);
       setNewModifier('');
     }
   }, [recipe]);

@@ -1,19 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Cruise } from '../types';
 import { deleteCruise } from '../model/cruiseData';
 import { useRouter } from 'next/navigation';
 import { DIET_REGISTRY, CrewMember } from '../model/crew';
 import { getSupplyById } from '../model/supplyData';
+import { useCruise } from '@/app/rejsy/CruiseProvider';
 
-interface CruiseInfoTabProps {
-  cruise: Cruise;
-}
-
-export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
+export default function CruiseInfoTab() {
   const router = useRouter();
   const [showMembers, setShowMembers] = useState(false);
+  const { cruise } = useCruise()
 
   const handleDelete = () => {
     if (confirm('Czy na pewno chcesz usunąć ten rejs?')) {
@@ -58,7 +55,7 @@ export default function CruiseInfoTab({ cruise }: CruiseInfoTabProps) {
             )}
             <div className="info-detail-row">
               <span className="info-detail-label">Długość rejsu:</span>
-              <span>{cruise.length} dni</span>
+              <span>{cruise.days.length} dni</span>
             </div>
             <div className="info-detail-row">
               <span className="info-detail-label">Załoga:</span>

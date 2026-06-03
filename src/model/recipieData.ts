@@ -1,6 +1,7 @@
-import { Recipie, Ingredient, IngredientAmount, Supply } from '../types';
 import recipies from '../data/recipies.json';
 import suppliesData from '../data/supplies.json';
+import { Recipie, IngredientAmount } from './recipe';
+import { Ingredient, Supply } from './supply';
 
 export function createRecipie(data: Recipie): Recipie {
   if (data.ingredients.length === 0) {
@@ -25,7 +26,7 @@ export function getIngredientById(id: string): Ingredient | undefined {
   return getIngredients().find(ingredient => ingredient.id === id);
 }
 
-export function getRecipieIngredients(ingredients: IngredientAmount[]): (IngredientAmount & Ingredient)[] {
+export function getRecipieIngredients(ingredients: readonly IngredientAmount[]): (IngredientAmount & Ingredient)[] {
 
   return ingredients.map(ing => {
     const ingredient = getIngredientById(ing.id);

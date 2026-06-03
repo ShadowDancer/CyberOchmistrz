@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Recipie } from '../types';
 import { getIngredients } from '../model/supplyData';
 import IngredientListEditor from './IngredientListEditor';
+import { Recipie } from '@/model/recipe';
 
 interface RecipeIngredientEditorProps {
   recipe: Recipie;

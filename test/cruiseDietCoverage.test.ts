@@ -1,7 +1,8 @@
 import { getMealCoverage, getDayCoverage, getCruiseCoverage, countCrewWithTag, getActiveDietTags, canEat } from '../src/model/cruiseDietCoverage';
 import { createRecipie } from '../src/model/recipieData';
-import { CrewMember, CruiseDayRecipe, MealType, Recipie, Cruise } from '../src/types';
-import { Diet } from '../src/model/crew';
+import { Diet, CrewMember } from '../src/model/crew';
+import { CruiseDayRecipe, Cruise } from '../src/model/cruise';
+import { MealType, Recipie } from '../src/model/recipe';
 
 // Mock supplies so isRecipieVegan/isRecipieVegetarian work deterministically
 jest.mock('../src/data/supplies.json', () => [
@@ -39,15 +40,11 @@ const slot = (r: Recipie, crewCount: number, mealSlot: MealType = MealType.DINNE
   mealSlot,
 });
 
-const makeCruise = (members: CrewMember[], dayRecipes: CruiseDayRecipe[] = []): Cruise => ({
-  id: 'c1',
-  name: 'Test',
-  dateCreated: '',
-  dateModified: '',
-  length: 1,
-  crewMembers: members,
-  days: [{ dayNumber: 1, recipes: dayRecipes }],
-});
+const makeCruise = (members: CrewMember[], dayRecipes: CruiseDayRecipe[] = []) => Cruise.createNew(
+  'Test',
+  1,
+  members,
+  [{ dayNumber: 1, recipes: dayRecipes }]);
 
 // ---------------------------------------------------------------------------
 // Recipes used in multiple tests
@@ -421,24 +418,28 @@ describe('getCruiseCoverage', () => {
 
   it('should return one report per day with correct coverage per day', () => {
     const crew = [omni('1'), omni('2'), vegan('3')];
-    const cruise: Cruise = {
-      id: 'c', name: 'c', dateCreated: '', dateModified: '',
-      length: 3,
-      crewMembers: crew,
-      days: [
-        { dayNumber: 1, recipes: [
-          slot(tofu, 3, MealType.BREAKFAST),
-          slot(spaghetti, 2), slot(tofu, 1),      // dinner: exact match
-          slot(tofu, 3, MealType.SUPPER),
-        ]},
+    const cruise: Cruise = Cruise.createNew(
+      'Test',
+      3,
+      crew,
+      [
+        {
+          dayNumber: 1, recipes: [
+            slot(tofu, 3, MealType.BREAKFAST),
+            slot(spaghetti, 2), slot(tofu, 1),      // dinner: exact match
+            slot(tofu, 3, MealType.SUPPER),
+          ]
+        },
         { dayNumber: 2, recipes: [slot(spaghetti, 3)] },               // vegan unfed + missing meals
-        { dayNumber: 3, recipes: [
-          slot(tofu, 3, MealType.BREAKFAST),
-          slot(tofu, 5),                           // dinner: all fed, surplus 2
-          slot(tofu, 3, MealType.SUPPER),
-        ]},
-      ],
-    };
+        {
+          dayNumber: 3, recipes: [
+            slot(tofu, 3, MealType.BREAKFAST),
+            slot(tofu, 5),                           // dinner: all fed, surplus 2
+            slot(tofu, 3, MealType.SUPPER),
+          ]
+        },
+      ]);
+
     const reports = getCruiseCoverage(cruise);
     expect(reports).toHaveLength(3);
 

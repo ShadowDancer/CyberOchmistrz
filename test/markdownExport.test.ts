@@ -1,7 +1,8 @@
 import { generateMarkdown } from '../src/utils/markdownExport';
-import { Cruise, CruiseDay, CruiseDayRecipe, MealType, Recipie } from '../src/types';
 import { Diet, CrewMember } from '../src/model/crew';
 import { makeCrewMembers } from './cruiseTestHarness';
+import { CruiseDayRecipe, CruiseDay, Cruise } from '../src/model/cruise';
+import { Recipie, MealType } from '../src/model/recipe';
 
 jest.mock('../src/data/recipies.json', () => [
   { id: 'catalog-base', name: 'Zupa bazowa', ingredients: [{ id: 'bread', amount: 1 }], description: '', mealType: ['obiad'], difficulty: 1, instructions: ['Krok katalogowy 1', 'Krok katalogowy 2'] },
@@ -30,16 +31,8 @@ const makeDayRecipe = (recipe: Recipie, crewCount: number, mealSlot: MealType = 
   mealSlot,
 });
 
-const makeCruise = (crewMembers: CrewMember[], days: CruiseDay[], startDate?: string): Cruise => ({
-  id: 'test',
-  name: 'Test',
-  dateCreated: '',
-  dateModified: '',
-  length: days.length,
-  crewMembers,
-  days,
-  startDate,
-});
+const makeCruise = (crewMembers: CrewMember[], days: CruiseDay[], startDate?: string): Cruise =>
+  Cruise.createNew('Test', days.length, crewMembers, days, undefined, startDate);
 
 const EMPTY_DAY_1 = [
   '# Dzień 1',

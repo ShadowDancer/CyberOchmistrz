@@ -1,5 +1,5 @@
 import { getAllSupplies, getIngredients, getNonIngredients, groupSuppliesByCategory } from '../src/model/supplyData';
-import { CategoryGroup, SupplyValidationErrors } from '../src/types';
+import { SupplyValidationErrors } from '../src/types';
 
 describe('supplyData functions', () => {
   const findGroup = (groups: CategoryGroup[], category: string) =>
@@ -122,6 +122,7 @@ describe('supplies data sorting', () => {
 */
 
 import { validateSupplyData, isSupplyDataValid, validateNewSupply } from '../src/model/supplyData';
+import { CategoryGroup } from '@/model/supply';
 
 describe('Supply Validation', () => {
   describe('validateSupplyData', () => {

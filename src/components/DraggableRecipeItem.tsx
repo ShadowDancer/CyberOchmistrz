@@ -2,8 +2,9 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { CruiseDayRecipe, Recipie } from '../types';
 import { getRecipeById } from '../model/recipieData';
+import { CruiseDayRecipe } from '@/model/cruise';
+import { Recipie } from '@/model/recipe';
 
 interface DraggableRecipeItemProps {
   recipe: CruiseDayRecipe;

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Supply, Ingredient, SupplyValidationErrors } from '@/types';
+import { SupplyValidationErrors } from '@/types';
 import { validateNewSupply, isSupplyDataValid } from '@/model/supplyData';
+import { Supply, Ingredient } from '@/model/supply';
 
 export default function AddSupplyForm() {
   const [isIngredient, setIsIngredient] = useState<boolean>(false);

@@ -1,10 +1,10 @@
 "use client";
 
 import { getRecipies, isRecipieVegetarian, isRecipieVegan } from '@/model/recipieData';
-import { Recipie, MealType } from '@/types';
 import { useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import StarRating from './StarRating';
+import { MealType, Recipie } from '@/model/recipe';
 
 interface RecipeListProps {
   onSelectRecipie: (recipie: Recipie) => void;
@@ -82,37 +82,37 @@ export default function RecipeList({ onSelectRecipie, selectedRecipieId, isDragg
   const [filterType, setFilterType] = useState<string>('wszystkie');
   const [filterDiet, setFilterDiet] = useState<'all' | 'vegetarian' | 'vegan'>('all');
   const [showFilters, setShowFilters] = useState(false);
-  
+
   const uniqueMealTypes = ['wszystkie', ...Object.values(MealType)];
-  
+
   const handleFilterChange = (type: string) => {
     setFilterType(type);
     applyFilters(type, filterDiet);
   };
-  
+
   const handleDietFilterChange = (diet: 'all' | 'vegetarian' | 'vegan') => {
     setFilterDiet(diet);
     applyFilters(filterType, diet);
   };
-  
+
   const applyFilters = (mealType: string, diet: 'all' | 'vegetarian' | 'vegan') => {
     let filtered = allRecipies;
-    
+
     // Apply meal type filter
     if (mealType !== 'wszystkie') {
       filtered = filtered.filter(recipie => recipie.mealType.includes(mealType as MealType));
     }
-    
+
     // Apply dietary filter
     if (diet === 'vegetarian') {
       filtered = filtered.filter(recipie => isRecipieVegetarian(recipie) || isRecipieVegan(recipie));
     } else if (diet === 'vegan') {
       filtered = filtered.filter(recipie => isRecipieVegan(recipie));
     }
-    
+
     setFilteredRecipies(filtered);
   };
-  
+
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
@@ -129,7 +129,7 @@ export default function RecipeList({ onSelectRecipie, selectedRecipieId, isDragg
             {showFilters ? 'Ukryj filtry' : 'Pokaż filtry'}
           </button>
         </div>
-        
+
         <div className={`space-y-3 mt-2 ${showFilters ? 'block' : 'hidden md:block'}`}>
           <div className="flex flex-wrap gap-2">
             {uniqueMealTypes.map(type => (
@@ -181,7 +181,7 @@ export default function RecipeList({ onSelectRecipie, selectedRecipieId, isDragg
           </div>
         </div>
       </div>
-      
+
       <div className="overflow-y-auto flex-grow dark:bg-gray-800">
         {filteredRecipies.length === 0 ? (
           <div className="empty-state">

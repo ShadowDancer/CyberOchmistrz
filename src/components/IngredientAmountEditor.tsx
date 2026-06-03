@@ -1,6 +1,6 @@
 'use client';
 
-import { Supply } from '../types';
+import { Supply } from "@/model/supply";
 
 interface IngredientAmountEditorProps {
   value: number;

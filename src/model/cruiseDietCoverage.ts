@@ -1,7 +1,8 @@
-import { Cruise, CruiseDayRecipe, MealType, Recipie } from "../types";
 import { CrewMember, Diet } from "./crew";
 import { isRecipieVegan, isRecipieVegetarian } from "./recipieData";
 import { CrewRecipeAllocationChecker } from "../utils/maxFlow";
+import { Cruise, CruiseDayRecipe } from "./cruise";
+import { MealType, Recipie } from "./recipe";
 
 // ---------------------------------------------------------------------------
 // Report types
@@ -37,8 +38,8 @@ export function getCruiseCoverage(cruise: Cruise): DayCoverageReport[] {
 
 export function getDayCoverage(
   dayNumber: number,
-  recipes: CruiseDayRecipe[],
-  members: CrewMember[],
+  recipes: readonly CruiseDayRecipe[],
+  members: readonly CrewMember[],
 ): DayCoverageReport {
   // Group non-snack recipes by mealSlot
   const bySlot = new Map<MealType, CruiseDayRecipe[]>();
@@ -75,8 +76,8 @@ export function getDayCoverage(
 }
 
 export function getMealCoverage(
-  slotRecipes: CruiseDayRecipe[],
-  members: CrewMember[],
+  slotRecipes: readonly CruiseDayRecipe[],
+  members: readonly CrewMember[],
   mealSlot: MealType,
 ): MealCoverage {
   const totalNeeded = members.length;

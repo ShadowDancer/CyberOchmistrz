@@ -2,17 +2,18 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CruiseDayRecipe, MealType, Recipie } from '../types';
 import DraggableRecipeItem from './DraggableRecipeItem';
 import { getMealCoverage, MealCoverage } from '../model/cruiseDietCoverage';
 import { Diet, DIET_REGISTRY, CrewMember } from '../model/crew';
 import { getSupplyById } from '../model/supplyData';
 import { declineUnit } from '../utils/polishDeclension';
+import { CruiseDayRecipe } from '@/model/cruise';
+import { Recipie, MealType } from '@/model/recipe';
 
 interface DroppableRecipieContainerProps {
   dayNumber: number;
-  recipes: CruiseDayRecipe[];
-  crewMembers: CrewMember[];
+  recipes: readonly CruiseDayRecipe[];
+  crewMembers: readonly CrewMember[];
   onEditIngredients: (
     dayNumber: number,
     recipe: { originalRecipeId: string; recipeData?: Recipie },
@@ -84,7 +85,7 @@ interface SlotSectionProps {
   slot: MealType;
   dayNumber: number;
   slotRecipes: { recipe: CruiseDayRecipe; originalIndex: number }[];
-  crewMembers: CrewMember[];
+  crewMembers: readonly CrewMember[];
   isDragging: boolean;
   onEditIngredients: DroppableRecipieContainerProps['onEditIngredients'];
   onRemoveRecipe: DroppableRecipieContainerProps['onRemoveRecipe'];

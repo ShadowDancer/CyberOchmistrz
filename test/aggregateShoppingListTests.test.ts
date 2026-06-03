@@ -1,6 +1,9 @@
-import { aggregateShoppingList } from '../src/model/cruiseData';
+import { aggregateShoppingList } from '../src/model/shoppingList';
 import { createRecipie } from '../src/model/recipieData';
-import { Cruise, CruiseDay, CruiseSupply, Recipie, IngredientAmount, AggregatedShoppingList, AmountSource, RecipeAmountSource, AdditionalSupplyAmountSource, CrewMember, MealType, CruiseDayRecipe } from '../src/types';
+import { CrewMember } from '../src/model/crew';
+import { CruiseDayRecipe, CruiseDay, CruiseSupply, Cruise } from '../src/model/cruise';
+import { IngredientAmount, Recipie, MealType } from '../src/model/recipe';
+import { AmountSource, RecipeAmountSource, AdditionalSupplyAmountSource } from '../src/model/shoppingList';
 
 // Mock the supplies data
 jest.mock('../src/data/supplies.json', () => [
@@ -155,16 +158,10 @@ describe('aggregateShoppingList', () => {
     mealSlot: MealType.DINNER,
   });
 
-  const makeCruise = (p: { length: number; crewCount: number; days: CruiseDay[]; additionalSupplies?: CruiseSupply[] }): Cruise => ({
-    id: 'test-cruise',
-    name: 'Test Cruise',
-    dateCreated: '2023-01-01T00:00:00.000Z',
-    dateModified: '2023-01-01T00:00:00.000Z',
-    length: p.length,
-    crewMembers: makeCrewMembers(p.crewCount),
-    days: p.days,
-    additionalSupplies: p.additionalSupplies,
-  });
+  const makeCruise = (p: { length: number; crewCount: number; days: CruiseDay[]; additionalSupplies?: CruiseSupply[] }): Cruise => {
+    return Cruise
+      .createNew('Test Cruise', p.length, makeCrewMembers(p.crewCount), p.days, p.additionalSupplies)
+  };
 
   it('should return empty list for cruise with no recipes or additional supplies', () => {
     const result = aggregateShoppingList(makeCruise({
@@ -310,10 +307,17 @@ describe('aggregateShoppingList', () => {
   });
 
   it('should handle multiple additional supplies with different flags', () => {
+    // 5 days so perDay supplies scale by 5 (expected woda total 25 below: 2 + 3 + 5 + 15).
     const result = aggregateShoppingList(makeCruise({
       length: 5,
       crewCount: 3,
-      days: [{ dayNumber: 1, recipes: [] }],
+      days: [
+        { dayNumber: 1, recipes: [] },
+        { dayNumber: 2, recipes: [] },
+        { dayNumber: 3, recipes: [] },
+        { dayNumber: 4, recipes: [] },
+        { dayNumber: 5, recipes: [] },
+      ],
       additionalSupplies: [
         { id: 'woda_butelkowana', amount: 2, isPerPerson: false, isPerDay: false },
         { id: 'woda_butelkowana', amount: 1, isPerPerson: true, isPerDay: false },
@@ -410,11 +414,18 @@ describe('aggregateShoppingList', () => {
     ]));
   });
 
-  it('should use cruise.length for perDay scaling, not days array length', () => {
+  it('should scale perDay supplies by the number of cruise days', () => {
+    // 5 days, perDay supply amount 2 -> expected 2 * 5 = 10.
     const result = aggregateShoppingList(makeCruise({
       length: 5,
       crewCount: 2,
-      days: [{ dayNumber: 1, recipes: [] }],
+      days: [
+        { dayNumber: 1, recipes: [] },
+        { dayNumber: 2, recipes: [] },
+        { dayNumber: 3, recipes: [] },
+        { dayNumber: 4, recipes: [] },
+        { dayNumber: 5, recipes: [] },
+      ],
       additionalSupplies: [
         { id: 'woda_butelkowana', amount: 2, isPerPerson: false, isPerDay: true },
       ],
@@ -482,20 +493,16 @@ describe('aggregateShoppingList', () => {
 
   it('should handle original and modified versions of same recipe with independent crewCount', () => {
     const original = makeRecipe('Bolognese', [{ id: 'tunczyk_w_sosie_wlasnym', amount: 100 }]);
-    const modified = makeRecipe('Bolognese', [{ id: 'pesto', amount: 50 }]);
-    modified.id = 'Bolognese-modified';
+    const modified = { ...makeRecipe('Bolognese', [{ id: 'pesto', amount: 50 }]), ...{ id: 'Bolognese-modified' } };
 
     const recipes: CruiseDayRecipe[] = [
       { originalRecipeId: 'Bolognese', recipeData: original, crewCount: 3, mealSlot: MealType.DINNER },
       { originalRecipeId: 'Bolognese', recipeData: modified, crewCount: 2, mealSlot: MealType.DINNER },
     ];
 
-    const result = aggregateShoppingList({
-      id: 'c', name: 'c', dateCreated: '', dateModified: '',
-      length: 1,
-      crewMembers: makeCrewMembers(5),
-      days: [{ dayNumber: 1, recipes }],
-    });
+
+    const cruise = Cruise.createNew('c', 1, makeCrewMembers(5), [{ dayNumber: 1, recipes }]);
+    const result = aggregateShoppingList(cruise);
 
     expect(result['ryby']).toEqual(expect.arrayContaining([item('tunczyk_w_sosie_wlasnym', 300, 'gramy')]));
     expect(result['inne']).toEqual(expect.arrayContaining([item('pesto', 100, 'gramy')]));

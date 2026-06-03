@@ -1,43 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Cruise } from '../types';
-import { getCruiseById } from '../model/cruiseData';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CruiseSuppliesTab from './CruiseSuppliesTab';
 import ShoppingListTab from './ShoppingListTab';
 import CruiseMenuTab from './CruiseMenuTab';
 import CruiseInfoTab from './CruiseInfoTab';
+import { useCruise } from '@/app/rejsy/CruiseProvider';
 
-interface CruiseDetailProps {
-  id: string;
-}
-
-export default function CruiseDetail({ id }: CruiseDetailProps) {
+export default function CruiseDetail() {
   const router = useRouter();
-  const [cruise, setCruise] = useState<Cruise | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { cruise } = useCruise();
   const [activeTab, setActiveTab] = useState<'info' | 'plan' | 'supplies' | 'shopping'>('info');
-
-  useEffect(() => {
-    const cruiseData = getCruiseById(id);
-    if (cruiseData) {
-      setCruise(cruiseData);
-    }
-    setLoading(false);
-  }, [id]);
-
-  const handleCruiseChange = () => {
-    // Refresh cruise data
-    const updatedCruise = getCruiseById(id);
-    if (updatedCruise) {
-      setCruise(updatedCruise);
-    }
-  };
-
-  if (loading) {
-    return <div className="loading-state">Ładowanie...</div>;
-  }
 
   if (!cruise) {
     return (
@@ -114,25 +88,19 @@ export default function CruiseDetail({ id }: CruiseDetailProps) {
 
       <div className="flex-grow overflow-auto">
         {activeTab === 'info' && (
-          <CruiseInfoTab cruise={cruise} />
+          <CruiseInfoTab />
         )}
 
         {activeTab === 'plan' && (
-          <CruiseMenuTab 
-            cruise={cruise}
-            onCruiseChange={handleCruiseChange}
-          />
+          <CruiseMenuTab />
         )}
 
         {activeTab === 'supplies' && (
-          <CruiseSuppliesTab
-            cruise={cruise}
-            onSupplyChange={handleCruiseChange}
-          />
+          <CruiseSuppliesTab />
         )}
 
         {activeTab === 'shopping' && (
-          <ShoppingListTab cruise={cruise} />
+          <ShoppingListTab />
         )}
       </div>
     </div>

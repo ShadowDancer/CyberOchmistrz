@@ -1,46 +1,36 @@
-import {
-  createNewCruise,
-  addAdditionalSupplyToCruise,
-  updateAdditionalSupplyAmount,
-  removeAdditionalSupplyFromCruise
-} from '../src/model/cruiseData';
-import { CruiseSupply } from '../src/types';
-import { setupCruises, clearCruises, getStoredCruises, makeCrewMembers } from './cruiseTestHarness';
+import { Cruise, CruiseSupply } from '../src/model/cruise';
+import { makeCrewMembers } from './cruiseTestHarness';
 
 describe('cruiseAdditionalSuppliesFlags', () => {
   const supply = (id: string, amount: number, perPerson: boolean, perDay: boolean) =>
     expect.objectContaining({ id, amount, isPerPerson: perPerson, isPerDay: perDay });
 
-  const findSupply = (supplies: CruiseSupply[], id: string, perPerson: boolean, perDay: boolean) =>
+  const findSupply = (supplies: readonly CruiseSupply[], id: string, perPerson: boolean, perDay: boolean) =>
     supplies.find(s => s.id === id && s.isPerPerson === perPerson && s.isPerDay === perDay);
 
-  const setupTestCruise = (opts?: { id?: string; supplies?: CruiseSupply[]; length?: number; crew?: number }) => {
-    const id = opts?.id ?? 'test-cruise';
-    const cruise = createNewCruise('Test Cruise', opts?.length ?? 7, makeCrewMembers(opts?.crew ?? 4));
-    cruise.id = id;
-    if (opts?.supplies) cruise.additionalSupplies = opts.supplies;
-    setupCruises([cruise]);
-    return id;
+  const setupTestCruise = (opts?: { id?: string; supplies?: CruiseSupply[]; length?: number; crew?: number }): Cruise => {
+    const cruise = Cruise.createNew(
+      opts?.id ?? 'test-cruise',
+      opts?.length ?? 7,
+      makeCrewMembers(opts?.crew ?? 4),
+      undefined,
+      opts?.supplies
+    );
+
+    return cruise;
   };
-
-  const getSupplies = () => getStoredCruises()[0].additionalSupplies!;
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    clearCruises();
-  });
 
   describe('multiple entries for same supply with different flags', () => {
     it('should allow multiple entries for same supply with different flag combinations', () => {
-      setupTestCruise();
+      let cruise = setupTestCruise();
 
-      addAdditionalSupplyToCruise('test-cruise', 'woda_butelkowana', 10, false, false);
-      addAdditionalSupplyToCruise('test-cruise', 'woda_butelkowana', 2, true, false);
-      addAdditionalSupplyToCruise('test-cruise', 'woda_butelkowana', 1, false, true);
-      addAdditionalSupplyToCruise('test-cruise', 'woda_butelkowana', 3, true, true);
+      cruise = cruise.upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 10, isPerPerson: false, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 2, isPerPerson: true, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 1, isPerPerson: false, isPerDay: true })
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 3, isPerPerson: true, isPerDay: true });
 
-      expect(getSupplies()).toHaveLength(4);
-      expect(getSupplies()).toEqual(expect.arrayContaining([
+      expect(cruise.additionalSupplies).toHaveLength(4);
+      expect(cruise.additionalSupplies).toEqual(expect.arrayContaining([
         supply('woda_butelkowana', 10, false, false),
         supply('woda_butelkowana', 2,  true,  false),
         supply('woda_butelkowana', 1,  false, true),
@@ -49,24 +39,25 @@ describe('cruiseAdditionalSuppliesFlags', () => {
     });
 
     it('should update only the correct entry when adding with same flags', () => {
-      setupTestCruise({
+      let cruise = setupTestCruise({
         supplies: [
           { id: 'woda_butelkowana', amount: 10, isPerPerson: false, isPerDay: false },
           { id: 'woda_butelkowana', amount: 2, isPerPerson: true, isPerDay: false },
         ],
       });
 
-      addAdditionalSupplyToCruise('test-cruise', 'woda_butelkowana', 5, true, false);
+      cruise = cruise.upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 5, isPerPerson: true, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(2);
-      expect(findSupply(getSupplies(), 'woda_butelkowana', false, false)?.amount).toBe(10);
-      expect(findSupply(getSupplies(), 'woda_butelkowana', true, false)?.amount).toBe(7);
+      expect(cruise.additionalSupplies).toHaveLength(2);
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana', false, false)?.amount).toBe(10);
+      // overwrite semantics: per-person entry (2) replaced by upsert of 5
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana', true, false)?.amount).toBe(5);
     });
   });
 
   describe('updateAdditionalSupplyAmount with flags', () => {
     it('should update only the specific entry identified by id and flags', () => {
-      setupTestCruise({
+      let cruise = setupTestCruise({
         supplies: [
           { id: 'papier_toaletowy', amount: 5, isPerPerson: false, isPerDay: false },
           { id: 'papier_toaletowy', amount: 2, isPerPerson: true, isPerDay: false },
@@ -74,23 +65,24 @@ describe('cruiseAdditionalSuppliesFlags', () => {
         ],
       });
 
-      updateAdditionalSupplyAmount('test-cruise', 'papier_toaletowy', 3, false, true);
+      cruise = cruise.upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 1, isPerPerson: false, isPerDay: true });
 
-      expect(getSupplies()).toHaveLength(3);
-      expect(findSupply(getSupplies(), 'papier_toaletowy', false, false)?.amount).toBe(5);
-      expect(findSupply(getSupplies(), 'papier_toaletowy', true, false)?.amount).toBe(2);
-      expect(findSupply(getSupplies(), 'papier_toaletowy', false, true)?.amount).toBe(3);
+      expect(cruise.additionalSupplies).toHaveLength(3);
+      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy', false, false)?.amount).toBe(5);
+      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy', true, false)?.amount).toBe(2);
+      // overwrite semantics: per-day entry (1) replaced by upsert of 1
+      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy', false, true)?.amount).toBe(1);
     });
 
     it('should add new entry if no entry matches the id and flags combination', () => {
-      setupTestCruise({
+      let cruise = setupTestCruise({
         supplies: [{ id: 'papier_toaletowy', amount: 5, isPerPerson: false, isPerDay: false }],
       });
 
-      updateAdditionalSupplyAmount('test-cruise', 'papier_toaletowy', 10, true, false);
+      cruise = cruise.upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 10, isPerPerson: true, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(2);
-      expect(getSupplies()).toEqual(expect.arrayContaining([
+      expect(cruise.additionalSupplies).toHaveLength(2);
+      expect(cruise.additionalSupplies).toEqual(expect.arrayContaining([
         supply('papier_toaletowy', 5,  false, false),
         supply('papier_toaletowy', 10, true,  false),
       ]));
@@ -99,7 +91,7 @@ describe('cruiseAdditionalSuppliesFlags', () => {
 
   describe('removeAdditionalSupplyFromCruise with flags', () => {
     it('should remove only the specific entry identified by id and flags', () => {
-      setupTestCruise({
+      let cruise = setupTestCruise({
         supplies: [
           { id: 'mydło', amount: 4, isPerPerson: false, isPerDay: false },
           { id: 'mydło', amount: 1, isPerPerson: true, isPerDay: false },
@@ -108,59 +100,60 @@ describe('cruiseAdditionalSuppliesFlags', () => {
         ],
       });
 
-      removeAdditionalSupplyFromCruise('test-cruise', 'mydło', false, true);
+      cruise = cruise.removeAdditionalSupply('mydło', false, true);
 
-      expect(getSupplies()).toHaveLength(3);
-      expect(findSupply(getSupplies(), 'mydło', false, false)).toBeDefined();
-      expect(findSupply(getSupplies(), 'mydło', true, false)).toBeDefined();
-      expect(findSupply(getSupplies(), 'mydło', false, true)).toBeUndefined();
-      expect(findSupply(getSupplies(), 'woda_butelkowana', false, false)).toBeDefined();
+      expect(cruise.additionalSupplies).toHaveLength(3);
+      expect(findSupply(cruise.additionalSupplies, 'mydło', false, false)).toBeDefined();
+      expect(findSupply(cruise.additionalSupplies, 'mydło', true, false)).toBeDefined();
+      expect(findSupply(cruise.additionalSupplies, 'mydło', false, true)).toBeUndefined();
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana', false, false)).toBeDefined();
     });
 
     it('should do nothing if no entry matches the id and flags combination', () => {
-      setupTestCruise({
+      let cruise = setupTestCruise({
         supplies: [{ id: 'mydło', amount: 4, isPerPerson: false, isPerDay: false }],
       });
 
-      removeAdditionalSupplyFromCruise('test-cruise', 'mydło', true, false);
+      cruise = cruise.removeAdditionalSupply('mydło', true, false);
 
-      expect(getSupplies()).toHaveLength(1);
-      expect(getSupplies()[0]).toEqual(supply('mydło', 4, false, false));
+      expect(cruise.additionalSupplies).toHaveLength(1);
+      expect(cruise.additionalSupplies[0]).toEqual(supply('mydło', 4, false, false));
     });
   });
 
   describe('edge cases', () => {
     it('should handle adding the same supply with same flags multiple times (should update)', () => {
-      setupTestCruise();
+      let cruise = setupTestCruise();
 
-      addAdditionalSupplyToCruise('test-cruise', 'woda_butelkowana', 10, false, false);
-      addAdditionalSupplyToCruise('test-cruise', 'woda_butelkowana', 15, false, false);
+      cruise = cruise
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 10, isPerPerson: false, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 15, isPerPerson: false, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(1);
-      expect(getSupplies()[0]).toEqual(supply('woda_butelkowana', 25, false, false));
+      expect(cruise.additionalSupplies).toHaveLength(1);
+      // overwrite semantics: second upsert (15) replaces the first (10)
+      expect(cruise.additionalSupplies[0]).toEqual(supply('woda_butelkowana', 15, false, false));
     });
 
     it('should correctly manage complex scenarios with multiple supplies and flag combinations', () => {
-      const id = setupTestCruise({ id: 'complex-test-cruise', length: 10, crew: 5 });
+      let cruise = setupTestCruise({ id: 'complex-test-cruise', length: 10, crew: 5 });
 
-      addAdditionalSupplyToCruise(id, 'woda_butelkowana', 20, false, false);
-      addAdditionalSupplyToCruise(id, 'woda_butelkowana', 2, true, false);
-      addAdditionalSupplyToCruise(id, 'papier_toaletowy', 5, false, true);
-      addAdditionalSupplyToCruise(id, 'mydło', 3, false, false);
-      addAdditionalSupplyToCruise(id, 'mydło', 1, true, true);
+      cruise = cruise
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 20, isPerPerson: false, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 2, isPerPerson: true, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 5, isPerPerson: false, isPerDay: true })
+        .upsertAdditionalSupply({ id: 'mydło', amount: 3, isPerPerson: false, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'mydło', amount: 1, isPerPerson: true, isPerDay: true })
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 25, isPerPerson: false, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 7, isPerPerson: false, isPerDay: true })
+        .removeAdditionalSupply('woda_butelkowana', true, false)
+        .removeAdditionalSupply('mydło', true, true);
 
-      updateAdditionalSupplyAmount(id, 'woda_butelkowana', 25, false, false);
-      updateAdditionalSupplyAmount(id, 'papier_toaletowy', 7, false, true);
-
-      removeAdditionalSupplyFromCruise(id, 'woda_butelkowana', true, false);
-      removeAdditionalSupplyFromCruise(id, 'mydło', true, true);
-
-      expect(getSupplies()).toHaveLength(3);
-      expect(findSupply(getSupplies(), 'woda_butelkowana', false, false)?.amount).toBe(25);
-      expect(findSupply(getSupplies(), 'papier_toaletowy', false, true)?.amount).toBe(7);
-      expect(findSupply(getSupplies(), 'mydło', false, false)?.amount).toBe(3);
-      expect(findSupply(getSupplies(), 'woda_butelkowana', true, false)).toBeUndefined();
-      expect(findSupply(getSupplies(), 'mydło', true, true)).toBeUndefined();
+      expect(cruise.additionalSupplies).toHaveLength(3);
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana', false, false)?.amount).toBe(25);
+      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy', false, true)?.amount).toBe(7);
+      expect(findSupply(cruise.additionalSupplies, 'mydło', false, false)?.amount).toBe(3);
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana', true, false)).toBeUndefined();
+      expect(findSupply(cruise.additionalSupplies, 'mydło', true, true)).toBeUndefined();
     });
   });
 });

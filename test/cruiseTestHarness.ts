@@ -44,9 +44,9 @@ export const getStoredCruises = (): Cruise[] => {
   return lastCall ? JSON.parse(lastCall[1]) : [];
 };
 
-import { Cruise, Recipie, MealType, IngredientAmount } from '../src/types';
+import { Cruise } from '../src/model/cruise';
+import { IngredientAmount, Recipie, MealType } from '../src/model/recipe';
 import { Diet, CrewMember } from '../src/model/crew';
-import { createNewCruise } from '../src/model/cruiseData';
 import { createRecipie } from '../src/model/recipieData';
 
 export const makeCrewMembers = (count: number, diet: Diet = 'omnivore'): CrewMember[] =>
@@ -71,18 +71,17 @@ export const createCruiseWithRecipes = (
   recipesByDay: { [dayNumber: number]: { recipeId: string; recipeData?: Recipie; crewCount?: number; mealSlot?: MealType }[] },
   crewMembers: CrewMember[] = makeCrewMembers(2)
 ): Cruise => {
-  const cruise = createNewCruise(name, length, crewMembers);
-  cruise.id = id;
+  let cruise = Cruise.createNew(name, length, crewMembers);
 
   Object.entries(recipesByDay).forEach(([dayNum, recipes]) => {
-    const dayIndex = cruise.days.findIndex(d => d.dayNumber === parseInt(dayNum));
-    if (dayIndex >= 0) {
-      cruise.days[dayIndex].recipes = recipes.map(r => ({
+
+    for (const r of recipes) {
+      cruise = cruise.insertRecipe(parseInt(dayNum), {
         originalRecipeId: r.recipeId,
         recipeData: r.recipeData ?? createTestRecipe(r.recipeId, r.recipeId),
         crewCount: r.crewCount ?? crewMembers.length,
         mealSlot: r.mealSlot ?? MealType.DINNER,
-      }));
+      });
     }
   });
 

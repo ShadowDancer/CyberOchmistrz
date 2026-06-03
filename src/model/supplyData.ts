@@ -1,7 +1,8 @@
 'use client';
 
-import {Supply, Ingredient, CategoryGroup, SupplyValidationErrors} from '@/types';
+import {SupplyValidationErrors} from '@/types';
 import suppliesData from '../data/supplies.json';
+import { Supply, Ingredient, CategoryGroup } from './supply';
 
 function castData(): Supply[] {
   return suppliesData as Supply[];

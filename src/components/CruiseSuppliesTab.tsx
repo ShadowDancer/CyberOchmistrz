@@ -1,36 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cruise, AdditionalSupplyCategoryGroup } from '../types';
-import {
-  addAdditionalSupplyToCruise,
-  updateAdditionalSupplyAmount,
-  removeAdditionalSupplyFromCruise,
-  getCruiseById,
-  hasAdditionalSupply,
-  getAdditionalSupplyAmount,
-  groupAdditionalSuppliesByCategory
-} from '../model/cruiseData';
 import { getSuppliesByType, groupSuppliesByCategory } from '../model/supplyData';
-import { CategoryGroup } from '../types';
 import { declineUnit } from '../utils/polishDeclension';
 import IngredientAmountEditor from './IngredientAmountEditor';
+import { AdditionalSupplyCategoryGroup, CategoryGroup } from '@/model/supply';
+import { useCruise } from '@/app/rejsy/CruiseProvider';
 
-interface CruiseSuppliesTabProps {
-  cruise: Cruise;
-  onSupplyChange: (updatedCruise: Cruise) => void;
-}
-
-export default function CruiseSuppliesTab({ 
-  cruise, 
-  onSupplyChange 
-}: CruiseSuppliesTabProps) {
+export default function CruiseSuppliesTab() {
   const [showIngredients, setShowIngredients] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [suppliesByCategory, setSuppliesByCategory] = useState<CategoryGroup[]>([]);
   const [shoppingListByCategory, setShoppingListByCategory] = useState<AdditionalSupplyCategoryGroup[]>([]);
-  
+  const { cruise, setCruise } = useCruise();
+
   // Load supplies directly, filtered by isIngredient flag
   useEffect(() => {
     const allSupplies = getSuppliesByType(showIngredients);
@@ -42,51 +26,29 @@ export default function CruiseSuppliesTab({
     // Reset category filter when changing ingredient type
     setSelectedCategory('');
   }, [showIngredients]);
-  
+
   // Group shopping list items by category using domain function
   useEffect(() => {
-    const groupedShoppingList = groupAdditionalSuppliesByCategory(cruise.id);
+    const groupedShoppingList = cruise.groupAdditionalSuppliesByCategory();
     setShoppingListByCategory(groupedShoppingList);
-  }, [cruise.additionalSupplies, cruise.id]);
-  
-  const handleAddSupply = (supplyId: string) => {
-    if (!cruise) return;
+  }, [cruise]);
 
-    addAdditionalSupplyToCruise(cruise.id, supplyId, 1, false, false);
-    
-    const updatedCruise = getCruiseById(cruise.id);
-    if (updatedCruise) {
-      onSupplyChange(updatedCruise);
-    }
+  const handleAddSupply = (supplyId: string) => {
+     setCruise(cruise.addAdditionalSupply({ id: supplyId, amount: 1, isPerDay: false, isPerPerson: false }));
   };
 
   const handleUpdateAmount = (supplyId: string, amount: number, isPerPerson: boolean, isPerDay: boolean) => {
-    if (!cruise || amount < 0) return;
-
-    updateAdditionalSupplyAmount(cruise.id, supplyId, amount, isPerPerson, isPerDay);
-
-    const updatedCruise = getCruiseById(cruise.id);
-    if (updatedCruise) {
-      onSupplyChange(updatedCruise);
-    }
+    if (amount < 0) return;
+    setCruise(cruise.upsertAdditionalSupply({ id: supplyId, amount, isPerPerson, isPerDay }));
   };
 
   const handleRemoveSupply = (supplyId: string, isPerPerson: boolean, isPerDay: boolean) => {
-    if (!cruise) return;
-
-    removeAdditionalSupplyFromCruise(cruise.id, supplyId, isPerPerson, isPerDay);
-
-    const updatedCruise = getCruiseById(cruise.id);
-    if (updatedCruise) {
-      onSupplyChange(updatedCruise);
-    }
+    setCruise(cruise.removeAdditionalSupply(supplyId, isPerPerson, isPerDay));
   };
 
   const handleUpdateFlags = (supplyId: string, oldIsPerPerson: boolean, oldIsPerDay: boolean, newIsPerPerson: boolean, newIsPerDay: boolean, amount: number) => {
-    if (!cruise) return;
-
-    if (hasAdditionalSupply(cruise.id, supplyId, newIsPerPerson, newIsPerDay)) {
-      const existingAmount = getAdditionalSupplyAmount(cruise.id, supplyId, newIsPerPerson, newIsPerDay);
+    if (cruise.hasAdditionalSupply(supplyId, newIsPerPerson, newIsPerDay)) {
+      const existingAmount = cruise.getAdditionalSupplyAmount(supplyId, newIsPerPerson, newIsPerDay);
       if (existingAmount !== null) {
         const confirmed = window.confirm(
           `Zmiana flag spowoduje połączenie z istniejącym wpisem (${existingAmount} ${declineUnit('sztuki', existingAmount)}). Czy chcesz kontynuować?`
@@ -95,20 +57,18 @@ export default function CruiseSuppliesTab({
       }
     }
 
-    removeAdditionalSupplyFromCruise(cruise.id, supplyId, oldIsPerPerson, oldIsPerDay);
-    addAdditionalSupplyToCruise(cruise.id, supplyId, amount, newIsPerPerson, newIsPerDay);
+    const updatedCruise = cruise
+      .removeAdditionalSupply(supplyId, oldIsPerPerson, oldIsPerDay)
+      .upsertAdditionalSupply({ id: supplyId, amount, isPerPerson: newIsPerPerson, isPerDay: newIsPerDay });
 
-    const updatedCruise = getCruiseById(cruise.id);
-    if (updatedCruise) {
-      onSupplyChange(updatedCruise);
-    }
+    setCruise(updatedCruise);
   };
-  
+
   const toggleShowIngredients = () => {
     setShowIngredients(!showIngredients);
     setFilterText('');
   };
-  
+
   const filteredSupplies = suppliesByCategory
     .filter(categoryGroup => !selectedCategory || categoryGroup.category === selectedCategory)
     .map(categoryGroup => ({
@@ -120,7 +80,7 @@ export default function CruiseSuppliesTab({
     .filter(categoryGroup => categoryGroup.supplies.length > 0);
 
   const availableCategories = suppliesByCategory.map(group => group.category).sort();
-  
+
   return (
     <div className="content-padding">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -171,7 +131,7 @@ export default function CruiseSuppliesTab({
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-4 max-h-[60vh] overflow-y-auto">
             {filteredSupplies.length === 0 ? (
               <p className="text-muted-light italic py-4">Brak produktów do wyświetlenia.</p>
@@ -208,7 +168,7 @@ export default function CruiseSuppliesTab({
             )}
           </div>
         </div>
-        
+
         {/* Right column - Additional supplies to buy */}
         <div>
           <h2 className="heading-secondary">Lista zakupów</h2>
