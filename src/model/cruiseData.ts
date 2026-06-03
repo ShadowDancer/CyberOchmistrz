@@ -6,7 +6,9 @@ export function getCruises(): Cruise[] {
   if (typeof window === 'undefined') return [];
 
   const storedCruises = localStorage.getItem(STORAGE_KEY);
-  return storedCruises ? JSON.parse(storedCruises) : [];
+  if (!storedCruises) return [];
+
+  return (JSON.parse(storedCruises) as Cruise[]).map(Cruise.fromCruise);
 }
 
 export function getCruiseById(id: string): Cruise | undefined {

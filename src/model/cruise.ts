@@ -49,6 +49,19 @@ export class Cruise {
     );
   }
 
+  public static fromCruise(data: Cruise): Cruise {
+    return new Cruise(
+      data.id,
+      data.name,
+      data.dateCreated,
+      data.dateModified,
+      data.crewMembers,
+      data.days,
+      data.additionalSupplies,
+      data.startDate,
+    );
+  }
+
   private with(modifiedValues: Partial<Omit<Cruise, 'id' | 'dateCreated'>>): Cruise {
     const name = modifiedValues.name ?? this.name;
     const crewMembers = modifiedValues.crewMembers ?? this.crewMembers;
