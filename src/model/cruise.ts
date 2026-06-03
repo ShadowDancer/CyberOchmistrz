@@ -273,6 +273,19 @@ export class Cruise {
     });
   }
 
+  public addAdditionalSupply(supply: CruiseSupply): Cruise {
+    return this.with({
+      additionalSupplies: produce(this.additionalSupplies, additionalSupplies => {
+        const existingSupplyIndex = additionalSupplies.findIndex((s) => idsEqual(s, supply));
+        if (existingSupplyIndex >= 0) {
+          additionalSupplies[existingSupplyIndex].amount += supply.amount;
+        } else {
+          additionalSupplies.push(supply);
+        }
+      })
+    });
+  }
+
   public removeAdditionalSupply(
     supplyId: string,
     isPerPerson: boolean,

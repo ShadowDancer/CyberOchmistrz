@@ -34,7 +34,7 @@ export default function CruiseSuppliesTab() {
   }, [cruise]);
 
   const handleAddSupply = (supplyId: string) => {
-     setCruise(cruise.upsertAdditionalSupply({ id: supplyId, amount: 1, isPerDay: false, isPerPerson: false }));
+     setCruise(cruise.addAdditionalSupply({ id: supplyId, amount: 1, isPerDay: false, isPerPerson: false }));
   };
 
   const handleUpdateAmount = (supplyId: string, amount: number, isPerPerson: boolean, isPerDay: boolean) => {
