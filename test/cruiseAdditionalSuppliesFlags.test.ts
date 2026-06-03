@@ -50,7 +50,8 @@ describe('cruiseAdditionalSuppliesFlags', () => {
 
       expect(cruise.additionalSupplies).toHaveLength(2);
       expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana', false, false)?.amount).toBe(10);
-      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana', true, false)?.amount).toBe(7);
+      // overwrite semantics: per-person entry (2) replaced by upsert of 5
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana', true, false)?.amount).toBe(5);
     });
   });
 
@@ -69,7 +70,8 @@ describe('cruiseAdditionalSuppliesFlags', () => {
       expect(cruise.additionalSupplies).toHaveLength(3);
       expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy', false, false)?.amount).toBe(5);
       expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy', true, false)?.amount).toBe(2);
-      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy', false, true)?.amount).toBe(3);
+      // overwrite semantics: per-day entry (1) replaced by upsert of 1
+      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy', false, true)?.amount).toBe(1);
     });
 
     it('should add new entry if no entry matches the id and flags combination', () => {
@@ -128,7 +130,8 @@ describe('cruiseAdditionalSuppliesFlags', () => {
         .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 15, isPerPerson: false, isPerDay: false });
 
       expect(cruise.additionalSupplies).toHaveLength(1);
-      expect(cruise.additionalSupplies[0]).toEqual(supply('woda_butelkowana', 25, false, false));
+      // overwrite semantics: second upsert (15) replaces the first (10)
+      expect(cruise.additionalSupplies[0]).toEqual(supply('woda_butelkowana', 15, false, false));
     });
 
     it('should correctly manage complex scenarios with multiple supplies and flag combinations', () => {

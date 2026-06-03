@@ -1,5 +1,5 @@
-import { CruiseSupply } from '../src/model/cruise';
-import { setupCruises, clearCruises, getStoredCruises, localStorageMock, makeCrewMembers } from './cruiseTestHarness';
+import { Cruise, CruiseSupply } from '../src/model/cruise';
+import { makeCrewMembers } from './cruiseTestHarness';
 
 jest.mock('../src/data/supplies.json', () => [
   { id: 'woda_butelkowana', name: 'Woda butelkowana', unit: 'litry', category: 'napoje', isIngredient: false },
@@ -18,126 +18,101 @@ describe('cruiseSupplies', () => {
   const supply = (id: string, amount: number, perPerson: boolean, perDay: boolean) =>
     expect.objectContaining({ id, amount, isPerPerson: perPerson, isPerDay: perDay });
 
-  const findSupply = (supplies: CruiseSupply[], id: string, perPerson = false, perDay = false) =>
+  const findSupply = (supplies: readonly CruiseSupply[], id: string, perPerson = false, perDay = false) =>
     supplies.find(s => s.id === id && s.isPerPerson === perPerson && s.isPerDay === perDay);
 
-  const setupTestCruise = (opts?: { id?: string; supplies?: CruiseSupply[]; length?: number; crew?: number }) => {
-    const id = opts?.id ?? 'rejs-na-mazury-2024';
-    const cruise = createNewCruise('Rejs na Mazury 2024', opts?.length ?? 7, makeCrewMembers(opts?.crew ?? 4));
-    cruise.id = id;
-    if (opts?.supplies) cruise.additionalSupplies = opts.supplies;
-    setupCruises([cruise]);
-    return id;
-  };
+  const setupTestCruise = (opts?: { supplies?: CruiseSupply[]; length?: number; crew?: number }): Cruise =>
+    Cruise.createNew('Rejs na Mazury 2024', opts?.length ?? 7, makeCrewMembers(opts?.crew ?? 4), undefined, opts?.supplies);
 
-  const getSupplies = () => getStoredCruises()[0].additionalSupplies!;
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    clearCruises();
-  });
-
-  describe('addAdditionalSupplyToCruise', () => {
+  // upsertAdditionalSupply overwrites the amount for a matching (id, isPerPerson, isPerDay) entry
+  describe('upsertAdditionalSupply (insert)', () => {
     it('should add a new non-ingredient supply to a cruise', () => {
-      setupTestCruise();
+      let cruise = setupTestCruise();
 
-      addAdditionalSupplyToCruise('rejs-na-mazury-2024', 'papier_toaletowy', 7, false, false);
+      cruise = cruise.upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 7, isPerPerson: false, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(1);
-      expect(getSupplies()[0]).toEqual(supply('papier_toaletowy', 7, false, false));
+      expect(cruise.additionalSupplies).toHaveLength(1);
+      expect(cruise.additionalSupplies[0]).toEqual(supply('papier_toaletowy', 7, false, false));
     });
 
-    it('should add to amount if supply already exists', () => {
-      setupTestCruise({
+    it('should overwrite the amount if supply already exists (last write wins)', () => {
+      let cruise = setupTestCruise({
         supplies: [{ id: 'woda_butelkowana', amount: 10, isPerPerson: false, isPerDay: false }],
       });
 
-      addAdditionalSupplyToCruise('rejs-na-mazury-2024', 'woda_butelkowana', 15, false, false);
+      cruise = cruise.upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 15, isPerPerson: false, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(1);
-      expect(getSupplies()[0]).toEqual(supply('woda_butelkowana', 25, false, false));
+      expect(cruise.additionalSupplies).toHaveLength(1);
+      // overwrite, not additive: 10 replaced by 15
+      expect(cruise.additionalSupplies[0]).toEqual(supply('woda_butelkowana', 15, false, false));
     });
 
-    it('should merge amounts when calling addAdditionalSupplyToCruise multiple times', () => {
-      setupTestCruise();
+    it('should keep only the last value when upserting the same supply multiple times', () => {
+      let cruise = setupTestCruise();
 
-      addAdditionalSupplyToCruise('rejs-na-mazury-2024', 'woda_butelkowana', 5, false, false);
-      addAdditionalSupplyToCruise('rejs-na-mazury-2024', 'woda_butelkowana', 10, false, false);
-      addAdditionalSupplyToCruise('rejs-na-mazury-2024', 'woda_butelkowana', 8, false, false);
+      cruise = cruise
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 5, isPerPerson: false, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 10, isPerPerson: false, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 8, isPerPerson: false, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(1);
-      expect(getSupplies()[0]).toEqual(supply('woda_butelkowana', 23, false, false));
+      expect(cruise.additionalSupplies).toHaveLength(1);
+      // last write wins: final upsert of 8
+      expect(cruise.additionalSupplies[0]).toEqual(supply('woda_butelkowana', 8, false, false));
     });
 
-    it('should initialize additionalSupplies array if it does not exist', () => {
-      setupTestCruise();
+    it('should add a supply to a cruise that starts with no additional supplies', () => {
+      let cruise = setupTestCruise();
 
-      addAdditionalSupplyToCruise('rejs-na-mazury-2024', 'mydło', 4, false, false);
+      cruise = cruise.upsertAdditionalSupply({ id: 'mydło', amount: 4, isPerPerson: false, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(1);
-      expect(getSupplies()[0]).toEqual(supply('mydło', 4, false, false));
-    });
-
-    it('should do nothing if cruise does not exist', () => {
-      setupCruises([]);
-
-      addAdditionalSupplyToCruise('nonexistent-cruise', 'papier_toaletowy', 7, false, false);
-
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
+      expect(cruise.additionalSupplies).toHaveLength(1);
+      expect(cruise.additionalSupplies[0]).toEqual(supply('mydło', 4, false, false));
     });
   });
 
-  describe('updateAdditionalSupplyAmount', () => {
+  describe('upsertAdditionalSupply (update)', () => {
     it('should update the amount of an existing supply', () => {
-      setupTestCruise({
+      let cruise = setupTestCruise({
         supplies: [
           { id: 'papier_toaletowy', amount: 5, isPerPerson: false, isPerDay: false },
           { id: 'woda_butelkowana', amount: 20, isPerPerson: false, isPerDay: false },
         ],
       });
 
-      updateAdditionalSupplyAmount('rejs-na-mazury-2024', 'papier_toaletowy', 10, false, false);
+      cruise = cruise.upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 10, isPerPerson: false, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(2);
-      expect(findSupply(getSupplies(), 'papier_toaletowy')?.amount).toBe(10);
-      expect(findSupply(getSupplies(), 'woda_butelkowana')?.amount).toBe(20);
+      expect(cruise.additionalSupplies).toHaveLength(2);
+      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy')?.amount).toBe(10);
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana')?.amount).toBe(20);
     });
 
-    it('should do nothing if cruise does not exist', () => {
-      setupCruises([]);
+    it('should add a new entry if the cruise has no additional supplies', () => {
+      let cruise = setupTestCruise();
 
-      updateAdditionalSupplyAmount('nonexistent-cruise', 'papier_toaletowy', 10, false, false);
+      cruise = cruise.upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 10, isPerPerson: false, isPerDay: false });
 
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
+      expect(cruise.additionalSupplies).toHaveLength(1);
+      expect(cruise.additionalSupplies[0]).toEqual(supply('papier_toaletowy', 10, false, false));
     });
 
-    it('should add new entry if cruise has no additional supplies', () => {
-      setupTestCruise();
-
-      updateAdditionalSupplyAmount('rejs-na-mazury-2024', 'papier_toaletowy', 10, false, false);
-
-      expect(getSupplies()).toHaveLength(1);
-      expect(getSupplies()[0]).toEqual(supply('papier_toaletowy', 10, false, false));
-    });
-
-    it('should add new entry if supply does not exist', () => {
-      setupTestCruise({
+    it('should add a new entry if the supply does not exist yet', () => {
+      let cruise = setupTestCruise({
         supplies: [{ id: 'woda_butelkowana', amount: 20, isPerPerson: false, isPerDay: false }],
       });
 
-      updateAdditionalSupplyAmount('rejs-na-mazury-2024', 'papier_toaletowy', 10, false, false);
+      cruise = cruise.upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 10, isPerPerson: false, isPerDay: false });
 
-      expect(getSupplies()).toHaveLength(2);
-      expect(getSupplies()).toEqual(expect.arrayContaining([
+      expect(cruise.additionalSupplies).toHaveLength(2);
+      expect(cruise.additionalSupplies).toEqual(expect.arrayContaining([
         supply('papier_toaletowy', 10, false, false),
         supply('woda_butelkowana', 20, false, false),
       ]));
     });
   });
 
-  describe('removeAdditionalSupplyFromCruise', () => {
+  describe('removeAdditionalSupply', () => {
     it('should remove a supply from the cruise', () => {
-      setupTestCruise({
+      let cruise = setupTestCruise({
         supplies: [
           { id: 'papier_toaletowy', amount: 7, isPerPerson: false, isPerDay: false },
           { id: 'woda_butelkowana', amount: 28, isPerPerson: false, isPerDay: false },
@@ -145,46 +120,37 @@ describe('cruiseSupplies', () => {
         ],
       });
 
-      removeAdditionalSupplyFromCruise('rejs-na-mazury-2024', 'mydło', false, false);
+      cruise = cruise.removeAdditionalSupply('mydło', false, false);
 
-      expect(getSupplies()).toHaveLength(2);
-      expect(findSupply(getSupplies(), 'mydło')).toBeUndefined();
-      expect(findSupply(getSupplies(), 'papier_toaletowy')).toBeDefined();
-      expect(findSupply(getSupplies(), 'woda_butelkowana')).toBeDefined();
+      expect(cruise.additionalSupplies).toHaveLength(2);
+      expect(findSupply(cruise.additionalSupplies, 'mydło')).toBeUndefined();
+      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy')).toBeDefined();
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana')).toBeDefined();
     });
 
-    it('should do nothing if cruise does not exist', () => {
-      setupCruises([]);
+    it('should do nothing if the cruise has no additional supplies', () => {
+      let cruise = setupTestCruise();
 
-      removeAdditionalSupplyFromCruise('nonexistent-cruise', 'mydło', false, false);
+      cruise = cruise.removeAdditionalSupply('mydło', false, false);
 
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
+      expect(cruise.additionalSupplies).toHaveLength(0);
     });
 
-    it('should do nothing if cruise has no additional supplies', () => {
-      setupTestCruise();
-
-      removeAdditionalSupplyFromCruise('rejs-na-mazury-2024', 'mydło', false, false);
-
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
-    });
-
-    it('should handle case when supply does not exist', () => {
-      setupTestCruise({
+    it('should leave supplies untouched when the target supply does not exist', () => {
+      let cruise = setupTestCruise({
         supplies: [{ id: 'woda_butelkowana', amount: 28, isPerPerson: false, isPerDay: false }],
       });
 
-      removeAdditionalSupplyFromCruise('rejs-na-mazury-2024', 'mydło', false, false);
+      cruise = cruise.removeAdditionalSupply('mydło', false, false);
 
-      expect(getSupplies()).toHaveLength(1);
-      expect(getSupplies()[0].id).toBe('woda_butelkowana');
+      expect(cruise.additionalSupplies).toHaveLength(1);
+      expect(cruise.additionalSupplies[0].id).toBe('woda_butelkowana');
     });
   });
 
   describe('groupAdditionalSuppliesByCategory', () => {
     it('should group additional supplies by category', () => {
-      setupTestCruise({
-        id: 'test-cruise',
+      const cruise = setupTestCruise({
         supplies: [
           { id: 'woda_butelkowana', amount: 10, isPerPerson: false, isPerDay: false },
           { id: 'papier_toaletowy', amount: 5, isPerPerson: false, isPerDay: false },
@@ -195,7 +161,7 @@ describe('cruiseSupplies', () => {
         length: 5,
       });
 
-      const grouped = groupAdditionalSuppliesByCategory('test-cruise');
+      const grouped = cruise.groupAdditionalSuppliesByCategory();
 
       expect(grouped).toHaveLength(2);
       expect(grouped.find(g => g.category === 'napoje')!.supplies).toHaveLength(2);
@@ -203,14 +169,13 @@ describe('cruiseSupplies', () => {
     });
 
     it('should return empty array for cruise with no additional supplies', () => {
-      setupTestCruise({ id: 'empty-cruise', length: 3, crew: 2 });
+      const cruise = setupTestCruise({ length: 3, crew: 2 });
 
-      expect(groupAdditionalSuppliesByCategory('empty-cruise')).toEqual([]);
+      expect(cruise.groupAdditionalSuppliesByCategory()).toEqual([]);
     });
 
     it('should sort categories alphabetically', () => {
-      setupTestCruise({
-        id: 'sort-test-cruise',
+      const cruise = setupTestCruise({
         length: 1,
         crew: 1,
         supplies: [
@@ -220,7 +185,7 @@ describe('cruiseSupplies', () => {
         ],
       });
 
-      const grouped = groupAdditionalSuppliesByCategory('sort-test-cruise');
+      const grouped = cruise.groupAdditionalSuppliesByCategory();
 
       expect(grouped).toHaveLength(2);
       expect(grouped[0].category).toBe('napoje');
@@ -228,8 +193,7 @@ describe('cruiseSupplies', () => {
     });
 
     it('should handle supplies with different flag combinations separately and sort by flag priority', () => {
-      setupTestCruise({
-        id: 'flag-test-cruise',
+      const cruise = setupTestCruise({
         supplies: [
           { id: 'woda_butelkowana', amount: 2, isPerPerson: true, isPerDay: true },
           { id: 'woda_butelkowana', amount: 10, isPerPerson: false, isPerDay: false },
@@ -238,7 +202,7 @@ describe('cruiseSupplies', () => {
         ],
       });
 
-      const grouped = groupAdditionalSuppliesByCategory('flag-test-cruise');
+      const grouped = cruise.groupAdditionalSuppliesByCategory();
       const supplies = grouped.find(g => g.category === 'napoje')!.supplies;
 
       expect(supplies).toHaveLength(4);
@@ -247,49 +211,39 @@ describe('cruiseSupplies', () => {
       expect(supplies[2]).toEqual(expect.objectContaining({ amount: 3, isPerPerson: false, isPerDay: true }));
       expect(supplies[3]).toEqual(expect.objectContaining({ amount: 2, isPerPerson: true, isPerDay: true }));
     });
-
-    it('should return empty array for non-existent cruise', () => {
-      setupCruises([]);
-
-      expect(groupAdditionalSuppliesByCategory('non-existent-cruise')).toEqual([]);
-    });
   });
 
   describe('realistic cruise supplies management', () => {
     it('should demonstrate typical cruise supply operations', () => {
-      const cruise = createNewCruise('Żeglarski Rejs Bałtycki 2024', 10, makeCrewMembers(6));
-      cruise.id = 'zeglarski-rejs-baltycki-2024';
-      cruise.additionalSupplies = [
-        { id: 'woda_butelkowana', amount: 60, isPerPerson: false, isPerDay: false },
-        { id: 'papier_toaletowy', amount: 15, isPerPerson: false, isPerDay: false },
-        { id: 'mydło', amount: 6, isPerPerson: false, isPerDay: false },
-        { id: 'płyn_do_naczyń', amount: 2, isPerPerson: false, isPerDay: false },
-        { id: 'worki_na_śmieci_120L', amount: 20, isPerPerson: false, isPerDay: false },
-        { id: 'worki_na_śmieci_30L', amount: 30, isPerPerson: false, isPerDay: false },
-        { id: 'ręcznik_papierowy', amount: 5, isPerPerson: false, isPerDay: false },
-        { id: 'zapalniczka', amount: 3, isPerPerson: false, isPerDay: false },
-        { id: 'herbata', amount: 20, isPerPerson: false, isPerDay: false },
-        { id: 'kawa', amount: 200, isPerPerson: false, isPerDay: false },
-      ];
-      const storage: { [key: string]: string } = {};
-      storage['cyber-ochmistrz-cruises'] = JSON.stringify([cruise]);
-      localStorageMock.getItem.mockImplementation((key: string) => storage[key] || null);
-      localStorageMock.setItem.mockImplementation((key: string, value: string) => {
-        storage[key] = value;
+      let cruise = setupTestCruise({
+        crew: 6,
+        length: 10,
+        supplies: [
+          { id: 'woda_butelkowana', amount: 60, isPerPerson: false, isPerDay: false },
+          { id: 'papier_toaletowy', amount: 15, isPerPerson: false, isPerDay: false },
+          { id: 'mydło', amount: 6, isPerPerson: false, isPerDay: false },
+          { id: 'płyn_do_naczyń', amount: 2, isPerPerson: false, isPerDay: false },
+          { id: 'worki_na_śmieci_120L', amount: 20, isPerPerson: false, isPerDay: false },
+          { id: 'worki_na_śmieci_30L', amount: 30, isPerPerson: false, isPerDay: false },
+          { id: 'ręcznik_papierowy', amount: 5, isPerPerson: false, isPerDay: false },
+          { id: 'zapalniczka', amount: 3, isPerPerson: false, isPerDay: false },
+          { id: 'herbata', amount: 20, isPerPerson: false, isPerDay: false },
+          { id: 'kawa', amount: 200, isPerPerson: false, isPerDay: false },
+        ],
       });
 
-      const id = 'zeglarski-rejs-baltycki-2024';
+      cruise = cruise
+        .upsertAdditionalSupply({ id: 'woda_butelkowana', amount: 80, isPerPerson: false, isPerDay: false })
+        .upsertAdditionalSupply({ id: 'papier_toaletowy', amount: 20, isPerPerson: false, isPerDay: false });
 
-      updateAdditionalSupplyAmount(id, 'woda_butelkowana', 80, false, false);
-      updateAdditionalSupplyAmount(id, 'papier_toaletowy', 20, false, false);
+      expect(findSupply(cruise.additionalSupplies, 'woda_butelkowana')?.amount).toBe(80);
+      expect(findSupply(cruise.additionalSupplies, 'papier_toaletowy')?.amount).toBe(20);
 
-      expect(findSupply(getSupplies(), 'woda_butelkowana')?.amount).toBe(80);
-      expect(findSupply(getSupplies(), 'papier_toaletowy')?.amount).toBe(20);
+      cruise = cruise
+        .removeAdditionalSupply('ręcznik_papierowy', false, false)
+        .removeAdditionalSupply('zapalniczka', false, false);
 
-      removeAdditionalSupplyFromCruise(id, 'ręcznik_papierowy', false, false);
-      removeAdditionalSupplyFromCruise(id, 'zapalniczka', false, false);
-
-      const finalSupplies = getSupplies();
+      const finalSupplies = cruise.additionalSupplies;
       expect(finalSupplies).toHaveLength(8);
       expect(findSupply(finalSupplies, 'ręcznik_papierowy')).toBeUndefined();
       expect(findSupply(finalSupplies, 'zapalniczka')).toBeUndefined();

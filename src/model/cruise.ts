@@ -1,5 +1,5 @@
 import { CrewMember } from "./crew";
-import { Recipie, MealType, IngredientAmount } from "./recipe";
+import { Recipie, MealType } from "./recipe";
 import { AdditionalSupplyCategoryGroup, AdditionalSupplyItem } from "./supply";
 import { getSupplyById } from './supplyData';
 import { produce, castDraft } from 'immer';

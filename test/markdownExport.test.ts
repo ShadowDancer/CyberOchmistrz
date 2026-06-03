@@ -31,16 +31,8 @@ const makeDayRecipe = (recipe: Recipie, crewCount: number, mealSlot: MealType = 
   mealSlot,
 });
 
-const makeCruise = (crewMembers: CrewMember[], days: CruiseDay[], startDate?: string): Cruise => ({
-  id: 'test',
-  name: 'Test',
-  dateCreated: '',
-  dateModified: '',
-  length: days.length,
-  crewMembers,
-  days,
-  startDate,
-});
+const makeCruise = (crewMembers: CrewMember[], days: CruiseDay[], startDate?: string): Cruise =>
+  Cruise.createNew('Test', days.length, crewMembers, days, undefined, startDate);
 
 const EMPTY_DAY_1 = [
   '# Dzień 1',
